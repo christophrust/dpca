@@ -1,0 +1,10 @@
+Package: dpca
+Version: 0.0.1
+Title: Dynamic Principal Component and Factor Analysis
+Description: Efficient implementations of the GDFM as suggested by Forni, Lippi (2001)
+Author: Christoph Rust [aut,cre]
+Maintainer: Christoph Rust <christoph.g.rust@gmail.com>
+Depends: R (>= 3.0.0)
+License: GPL-3
+Encoding: UTF-8
+RoxygenNote: 7.2.1
