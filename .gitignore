@@ -5,3 +5,7 @@ tmp/
 
 
 man/
+/src/.cache/
+/src/.ccls
+/src/*.so
+/src/*.o
