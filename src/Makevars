@@ -1,0 +1,3 @@
+#PKG_LIBS = -llapack -lblas -lgfortran -lm -lquadmath -larpack
+PKG_LIBS = -llapack -larpack -lblas
+PKG_CFLAGS = -I"/usr/include/arpack"
