@@ -29,10 +29,15 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   a_int nev = (a_int) q;        // Number of eigenvalues
   double _Complex resid[N];     // residual vector
   a_int ncv = 2 * nev + 1; //
+  if (ncv < 20) ncv = 20;  // usage consistent to octave
+  if (ncv > N) ncv = N;
+
   double _Complex V[ncv * N];
   a_int ldv = N;
   a_int iparam[11];
   a_int ipntr[14];
+  for (int i=0; i< 14; i++) ipntr[i] = 0;
+
   double _Complex workd[3 * N];
   a_int rvec = 1;
   char howmny[] = "A";
@@ -46,9 +51,11 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   double _Complex sigma = 0. + I * 0.;
   int k;
   for (k = 0; k < 3 * N; ++k) workd[k] = 0;
-  double _Complex workl[3 * (ncv * ncv) + 6 * ncv];
-  for (k = 0; k < 3 * (ncv * ncv) + 6 * ncv; ++k) workl[k] = 0;
-  a_int lworkl = 3 * (ncv * ncv) + 6 * ncv;
+
+  a_int lworkl = ncv *  (3 * ncv + 5);
+
+  double _Complex workl[lworkl];
+  for (k = 0; k < lworkl; ++k) workl[k] = 0;
   double rwork[ncv];
   double _Complex workev[2 * ncv];
   a_int info = 0;
@@ -57,39 +64,45 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   iparam[2] = 10 * N;
   iparam[3] = 1;
   iparam[4] = 0;  // number of ev found by arpack.
+  iparam[5] = 0;
   iparam[6] = 1;
+  iparam[7] = 0;
+  iparam[8] = 0;
+  iparam[9] = 0;
+  iparam[10] = 0;
 
   // we still copy the array
-  R_ShowMessage("test1");
   double _Complex cmplx_mat[dim * dim];
   for (int i= 0; i < dim * dim; i++) cmplx_mat[i] = mat[i].r + _Complex_I * mat[i].i;
 
-  R_ShowMessage("test2");
+  int cnt = 0;
   while (ido != 99) {
     /* call arpack like you would have, but, use znaupd_c instead of znaupd_ */
     znaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, rwork, &info);
 
     zMatVec(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), cmplx_mat, dim);
+    cnt++;
   }
-  R_ShowMessage("test3");
+
+
   if (iparam[4] != nev) {
     printf("Error: iparam[4] %d, nev %d\n", iparam[4], nev); // check number of ev found by arpack.
   }
-  R_ShowMessage("test4");
+
+
   /* call arpack like you would have, but, use zneupd_c instead of zneupd_ */
   zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev, bmat, N, which, nev,
            tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl, rwork,
            &info);
 
-  R_ShowMessage("test5");
   // copy results
   for (int i = 0; i < q; i++) {
     eval[i].r = creal(d[i]);
     eval[i].i = cimag(d[i]);
     for (int j = 0; j < dim; j++){
-      evecs[i*dim + j].r = creal(z[i*dim + j]);
-      evecs[i*dim + j].i = cimag(z[i*dim + j]);
+      evecs[i * dim + j].r = creal(z[i * dim + j]);
+      evecs[i * dim + j].i = cimag(z[i * dim + j]);
     }
   }
 
