@@ -70,7 +70,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   for (int i = 0; i < ncv; i++) select[i] = 1;
 
   double _Complex z[N  * nev];
-  a_int ldz = N + 1;
+  a_int ldz = N;
   double _Complex sigma = 0. + I * 0.;
   int k;
   for (k = 0; k < 3 * N; ++k) workd[k] = 0;
