@@ -28,7 +28,7 @@ void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim) {
   alpha.r = 1.0; alpha.i = 0.0;
   Rcomplex beta;
   beta.r = 0.0; beta.i = 0.0;
-  int inc =1;
+  int inc = 1;
 
   F77_CALL(zgemv)("N", &dim, &dim, &alpha, mat,
                   &dim,
@@ -94,7 +94,6 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   iparam[9] = 0;
   iparam[10] = 0;
 
-  if (verbose) printf("allocating mat copy\n");
   // we still copy the array
   /* double _Complex cmplx_mat[dim * dim]; */
 
@@ -111,34 +110,22 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
              workd, workl, lworkl, rwork, &info);
 
     zMatVecLa(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), mat, dim);
-    //for (int i=0; i<N; i++) printf("xVec[%d]: %f%+fi\n", i, creal(workd[ipntr[0] - 1 + i]), cimag(workd[ipntr[0] - 1 + i]));
-    //for (int i=0; i<N; i++) printf("yVec[%d]: %f%+fi\n", i, creal(workd[ipntr[1] - 1 + i]), cimag(workd[ipntr[1] - 1 + i]));
     cnt++;
   }
 
-  if (verbose) printf("finished znaupd iteration, info: %d\n", info);
+  if (verbose) printf("finished znaupd iteration, info: %d, numer of iterations: %d\n", info, cnt);
 
-  //printf("Info: %d\n", info);
-  // printf("Number of iterations: %d or %i\n", iparam[2], cnt);
 
   if (iparam[4] != nev) {
     printf("Error: iparam[4] %d, nev %d\n", iparam[4], nev); // check number of ev found by arpack.
   }
 
-  /* printf("Tol: %e\n", tol); */
-  /* for (int i=0; i < N; i++) printf("presid[%i,1]: %f%+fi\n", i, creal(resid[i]), cimag(resid[i])); */
-  /* for (int i=0; i < N; i++) printf("V[%i,1]: %f%+fi\n", i, creal(V[i]), cimag(V[i])); */
-  /* for (int i=0; i <11; i++) printf("iparam[%i]: %i\n", i, iparam[i]); */
-  /* for (int i=0; i <14; i++) printf("ipntr[%i]: %i\n", i, ipntr[i]); */
-  /* for (int i=0; i < 3*N; i++) printf("workd[%i,1]: %f%+fi\n", i, creal(workd[i]), cimag(workd[i])); */
-  /* for (int i=0; i < lworkl; i++) printf("workl[%i,1]: %f%+fi\n", i, creal(workl[i]), cimag(workl[i])); */
-  /* printf("lworkl: %i\n", lworkl); */
-  /* for (int i=0; i < ncv; i++) printf("rwork[%i,1]: %f\n", i, rwork[i]); */
 
   /* call arpack like you would have, but, use zneupd_c instead of zneupd_ */
   zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev, bmat, N, which, nev,
            tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl, rwork,
            &info);
+
   if (verbose) printf("finished zneupd call, info: %d\n", info);
 
   if (verbose) printf("copying results\n");
