@@ -3,14 +3,15 @@
 #include "dpca.h"
 
 
-void zMatVec(double _Complex* x, double _Complex* y, double _Complex* mat, int dim) {
+
+void zMatVec(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim) {
 
   int i, j;
 
   for (i = 0; i < dim; i++) {
     double _Complex accum = 0.0 + 0.0 * _Complex_I;
     for (j = 0; j < dim; j++) {
-      accum += x[j] * mat[j * dim + i];
+      accum += x[j] * (mat[j * dim + i].r + mat[j * dim + i].i * _Complex_I);
       /* printf("Curr mat[%d,%d]: %f%+f\n", i,j, creal(mat[i * dim + j]), cimag(mat[i * dim + j])); */
       /* printf("Curr v[%d]: %f%+f\n", j, creal(x[j]), cimag(x[j])); */
       /* printf("Curr sum: %f%+f\n", creal(x[j] * mat[i * dim + j]), cimag(x[j] * mat[i * dim + j])); */
@@ -61,11 +62,13 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   double _Complex workd[3 * N];
   a_int rvec = 1;
   char howmny[] = "A";
-  double _Complex* d =
-      (double _Complex*)malloc((nev + 1) * sizeof(double _Complex));
+  /* double _Complex* d = */
+  /*     (double _Complex*)malloc((nev + 1) * sizeof(double _Complex)); */
+  double _Complex d[nev+1];
+
   a_int select[ncv];
   for (int i = 0; i < ncv; i++) select[i] = 1;
-  //double _Complex z[(N + 1) * (nev + 1)];
+
   double _Complex z[N  * nev];
   a_int ldz = N + 1;
   double _Complex sigma = 0. + I * 0.;
@@ -93,8 +96,12 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 
   if (verbose) printf("allocating mat copy\n");
   // we still copy the array
-  double _Complex cmplx_mat[dim * dim];
-  for (int i= 0; i < dim * dim; i++) cmplx_mat[i] = mat[i].r + _Complex_I * mat[i].i;
+  /* double _Complex cmplx_mat[dim * dim]; */
+
+  /* for (int i= 0; i < dim * dim; i++) { */
+  /*   printf("%d", i); */
+  /*   cmplx_mat[i] = mat[i].r + _Complex_I * mat[i].i; */
+  /* } */
 
   if (verbose) printf("starting znaupd iteration\n");
   int cnt = 0;
@@ -103,7 +110,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
     znaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, rwork, &info);
 
-    zMatVec(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), cmplx_mat, dim);
+    zMatVecLa(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), mat, dim);
     //for (int i=0; i<N; i++) printf("xVec[%d]: %f%+fi\n", i, creal(workd[ipntr[0] - 1 + i]), cimag(workd[ipntr[0] - 1 + i]));
     //for (int i=0; i<N; i++) printf("yVec[%d]: %f%+fi\n", i, creal(workd[ipntr[1] - 1 + i]), cimag(workd[ipntr[1] - 1 + i]));
     cnt++;
@@ -134,6 +141,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
            &info);
   if (verbose) printf("finished zneupd call, info: %d\n", info);
 
+  if (verbose) printf("copying results\n");
   // copy results
   for (int i = 0; i < q; i++) {
     eval[i].r = creal(d[i]);
@@ -159,7 +167,7 @@ SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol) {
   SEXP evecs = PROTECT(allocMatrix(CPLXSXP, dim, q));
   SEXP evals = PROTECT(allocVector(CPLXSXP, q));
 
-  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol);
+  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol, 1);
 
   SET_VECTOR_ELT(res, 0, evals);
   SET_VECTOR_ELT(res, 1, evecs);
