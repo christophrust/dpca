@@ -37,7 +37,7 @@ void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim) {
 
 
 void arnoldi_eigs(Rcomplex *mat, int dim, int q,
-  Rcomplex *eval, Rcomplex *evecs, double tol) {
+  Rcomplex *eval, Rcomplex *evecs, double tol, int verbose) {
 
 
   // znaupd parameters
@@ -91,10 +91,12 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   iparam[9] = 0;
   iparam[10] = 0;
 
+  if (verbose) printf("allocating mat copy\n");
   // we still copy the array
   double _Complex cmplx_mat[dim * dim];
   for (int i= 0; i < dim * dim; i++) cmplx_mat[i] = mat[i].r + _Complex_I * mat[i].i;
 
+  if (verbose) printf("starting znaupd iteration\n");
   int cnt = 0;
   while (ido != 99) {
     /* call arpack like you would have, but, use znaupd_c instead of znaupd_ */
@@ -106,6 +108,8 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
     //for (int i=0; i<N; i++) printf("yVec[%d]: %f%+fi\n", i, creal(workd[ipntr[1] - 1 + i]), cimag(workd[ipntr[1] - 1 + i]));
     cnt++;
   }
+
+  if (verbose) printf("finished znaupd iteration, info: %d\n", info);
 
   //printf("Info: %d\n", info);
   // printf("Number of iterations: %d or %i\n", iparam[2], cnt);
@@ -128,6 +132,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev, bmat, N, which, nev,
            tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl, rwork,
            &info);
+  if (verbose) printf("finished zneupd call, info: %d\n", info);
 
   // copy results
   for (int i = 0; i < q; i++) {
