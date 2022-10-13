@@ -62,8 +62,6 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   double _Complex workd[3 * N];
   a_int rvec = 1;
   char howmny[] = "A";
-  /* double _Complex* d = */
-  /*     (double _Complex*)malloc((nev + 1) * sizeof(double _Complex)); */
   double _Complex d[nev+1];
 
   a_int select[ncv];
@@ -76,12 +74,13 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   for (k = 0; k < 3 * N; ++k) workd[k] = 0;
 
   a_int lworkl = ncv *  (3 * ncv + 5);
-
   double _Complex workl[lworkl];
   for (k = 0; k < lworkl; ++k) workl[k] = 0;
+
   double rwork[ncv];
   double _Complex workev[2 * ncv];
   a_int info = 0;
+
 
   iparam[0] = 1;
   iparam[2] = 10 * N;
@@ -94,15 +93,8 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   iparam[9] = 0;
   iparam[10] = 0;
 
-  // we still copy the array
-  /* double _Complex cmplx_mat[dim * dim]; */
-
-  /* for (int i= 0; i < dim * dim; i++) { */
-  /*   printf("%d", i); */
-  /*   cmplx_mat[i] = mat[i].r + _Complex_I * mat[i].i; */
-  /* } */
-
   if (verbose) printf("starting znaupd iteration\n");
+
   int cnt = 0;
   while (ido != 99) {
     /* call arpack like you would have, but, use znaupd_c instead of znaupd_ */
@@ -129,7 +121,8 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   if (verbose) printf("finished zneupd call, info: %d\n", info);
 
   if (verbose) printf("copying results\n");
-  // copy results
+
+  // copy results -> how to avoid?
   for (int i = 0; i < q; i++) {
     eval[i].r = creal(d[i]);
     eval[i].i = cimag(d[i]);
@@ -140,6 +133,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   }
 
 }
+
 
 
 SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol) {
