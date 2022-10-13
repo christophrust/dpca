@@ -11,11 +11,16 @@ void zMatVec(double _Complex* x, double _Complex* y, double _Complex* mat, int d
     double _Complex accum = 0.0 + 0.0 * _Complex_I;
     for (j = 0; j < dim; j++) {
       accum += x[j] * mat[j * dim + i];
+      /* printf("Curr mat[%d,%d]: %f%+f\n", i,j, creal(mat[i * dim + j]), cimag(mat[i * dim + j])); */
+      /* printf("Curr v[%d]: %f%+f\n", j, creal(x[j]), cimag(x[j])); */
+      /* printf("Curr sum: %f%+f\n", creal(x[j] * mat[i * dim + j]), cimag(x[j] * mat[i * dim + j])); */
+      /* printf("Curr accum: %f%+f\n", creal(accum), cimag(accum)); */
     }
     y[i] = accum;
   }
 
 }
+
 
 void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   Rcomplex *eval, Rcomplex *evecs, double tol) {
@@ -28,6 +33,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   char which[] = "LM";          // LM -> largest eigenvalues are of interest
   a_int nev = (a_int) q;        // Number of eigenvalues
   double _Complex resid[N];     // residual vector
+
   a_int ncv = 2 * nev + 1; //
   if (ncv < 20) ncv = 20;  // usage consistent to octave
   if (ncv > N) ncv = N;
@@ -82,14 +88,27 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
              workd, workl, lworkl, rwork, &info);
 
     zMatVec(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), cmplx_mat, dim);
+    //for (int i=0; i<N; i++) printf("xVec[%d]: %f%+fi\n", i, creal(workd[ipntr[0] - 1 + i]), cimag(workd[ipntr[0] - 1 + i]));
+    //for (int i=0; i<N; i++) printf("yVec[%d]: %f%+fi\n", i, creal(workd[ipntr[1] - 1 + i]), cimag(workd[ipntr[1] - 1 + i]));
     cnt++;
   }
 
+  //printf("Info: %d\n", info);
+  // printf("Number of iterations: %d or %i\n", iparam[2], cnt);
 
   if (iparam[4] != nev) {
     printf("Error: iparam[4] %d, nev %d\n", iparam[4], nev); // check number of ev found by arpack.
   }
 
+  /* printf("Tol: %e\n", tol); */
+  /* for (int i=0; i < N; i++) printf("presid[%i,1]: %f%+fi\n", i, creal(resid[i]), cimag(resid[i])); */
+  /* for (int i=0; i < N; i++) printf("V[%i,1]: %f%+fi\n", i, creal(V[i]), cimag(V[i])); */
+  /* for (int i=0; i <11; i++) printf("iparam[%i]: %i\n", i, iparam[i]); */
+  /* for (int i=0; i <14; i++) printf("ipntr[%i]: %i\n", i, ipntr[i]); */
+  /* for (int i=0; i < 3*N; i++) printf("workd[%i,1]: %f%+fi\n", i, creal(workd[i]), cimag(workd[i])); */
+  /* for (int i=0; i < lworkl; i++) printf("workl[%i,1]: %f%+fi\n", i, creal(workl[i]), cimag(workl[i])); */
+  /* printf("lworkl: %i\n", lworkl); */
+  /* for (int i=0; i < ncv; i++) printf("rwork[%i,1]: %f\n", i, rwork[i]); */
 
   /* call arpack like you would have, but, use zneupd_c instead of zneupd_ */
   zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev, bmat, N, which, nev,
