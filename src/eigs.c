@@ -170,23 +170,28 @@ SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol) {
 }
 
 
-SEXP R_zMatVec(SEXP r_mat, SEXP r_vec, SEXP r_dim) {
+SEXP R_zMatVec(SEXP r_mat, SEXP r_vec, SEXP r_dim, SEXP version) {
   int dim = *INTEGER(r_dim);
   SEXP res = PROTECT(allocVector(CPLXSXP, dim));
-  double _Complex m[dim * dim];
-  double _Complex x[dim];
-  double _Complex y[dim];
 
-  for (int i = 0; i < dim*dim; i ++)
-    m[i] = COMPLEX(r_mat)[i].r + COMPLEX(r_mat)[i].i * _Complex_I;
-  for (int i = 0; i < dim; i ++)
-    x[i] = COMPLEX(r_vec)[i].r + COMPLEX(r_vec)[i].i * _Complex_I;
+  if (*INTEGER(version) == 1) {
 
-  zMatVec(x, y, m, dim);
+    double _Complex x[dim];
+    double _Complex y[dim];
 
-  for (int i = 0; i < dim; i ++){
-    COMPLEX(res)[i].r = creal(y[i]);
-    COMPLEX(res)[i].i = cimag(y[i]);
+    // printf("dim: %d\n", dim);
+    for (int i = 0; i < dim; i ++)
+      x[i] = COMPLEX(r_vec)[i].r + COMPLEX(r_vec)[i].i * _Complex_I;
+
+    zMatVec(x, y, COMPLEX(r_mat), dim);
+    for (int i = 0; i < dim; i ++){
+      COMPLEX(res)[i].r = creal(y[i]);
+      COMPLEX(res)[i].i = cimag(y[i]);
+
+    }
+  } else {
+    // printf("blube\n");
+    zMatVecLa((double _Complex *) COMPLEX(r_vec), (double _Complex *) COMPLEX(res), COMPLEX(r_mat), dim);
   }
 
   UNPROTECT(1);
