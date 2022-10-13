@@ -18,7 +18,7 @@ void zMatVec(double _Complex* x, double _Complex* y, double _Complex* mat, int d
 }
 
 void arnoldi_eigs(Rcomplex *mat, int dim, int q,
-  Rcomplex *eval, Rcomplex *evecs) {
+  Rcomplex *eval, Rcomplex *evecs, double tol) {
 
 
   // znaupd parameters
@@ -27,7 +27,6 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   a_int N = (a_int) dim;        // number of rows (dimension of the eigenproblem)
   char which[] = "LM";          // LM -> largest eigenvalues are of interest
   a_int nev = (a_int) q;        // Number of eigenvalues
-  double tol = 0.000001;        // small tol => more stable checks after EV computation.
   double _Complex resid[N];     // residual vector
   a_int ncv = 2 * nev + 1; //
   double _Complex V[ncv * N];
@@ -97,18 +96,19 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 }
 
 
-SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q) {
+SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol) {
 
   Rcomplex *mat = COMPLEX(r_mat);
   int dim = *INTEGER(r_dim);
   int q = *INTEGER(r_q);
+  double tol = *REAL(r_tol);
 
   // result objects
   SEXP res = PROTECT(allocVector(VECSXP, 2));;
   SEXP evecs = PROTECT(allocMatrix(CPLXSXP, dim, q));
   SEXP evals = PROTECT(allocVector(CPLXSXP, q));
 
-  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs));
+  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol);
 
   SET_VECTOR_ELT(res, 0, evals);
   SET_VECTOR_ELT(res, 1, evecs);
