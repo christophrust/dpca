@@ -7,10 +7,10 @@ void zMatVec(double _Complex* x, double _Complex* y, double _Complex* mat, int d
 
   int i, j;
 
-  for (i = 0; i < dim; ++i) {
+  for (i = 0; i < dim; i++) {
     double _Complex accum = 0.0 + 0.0 * _Complex_I;
     for (j = 0; j < dim; j++) {
-      accum += x[j] * mat[i * dim + j];
+      accum += x[j] * mat[j * dim + i];
     }
     y[i] = accum;
   }
