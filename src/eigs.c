@@ -21,6 +21,20 @@ void zMatVec(double _Complex* x, double _Complex* y, double _Complex* mat, int d
 
 }
 
+void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim) {
+
+  Rcomplex alpha;
+  alpha.r = 1.0; alpha.i = 0.0;
+  Rcomplex beta;
+  beta.r = 0.0; beta.i = 0.0;
+  int inc =1;
+
+  F77_CALL(zgemv)("N", &dim, &dim, &alpha, mat,
+                  &dim,
+                  (Rcomplex*) x, &inc, &beta,
+                  (Rcomplex*) y, &inc);
+}
+
 
 void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   Rcomplex *eval, Rcomplex *evecs, double tol) {
