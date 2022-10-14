@@ -13,4 +13,9 @@
 SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol, SEXP r_normalize_evals, SEXP r_verbose);
 
 SEXP R_zMatVec(SEXP r_mat, SEXP r_vec, SEXP r_dim, SEXP version);
+
+void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim);
+
+void zMatVec(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim);
+
 #endif // DPCA_H_
