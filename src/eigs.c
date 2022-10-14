@@ -1,4 +1,12 @@
-// LAPACK stegr
+
+#include <R.h>
+#include <Rinternals.h>
+#include <complex.h>
+#include <arpack.h>
+#include <stat_c.h>
+#include <debug_c.h>
+#include <R_ext/Lapack.h>
+#include <math.h>
 
 #include "dpca.h"
 
