@@ -4,6 +4,7 @@
 
 
 
+
 void zMatVec(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim) {
 
   int i, j;
@@ -38,7 +39,7 @@ void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim) {
 
 
 void arnoldi_eigs(Rcomplex *mat, int dim, int q,
-  Rcomplex *eval, Rcomplex *evecs, double tol, int verbose) {
+  Rcomplex *eval, Rcomplex *evecs, double tol, int normalize_evals, int verbose) {
 
 
   // znaupd parameters
@@ -122,13 +123,27 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 
   if (verbose) printf("copying results\n");
 
+  // rotate according to eigen result:
+  double z1 = 1.0, z2 = 0.0;
   // copy results -> how to avoid?
   for (int i = 0; i < q; i++) {
+
     eval[i].r = creal(d[i]);
     eval[i].i = cimag(d[i]);
+
+    if (normalize_evals) {
+
+      z2 = sqrt(1.0 / (1.0 + pow(creal(z[i * dim + 0]) / cimag(z[i * dim + 0]), 2.0)));
+      z1 = - creal(z[i * dim + 0]) / cimag(z[i * dim + 0]) * z2;
+      if ((creal(z[i * dim + 0]) * z1 - cimag(z[i * dim + 0]) * z2) < 0.0) {
+        z1 = -z1;
+        z2 = -z2;
+      }
+    }
+
     for (int j = 0; j < dim; j++){
-      evecs[i * dim + j].r = creal(z[i * dim + j]);
-      evecs[i * dim + j].i = cimag(z[i * dim + j]);
+      evecs[i * dim + j].r = creal(z[i * dim + j]) * z1 - cimag(z[i * dim + j]) * z2;
+      evecs[i * dim + j].i = cimag(z[i * dim + j]) * z1 + creal(z[i * dim + j]) * z2;
     }
   }
 
@@ -136,19 +151,21 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 
 
 
-SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol) {
+SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol, SEXP r_normalize_evals, SEXP r_verbose) {
 
   Rcomplex *mat = COMPLEX(r_mat);
   int dim = *INTEGER(r_dim);
   int q = *INTEGER(r_q);
   double tol = *REAL(r_tol);
+  int normalize_evals = *INTEGER(r_normalize_evals);
+  int verbose = *INTEGER(r_verbose);
 
   // result objects
   SEXP res = PROTECT(allocVector(VECSXP, 2));;
   SEXP evecs = PROTECT(allocMatrix(CPLXSXP, dim, q));
   SEXP evals = PROTECT(allocVector(CPLXSXP, q));
 
-  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol, 1);
+  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol, normalize_evals, verbose);
 
   SET_VECTOR_ELT(res, 0, evals);
   SET_VECTOR_ELT(res, 1, evecs);

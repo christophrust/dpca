@@ -2,7 +2,7 @@
 
 
 static const R_CallMethodDef CallEntries[] = {
-  {"R_arnoldi_eigs", (DL_FUNC) &R_arnoldi_eigs, 4},
+  {"R_arnoldi_eigs", (DL_FUNC) &R_arnoldi_eigs, 6},
   {"R_zMatVec", (DL_FUNC) &R_zMatVec, 4},
   {NULL, NULL, 0}
 };
