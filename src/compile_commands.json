@@ -3,5 +3,15 @@
     "directory": "/home/cgr/Nextcloud/projects/repos/dpca/src/",
     "file": "eigs.c",
     "command": "gcc -I\"/usr/share/R/include\" -DNDEBUG     -I\"/usr/include/arpack\" -fpic  -g -O2 -ffile-prefix-map=/build/r-base-J8F88F/r-base-4.2.1=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2  -UNDEBUG -Wall -pedantic -g -O0 -fdiagnostics-color=always -c eigs.c -o eigs.o"
+  },
+  {
+    "directory": "/home/cgr/Nextcloud/projects/repos/dpca/src/",
+    "file": "zMatVec.c",
+    "command": "gcc -I\"/usr/share/R/include\" -DNDEBUG     -I\"/usr/include/arpack\" -fpic  -g -O2 -ffile-prefix-map=/build/r-base-J8F88F/r-base-4.2.1=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2  -UNDEBUG -Wall -pedantic -g -O0 -fdiagnostics-color=always -c zMatVec.c -o zMatVec.o"
+  },
+  {
+    "directory": "/home/cgr/Nextcloud/projects/repos/dpca/src/",
+    "file": "exports.c",
+    "command": "gcc -I\"/usr/share/R/include\" -DNDEBUG     -I\"/usr/include/arpack\" -fpic  -g -O2 -ffile-prefix-map=/build/r-base-J8F88F/r-base-4.2.1=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2  -UNDEBUG -Wall -pedantic -g -O0 -fdiagnostics-color=always -c exports.c -o exports.o"
   }
 ]
