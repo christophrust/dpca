@@ -45,7 +45,6 @@ SEXP R_fourier_transform(SEXP z, SEXP dim_z1, SEXP dim_z2,
 {
 
 
-    // initialize res to zero
     SEXP res = PROTECT(alloc3DArray(CPLXSXP, *INTEGER(dim_z1), *INTEGER(dim_z2), *INTEGER(n_freq)));
 
     fourier_transform(REAL(z), *INTEGER(dim_z1), *INTEGER(dim_z2),

@@ -33,6 +33,10 @@ SEXP R_fourier_inverse1(SEXP f, SEXP dim_f1, SEXP dim_f2,
                      SEXP lags, SEXP n_lags,
                      SEXP freqs, SEXP n_freqs);
 
+SEXP R_filter_process(SEXP r_f, SEXP r_x, SEXP r_lags,
+                      SEXP r_nrf, SEXP r_ncf, SEXP r_nrx,
+                      SEXP r_ncx, SEXP r_nlags, SEXP r_inx);
+
 void lagged_cov(double *x, double *y, double *res, int lag,
                 int nrx, int ncx, int nry, int ncy);
 
@@ -53,4 +57,9 @@ void fourier_transform(double *z, int nrz, int ncz,
                        double * freqs, int nfreq,
                        int * lags, int nlags,
                        double _Complex *res);
+
+void filter_process(double *f, double *x, int *lags, int nrf,
+                    int ncf, int nrx, int ncx, int nlags, double *y,
+                    int insert_sample_end);
+
 #endif // DPCA_H_
