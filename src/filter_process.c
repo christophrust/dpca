@@ -1,8 +1,9 @@
+#include <R.h>
 #include "R_ext/RS.h"
 #include "Rinternals.h"
-#include "dpca.h"
+// #include "dpca.h"
 #include "R_ext/Lapack.h"
-#include <string.h>
+
 /*
 ** Compute the convolution of a (multiple) filters f and a (multivariate) time series x
 **
@@ -46,7 +47,8 @@ void filter_process1(double *f, double *x, int *lags, int nrf, int ncf, int nrx,
 
 
 void filter_process(double *f, double *x, int *lags, int nrf, int ncf,
-                    int nrx, int ncx, int nlags, double *y, int insert_sample_end) {
+                    int nrx, int ncx, int nlags, double *y, int insert_sample_end,
+                    int transf, int rev) {
 
     int fdim12 = nrf * ncf;
     int maxlag = lags[0];
@@ -62,23 +64,38 @@ void filter_process(double *f, double *x, int *lags, int nrf, int ncf,
     if (maxlag > 0) maxlag0 = maxlag;
     if (minlag < 0) minlag0 = minlag;
 
-    memset(y, 0, nrf * ncx * sizeof(double));
+    int nry = nrf;
+    if (transf) nry = ncf;
+
+    memset(y, 0, nry * ncx * sizeof(double));
 
     int n, offsetf, offsetx, offsety;
     double alpha = 1.0;
     double beta = 1.0;
 
-    offsety = nrf * maxlag0;
+    offsety = nry * maxlag0;
     n = ncx - maxlag0 + minlag0;
 
     for (int k = 0; k < nlags; k++) {
 
-        offsetf = k * fdim12;
+
+        if (rev) {
+            offsetf = (nlags - k) * fdim12;
+        } else {
+            offsetf = k * fdim12;
+        }
+
         offsetx = nrx * (maxlag -lags[k]);
 
-        F77_CALL(dgemm)("N", "N", &nrf, &n, &nrx, &alpha,
-                        f + offsetf, &nrf, x + offsetx, &nrx,
-                        &beta, y + offsety, &nrf);
+        if (transf) {
+            F77_CALL(dgemm)("T", "N", &ncf, &n, &nrx, &alpha,
+                            f + offsetf, &nrf, x + offsetx, &nrx,
+                            &beta, y + offsety, &nry);
+        } else {
+            F77_CALL(dgemm)("N", "N", &nrf, &n, &nrx, &alpha,
+                            f + offsetf, &nrf, x + offsetx, &nrx,
+                            &beta, y + offsety, &nry);
+        }
     }
 
     if (insert_sample_end) {
@@ -86,19 +103,19 @@ void filter_process(double *f, double *x, int *lags, int nrf, int ncf,
         double row_means[nrf];
 
 
-        for (int i = 0; i < nrf; i++) {
+        for (int i = 0; i < nry; i++) {
             row_means[i] = 0;
             for (int j = 0; j < n; j++)
-                row_means[i] += y[offsety + i + j * nrf] / n;
+                row_means[i] += y[offsety + i + j * nry] / n;
         }
 
 
-        for (int i = 0; i < nrf; i++) {
+        for (int i = 0; i < nry; i++) {
             for (int k = 0; k < maxlag0; k++) {
-                y[i + k * nrf] = row_means[i];
+                y[i + k * nry] = row_means[i];
             }
             for (int k = 0; k < abs(minlag0); k++) {
-                y[offsety + i + (n + k) * nrf] = row_means[i];
+                y[offsety + i + (n + k) * nry] = row_means[i];
             }
         }
     }
@@ -108,15 +125,20 @@ void filter_process(double *f, double *x, int *lags, int nrf, int ncf,
 
 SEXP R_filter_process(SEXP r_f, SEXP r_x, SEXP r_lags,
                       SEXP r_nrf, SEXP r_ncf, SEXP r_nrx, SEXP r_ncx,
-                      SEXP r_nlags, SEXP r_inx) {
+                      SEXP r_nlags, SEXP r_inx, SEXP r_transf, SEXP r_rev) {
 
     int nrf = *INTEGER(r_nrf);
+    int ncf = *INTEGER(r_ncf);
     int ncx = *INTEGER(r_ncx);
-    SEXP res = PROTECT(allocMatrix(REALSXP, nrf , ncx));
+    int transf = *INTEGER(r_transf);
+    int rev = *INTEGER(r_rev);
+    int nry = nrf;
+    if (transf) nry = ncf;
+    SEXP res = PROTECT(allocMatrix(REALSXP, nry , ncx));
 
     filter_process(REAL(r_f), REAL(r_x), INTEGER(r_lags), nrf, *INTEGER(r_ncf),
                    *INTEGER(r_nrx), *INTEGER(r_ncx), *INTEGER(r_nlags), REAL(res),
-                   *INTEGER(r_inx));
+                   *INTEGER(r_inx), transf, rev);
     UNPROTECT(1);
     return res;
 }
