@@ -80,12 +80,12 @@ void filter_process(double *f, double *x, int *lags, int nrf, int ncf,
 
 
         if (rev) {
-            offsetf = (nlags - k) * fdim12;
+            offsetf = (nlags - 1 - k ) * fdim12;
         } else {
             offsetf = k * fdim12;
         }
 
-        offsetx = nrx * (maxlag -lags[k]);
+        offsetx = nrx * (maxlag - lags[k]);
 
         if (transf) {
             F77_CALL(dgemm)("T", "N", &ncf, &n, &nrx, &alpha,
