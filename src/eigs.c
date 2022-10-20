@@ -136,7 +136,7 @@ SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol, SEXP r_normali
   int verbose = *INTEGER(r_verbose);
 
   // result objects
-  SEXP res = PROTECT(allocVector(VECSXP, 2));;
+  SEXP res = PROTECT(allocVector(VECSXP, 2));
   SEXP evecs = PROTECT(allocMatrix(CPLXSXP, dim, q));
   SEXP evals = PROTECT(allocVector(CPLXSXP, q));
 
