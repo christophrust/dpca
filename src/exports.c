@@ -9,7 +9,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"R_fourier_transform", (DL_FUNC) &R_fourier_transform, 7},
   {"R_fourier_inverse1", (DL_FUNC) &R_fourier_inverse1, 7},
   {"R_fourier_inverse", (DL_FUNC) &R_fourier_inverse, 7},
-  {"R_filter_process", (DL_FUNC) &R_filter_process, 9},
+  {"R_filter_process", (DL_FUNC) &R_filter_process, 11},
   {NULL, NULL, 0}
 };
 
