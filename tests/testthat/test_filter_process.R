@@ -9,13 +9,13 @@ test_that("Filter process (C-function)", {
   f <- matrix(0, nrow = nrf, ncol = nrx)
   f[1:nrf, 1:nrf] <- diag(nrf)
 
-  res1 <- .Call("R_filter_process", f, x, 0L, nrf, nrx, nrx, ncx, 1L, 0L)
+  res1 <- .Call("R_filter_process", f, x, 0L, nrf, nrx, nrx, ncx, 1L, 0L, 0L, 0L)
   res2 <- f %*% x
 
   expect_lt(sum((res1 - res2)^2), 1e-9)
 
 
-  res1 <- .Call("R_filter_process", f, x, 1L, nrf, nrx, nrx, ncx, 1L, 0L)
+  res1 <- .Call("R_filter_process", f, x, 1L, nrf, nrx, nrx, ncx, 1L, 0L, 0L, 0L)
   res2 <- cbind(NA, f %*% x[,-ncol(x)])
 
   expect_lt(sum((res1 - res2)^2, na.rm = TRUE), 1e-9)
@@ -36,7 +36,7 @@ test_that("Filter process (C-function)", {
     m
   }, matrix(0,ncol = nrx, nrow = nrf))
 
-  res1 <- .Call("R_filter_process", f, x, lags, nrf, nrx, nrx, ncx, length(lags), 0L)
+  res1 <- .Call("R_filter_process", f, x, lags, nrf, nrx, nrx, ncx, length(lags), 0L, 0L, 0L)
   tmp <- vapply(seq_along(lags), function(l) {
     if (lags[l] > 0)
     {
@@ -67,7 +67,7 @@ test_that("Filter process (C-function)", {
   x <- matrix(rnorm(nrx * ncx), nrow = nrx)
   f <- vapply(lags, function(i) matrix(rnorm(nrx * nrf), nrow = nrf), matrix(0,ncol = nrx, nrow = nrf))
 
-  res1 <- .Call("R_filter_process", f, x, lags, nrf, nrx, nrx, ncx, length(lags), 0L)
+  res1 <- .Call("R_filter_process", f, x, lags, nrf, nrx, nrx, ncx, length(lags), 0L, 0L, 0L)
   tmp <- vapply(seq_along(lags), function(l) {
     if (lags[l] > 0)
     {
@@ -82,11 +82,16 @@ test_that("Filter process (C-function)", {
   }, matrix(0, nrow = nrf, ncol = ncx))
   res2 <- apply(tmp, 1:2, sum)
 
+  ft <- vapply(seq_along(lags), function(i) {
+    t(f[,,i])
+  }, t(f[,,1]))
+  res3 <- .Call("R_filter_process", ft, x, lags, nrx, nrf, nrx, ncx, length(lags), 0L, 1L, 0L)
 
   expect_lt(sum((res1 - res2)^2, na.rm = TRUE), 1e-9)
+  expect_lt(sum((res1 - res3)^2, na.rm = TRUE), 1e-9)
 
 
-  res1 <- .Call("R_filter_process", f, x, lags, nrf, nrx, nrx, ncx, length(lags), 1L)
+  res1 <- .Call("R_filter_process", f, x, lags, nrf, nrx, nrx, ncx, length(lags), 1L, 0L, 0L)
   res2[is.na(res2)] <- rowMeans(res2, na.rm = TRUE)
   expect_lt(sum((res1 - res2)^2), 1e-9)
 })
