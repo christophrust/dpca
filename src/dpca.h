@@ -59,6 +59,10 @@ void fourier_transform(double *z, int nrz, int ncz,
                        int * lags, int nlags,
                        double _Complex *res);
 
+void arnoldi_eigs(Rcomplex *mat, int dim, int q,
+                  Rcomplex *eval, Rcomplex *evecs,
+                  double tol, int normalize_evals, int verbose);
+
 void filter_process(double *f, double *x, int *lags, int nrf,
                     int ncf, int nrx, int ncx, int nlags, double *y,
                     int insert_sample_end, int transf, int rev);
