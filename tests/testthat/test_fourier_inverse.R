@@ -1,5 +1,5 @@
 library(dpca)
-library(freqdom)
+##library(freqdom)
 
 test_that("Fourier inverse (C-function)", {
 
