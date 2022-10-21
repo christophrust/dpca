@@ -16,7 +16,8 @@ SEXP R_lagged_cov(SEXP r_x, SEXP r_y, SEXP r_lag, SEXP r_nrx,
                   SEXP r_center);
 
 SEXP R_lagged_covs(SEXP r_x, SEXP r_y, SEXP r_lags, SEXP r_nrx,
-                   SEXP r_ncx, SEXP r_nry, SEXP r_ncy, SEXP r_weights);
+                   SEXP r_ncx, SEXP r_nry, SEXP r_ncy, SEXP r_weights,
+                   SEXP r_center);
 
 SEXP R_fourier_transform1(SEXP z, SEXP dim_z1, SEXP dim_z2,
                           SEXP freq, SEXP n_freq,
@@ -45,7 +46,7 @@ void lagged_cov(double *x, double *y, double *res, int lag,
                 int nrx, int ncx, int nry, int center, double weight);
 
 void lagged_covs(double *x, double *y, double *res, int *lags, int nlags,
-                 int nrx, int ncx, int nry, int ncy, double * weights);
+                 int nrx, int ncx, int nry, int ncy, double * weights, int center);
 
 void zMatVecLa(double _Complex *x, double _Complex* y,
                Rcomplex* mat, int dim);

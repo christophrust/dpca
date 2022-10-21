@@ -5,32 +5,46 @@ library(dpca)
 test_that("Lagged covariance estimation", {
 
   ncy <- ncx <- 1000L
-  nrx <- 100L
-  nry <- 150L
+  nrx <- 10L
+  nry <- 15L
 
   x <- matrix(rnorm(ncx* nrx), ncol = ncx)
   y <- matrix(rnorm(ncy* nry), ncol = ncy)
+  xc <- x - rowMeans(x)
+  yc <- y - rowMeans(y)
 
-  system.time(res1 <- .Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy))
+  system.time(res1 <- .Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy, 1, 0L))
   system.time(res2 <- tcrossprod(x, y)/ncx)
-
   expect_lt(sum((res1 - res2)^2), 1e-10)
 
 
-  system.time(res1 <- .Call("R_lagged_cov", x, y, 1L, nrx, ncx, nry, ncy))
+  system.time(res1 <- .Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy, 1, 1L))
+  system.time(res2 <- tcrossprod(xc, yc)/ncx)
+  expect_lt(sum((res1 - res2)^2), 1e-10)
+
+
+
+  system.time(res1 <- .Call("R_lagged_cov", x, y, 1L, nrx, ncx, nry, ncy, 1, 0L))
   system.time(res2 <- tcrossprod(x[,-1], y[,-ncy])/(ncx-1))
-
   expect_lt(sum((res1 - res2)^2), 1e-10)
 
-  system.time(res1 <- .Call("R_lagged_cov", x, y, -1L, nrx, ncx, nry, ncy))
+
+  system.time(res1 <- .Call("R_lagged_cov", x, y, -1L, nrx, ncx, nry, ncy, 1, 0L))
   system.time(res2 <- tcrossprod(x[,-ncx], y[,-1])/(ncx-1))
-
   expect_lt(sum((res1 - res2)^2), 1e-10)
 
-  system.time(res1 <- .Call("R_lagged_cov", x, y, -2L, nrx, ncx, nry, ncy))
+
+  system.time(res1 <- .Call("R_lagged_cov", x, y, -2L, nrx, ncx, nry, ncy, 1, 0L))
   system.time(res2 <- tcrossprod(x[,-ncx+c(1,0)], y[,-c(1:2)])/(ncx-2))
-
   expect_lt(sum((res1 - res2)^2), 1e-10)
+
+
+  system.time(res1 <- .Call("R_lagged_cov", x, y, -2L, nrx, ncx, nry, ncy, 1, 1L))
+  system.time(res2 <- .Call("R_lagged_cov", xc, yc, -2L, nrx, ncx, nry, ncy, 1, 0L))
+  system.time(res3 <- tcrossprod(xc[,-ncx+c(1,0)], yc[,-c(1:2)])/(ncx-2))
+  expect_lt(sum((res1 - res2)^2), 1e-10)
+  expect_lt(sum((res1 - res3)^2), 1e-10)
+  expect_lt(sum((res2 - res3)^2), 1e-10)
 
 })
 
@@ -45,10 +59,10 @@ test_that("R_lagged_cov input checking (dimension of arrays)", {
   x <- matrix(rnorm(ncx* nrx), ncol = ncx)
   y <- matrix(rnorm(ncy* nry), ncol = ncy)
 
-  expect_error(.Call("R_lagged_cov", x, y, 0L, nrx +1L, ncx, nry, ncy))
-  expect_error(.Call("R_lagged_cov", x, y, 0L, nrx, ncx + 1L, nry, ncy))
-  expect_error(.Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry + 2L, ncy))
-  expect_error(.Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy + 3L))
+  expect_error(.Call("R_lagged_cov", x, y, 0L, nrx +1L, ncx, nry, ncy, 1, 0L))
+  expect_error(.Call("R_lagged_cov", x, y, 0L, nrx, ncx + 1L, nry, ncy, 1, 0L))
+  expect_error(.Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry + 2L, ncy, 1, 0L))
+  expect_error(.Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy + 3L, 1, 0L))
 
 })
 
@@ -63,7 +77,7 @@ test_that("R_lagged_cov input checking (equal number of columns)", {
   x <- matrix(rnorm(ncx* nrx), ncol = ncx)
   y <- matrix(rnorm(ncy* nry + nry), ncol = ncy + 1)
 
-  expect_error(.Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy + 1L))
+  expect_error(.Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy + 1L, 1, 0L))
 
 
 })
@@ -79,7 +93,7 @@ test_that("R_lagged_cov input checking (lag too high)", {
   x <- matrix(rnorm(ncx* nrx), ncol = ncx)
   y <- matrix(rnorm(ncy* nry), ncol = ncy)
 
-  expect_error(.Call("R_lagged_cov", x, y, 100L, nrx, ncx, nry, ncy ))
+  expect_error(.Call("R_lagged_cov", x, y, 100L, nrx, ncx, nry, ncy, 0L))
 
 })
 
@@ -93,8 +107,11 @@ test_that("Multiple lagged covariance estimation", {
 
   x <- matrix(rnorm(ncx* nrx), ncol = ncx)
   y <- matrix(rnorm(ncy* nry), ncol = ncy)
+  xc <- x - rowMeans(x)
+  yc <- y - rowMeans(y)
 
-  system.time(res1 <- .Call("R_lagged_covs", x, y, as.integer(-5:5), nrx, ncx, nry, ncy))
+  weights <- rep(1, 11)
+  system.time(res1 <- .Call("R_lagged_covs", x, y, as.integer(-5:5), nrx, ncx, nry, ncy, weights, 0L))
   system.time(res2 <-
                 vapply(-5:5,
                        function(l) {
@@ -110,4 +127,7 @@ test_that("Multiple lagged covariance estimation", {
 
   expect_lt(sum((res1 - res2)^2), 1e-10)
 
+  system.time(res1 <- .Call("R_lagged_covs", xc, yc, as.integer(-5:5), nrx, ncx, nry, ncy, weights, 0L))
+  system.time(res2 <- .Call("R_lagged_covs", x, y, as.integer(-5:5), nrx, ncx, nry, ncy, weights, 1L))
+  expect_lt(sum((res1 - res2)^2), 1e-10)
 })

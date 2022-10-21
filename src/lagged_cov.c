@@ -42,8 +42,6 @@ void lagged_cov(double *x, double *y, double *res,
         xc = (double *) Calloc(nrx * ncx, double);
         yc = (double *) Calloc(nry * ncx, double);
 
-        for (int i = 0; i< 20; i++) printf("%dmod%d: %d\n", i, 10, i%10);
-
         for (int i = 0; i< nrx * ncx; i++)
             xc[i] = x[i] - meanx[i%nrx];
 
@@ -64,11 +62,49 @@ void lagged_cov(double *x, double *y, double *res,
 
 
 
-void lagged_covs(double *x, double *y, double *res, int *lags, int nlags, int nrx, int ncx, int nry, int ncy, double * weights) {
+void lagged_covs(double *x, double *y, double *res, int *lags, int nlags, int nrx, int ncx, int nry, int ncy, double * weights, int center) {
 
     int dim = nrx * nry;
-    for (int i = 0; i < nlags; i++) {
-        lagged_cov(x, y, res + i * dim, lags[i], nrx, ncx, nry, ncy, weights[i]);
+
+    if (center) {
+        int one = 1;
+        double ones[ncx];
+        for (int i = 0; i < ncx; i++) ones[i] = 1.0;
+        double meanx[nrx];
+        double meany[nry];
+        double alpha1 = 1.0/ncx;
+        double beta1 = 0.0;
+
+        F77_CALL(dgemv)("N", &nrx, &ncx, &alpha1, x,
+                        &nrx, ones, &one, &beta1, meanx, &one);
+
+        F77_CALL(dgemv)("N", &nry, &ncx, &alpha1, y,
+                        &nry, ones, &one, &beta1, meany, &one);
+
+        // create centered versions of x and y
+        double *xc, *yc;
+
+        xc = R_Calloc(nrx * ncx, double);
+        yc = R_Calloc(nry * ncx, double);
+
+        for (int i = 0; i< nrx * ncx; i++)
+            xc[i] = x[i] - meanx[i%nrx];
+
+        for (int i = 0; i< nry * ncx; i++)
+            yc[i] = y[i] - meany[i%nry];
+
+        for (int i = 0; i < nlags; i++) {
+            lagged_cov(xc, yc, res + i * dim, lags[i], nrx, ncx, nry, 0, weights[i]);
+        }
+
+        Free(xc);
+        Free(yc);
+
+    } else {
+
+        for (int i = 0; i < nlags; i++) {
+            lagged_cov(x, y, res + i * dim, lags[i], nrx, ncx, nry, 0, weights[i]);
+        }
     }
 
 }
@@ -104,11 +140,13 @@ SEXP R_lagged_cov(SEXP r_x, SEXP r_y, SEXP r_lag, SEXP r_nrx,
 
 
 SEXP R_lagged_covs(SEXP r_x, SEXP r_y, SEXP r_lags, SEXP r_nrx, SEXP r_ncx,
-                   SEXP r_nry, SEXP r_ncy, SEXP r_weights) {
+                   SEXP r_nry, SEXP r_ncy, SEXP r_weights, SEXP r_center) {
+
     int ncx = *INTEGER(r_ncx);
     int nrx = *INTEGER(r_nrx);
     int ncy = *INTEGER(r_ncy);
     int nry = *INTEGER(r_nry);
+    int center = *INTEGER(r_center);
     int *lags = INTEGER(r_lags);
     int nlags = length(r_lags);
     int maxlag = 0;
@@ -127,7 +165,7 @@ SEXP R_lagged_covs(SEXP r_x, SEXP r_y, SEXP r_lags, SEXP r_nrx, SEXP r_ncx,
 
     SEXP res = PROTECT(alloc3DArray(REALSXP, nrx, nry, nlags));
 
-    lagged_covs(REAL(r_x), REAL(r_y), REAL(res), INTEGER(r_lags), nlags, nrx, ncx, nry, ncy, REAL(r_weights));
+    lagged_covs(REAL(r_x), REAL(r_y), REAL(res), INTEGER(r_lags), nlags, nrx, ncx, nry, ncy, REAL(r_weights), center);
 
     UNPROTECT(1);
     return res;
