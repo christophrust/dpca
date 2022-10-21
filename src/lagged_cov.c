@@ -7,9 +7,11 @@
 #include "dpca.h"
 
 void lagged_cov(double *x, double *y, double *res,
-                int lag, int nrx, int ncx, int nry, int center, double weight) {
+                int lag, int nrx, int ncx, int nry,
+                int center, double weight) {
 
-    double alpha = 1.0/(ncx - abs(lag)) * weight;
+    //double alpha = 1.0/(ncx - abs(lag)) * weight;
+    double alpha = 1.0/ncx * weight;
     double beta = 0;
     int m = nrx;
     int n = nry;
