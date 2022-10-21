@@ -11,6 +11,19 @@
 #include "dpca.h"
 
 
+void get_rank(double *values, int *rank, int n) {
+
+  for (int i = 0; i < n; i++) {
+    int curRank=0;
+    for (int j = 0; j < i; j++) {
+      if (values[i] < values[j]) {
+        curRank++;
+      } else rank[j]++;
+    }
+    rank[i] = curRank;
+  }
+}
+
 
 
 void arnoldi_eigs(Rcomplex *mat, int dim, int q,
@@ -31,7 +44,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 
   double _Complex V[ncv * N];
   a_int ldv = N;
-  a_int iparam[11];
+  a_int iparam[11] = {0};
   a_int ipntr[14];
   for (int i=0; i< 14; i++) ipntr[i] = 0;
 
@@ -56,7 +69,6 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   double rwork[ncv];
   double _Complex workev[2 * ncv];
   a_int info = 0;
-
 
   iparam[0] = 1;
   iparam[2] = 10 * N;
@@ -98,27 +110,38 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 
   if (verbose) printf("copying results\n");
 
+  // sort eigenvalues and eigenvectors
+  int rank[q];
+  double abs_vals[q];
+  for (int i = 0; i < q; i++)
+    abs_vals[i] = sqrt( pow(creal(d[i]), 2) +  pow(cimag(d[i]), 2));
+
+  get_rank(abs_vals, rank, q);
+
+
   // rotate according to eigen result:
   double z1 = 1.0, z2 = 0.0;
+  int didx;
   // copy results -> how to avoid?
   for (int i = 0; i < q; i++) {
 
-    eval[i].r = creal(d[i]);
-    eval[i].i = cimag(d[i]);
+    didx = rank[i];
+    eval[i].r = creal(d[didx]);
+    eval[i].i = cimag(d[didx]);
 
     if (normalize_evals) {
 
-      z2 = sqrt(1.0 / (1.0 + pow(creal(z[i * dim + 0]) / cimag(z[i * dim + 0]), 2.0)));
-      z1 = - creal(z[i * dim + 0]) / cimag(z[i * dim + 0]) * z2;
-      if ((creal(z[i * dim + 0]) * z1 - cimag(z[i * dim + 0]) * z2) < 0.0) {
+      z2 = sqrt(1.0 / (1.0 + pow(creal(z[didx * dim + 0]) / cimag(z[didx * dim + 0]), 2.0)));
+      z1 = - creal(z[didx * dim + 0]) / cimag(z[didx * dim + 0]) * z2;
+      if ((creal(z[didx * dim + 0]) * z1 - cimag(z[didx * dim + 0]) * z2) < 0.0) {
         z1 = -z1;
         z2 = -z2;
       }
     }
 
     for (int j = 0; j < dim; j++){
-      evecs[i * dim + j].r = creal(z[i * dim + j]) * z1 - cimag(z[i * dim + j]) * z2;
-      evecs[i * dim + j].i = cimag(z[i * dim + j]) * z1 + creal(z[i * dim + j]) * z2;
+      evecs[i * dim + j].r = creal(z[didx * dim + j]) * z1 - cimag(z[didx * dim + j]) * z2;
+      evecs[i * dim + j].i = cimag(z[didx * dim + j]) * z1 + creal(z[didx * dim + j]) * z2;
     }
   }
 
