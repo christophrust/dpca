@@ -12,10 +12,11 @@ SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
 SEXP R_zMatVec(SEXP r_mat, SEXP r_vec, SEXP r_dim, SEXP version);
 
 SEXP R_lagged_cov(SEXP r_x, SEXP r_y, SEXP r_lag, SEXP r_nrx,
-                  SEXP r_ncx, SEXP r_nry, SEXP r_ncy);
+                  SEXP r_ncx, SEXP r_nry, SEXP r_ncy, SEXP r_weight,
+                  SEXP r_center);
 
 SEXP R_lagged_covs(SEXP r_x, SEXP r_y, SEXP r_lags, SEXP r_nrx,
-                   SEXP r_ncx, SEXP r_nry, SEXP r_ncy);
+                   SEXP r_ncx, SEXP r_nry, SEXP r_ncy, SEXP r_weights);
 
 SEXP R_fourier_transform1(SEXP z, SEXP dim_z1, SEXP dim_z2,
                           SEXP freq, SEXP n_freq,
@@ -37,12 +38,14 @@ SEXP R_filter_process(SEXP r_f, SEXP r_x, SEXP r_lags,
                       SEXP r_nrf, SEXP r_ncf, SEXP r_nrx,
                       SEXP r_ncx, SEXP r_nlags, SEXP r_inx,
                       SEXP r_transf);
+SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
+            SEXP r_tol, SEXP kernel);
 
 void lagged_cov(double *x, double *y, double *res, int lag,
-                int nrx, int ncx, int nry, int ncy);
+                int nrx, int ncx, int nry, int center, double weight);
 
 void lagged_covs(double *x, double *y, double *res, int *lags, int nlags,
-                 int nrx, int ncx, int nry, int ncy);
+                 int nrx, int ncx, int nry, int ncy, double * weights);
 
 void zMatVecLa(double _Complex *x, double _Complex* y,
                Rcomplex* mat, int dim);
