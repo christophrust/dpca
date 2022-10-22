@@ -149,7 +149,8 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 
 
 
-SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol, SEXP r_normalize_evals, SEXP r_verbose) {
+SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
+                    SEXP r_normalize_evals, SEXP r_verbose, SEXP r_row_evecs) {
 
   Rcomplex *mat = COMPLEX(r_mat);
   int dim = *INTEGER(r_dim);
@@ -157,13 +158,14 @@ SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol, SEXP r_normali
   double tol = *REAL(r_tol);
   int normalize_evals = *INTEGER(r_normalize_evals);
   int verbose = *INTEGER(r_verbose);
+  int row_evecs = *INTEGER(r_row_evecs);
 
   // result objects
-  SEXP res = PROTECT(allocVector(VECSXP, 2));
+  SEXP res = PROTECT(allocVector(VECSXP, 2));;
   SEXP evecs = PROTECT(allocMatrix(CPLXSXP, dim, q));
   SEXP evals = PROTECT(allocVector(CPLXSXP, q));
 
-  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol, normalize_evals, verbose);
+  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol, normalize_evals, verbose, row_evecs);
 
   SET_VECTOR_ELT(res, 0, evals);
   SET_VECTOR_ELT(res, 1, evecs);
