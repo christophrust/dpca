@@ -27,7 +27,7 @@ void get_rank(double *values, int *rank, int n) {
 
 
 void arnoldi_eigs(Rcomplex *mat, int dim, int q,
-  Rcomplex *eval, Rcomplex *evecs, double tol, int normalize_evals, int verbose) {
+  Rcomplex *eval, Rcomplex *evecs, double tol, int normalize_evals, int verbose, int row_evecs) {
 
 
   // znaupd parameters
@@ -141,7 +141,12 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 
     for (int j = 0; j < dim; j++){
       evecs[i * dim + j].r = creal(z[didx * dim + j]) * z1 - cimag(z[didx * dim + j]) * z2;
-      evecs[i * dim + j].i = cimag(z[didx * dim + j]) * z1 + creal(z[didx * dim + j]) * z2;
+      if (row_evecs) {
+        // complex conjugate if row eigenvectors are requested (assumes hermitian matrix)
+        evecs[i * dim + j].i = - cimag(z[didx * dim + j]) * z1 - creal(z[didx * dim + j]) * z2;
+      } else {
+        evecs[i * dim + j].i = cimag(z[didx * dim + j]) * z1 + creal(z[didx * dim + j]) * z2;
+      }
     }
   }
 
