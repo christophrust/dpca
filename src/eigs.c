@@ -27,7 +27,9 @@ void get_rank(double *values, int *rank, int n) {
 
 
 void arnoldi_eigs(Rcomplex *mat, int dim, int q,
-  Rcomplex *eval, Rcomplex *evecs, double tol, int normalize_evals, int verbose, int row_evecs) {
+                  Rcomplex *eval, Rcomplex *evecs, double tol,
+                  int normalize_evals, int verbose, int row_evecs,
+                  int transpose_out) {
 
 
   // znaupd parameters
@@ -121,7 +123,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 
   // rotate according to eigen result:
   double z1 = 1.0, z2 = 0.0;
-  int didx;
+  int didx, ridx, cidx;
   // copy results -> how to avoid?
   for (int i = 0; i < q; i++) {
 
@@ -140,12 +142,14 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
     }
 
     for (int j = 0; j < dim; j++){
-      evecs[i * dim + j].r = creal(z[didx * dim + j]) * z1 - cimag(z[didx * dim + j]) * z2;
+      if (transpose_out) {ridx = j; cidx = i;} else {ridx = i; cidx = j;}
+
+      evecs[ridx * dim + cidx].r = creal(z[didx * dim + j]) * z1 - cimag(z[didx * dim + j]) * z2;
       if (row_evecs) {
         // complex conjugate if row eigenvectors are requested (assumes hermitian matrix)
-        evecs[i * dim + j].i = - cimag(z[didx * dim + j]) * z1 - creal(z[didx * dim + j]) * z2;
+        evecs[ridx * dim + cidx].i = - cimag(z[didx * dim + j]) * z1 - creal(z[didx * dim + j]) * z2;
       } else {
-        evecs[i * dim + j].i = cimag(z[didx * dim + j]) * z1 + creal(z[didx * dim + j]) * z2;
+        evecs[ridx * dim + cidx].i = cimag(z[didx * dim + j]) * z1 + creal(z[didx * dim + j]) * z2;
       }
     }
   }
@@ -155,7 +159,8 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 
 
 SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
-                    SEXP r_normalize_evals, SEXP r_verbose, SEXP r_row_evecs) {
+                    SEXP r_normalize_evals, SEXP r_verbose,
+                    SEXP r_row_evecs, SEXP r_transpose_out) {
 
   Rcomplex *mat = COMPLEX(r_mat);
   int dim = *INTEGER(r_dim);
@@ -164,13 +169,15 @@ SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
   int normalize_evals = *INTEGER(r_normalize_evals);
   int verbose = *INTEGER(r_verbose);
   int row_evecs = *INTEGER(r_row_evecs);
+  int transpose_out = *INTEGER(r_transpose_out);
 
   // result objects
   SEXP res = PROTECT(allocVector(VECSXP, 2));;
   SEXP evecs = PROTECT(allocMatrix(CPLXSXP, dim, q));
   SEXP evals = PROTECT(allocVector(CPLXSXP, q));
 
-  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol, normalize_evals, verbose, row_evecs);
+  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol,
+               normalize_evals, verbose, row_evecs, transpose_out);
 
   SET_VECTOR_ELT(res, 0, evals);
   SET_VECTOR_ELT(res, 1, evecs);
