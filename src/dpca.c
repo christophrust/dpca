@@ -4,26 +4,26 @@
 #include "Rinternals.h"
 
 
-SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol) {
 
-    int nrx = nrows(r_x);
-    int ncx = ncols(r_x);
-    double * freqs = REAL(r_freqs);
+SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP kernel) {
+
+    int nrx = Rf_nrows(r_x);
+    int ncx = Rf_ncols(r_x);
+    double *freqs = REAL(r_freqs);
     int nfreqs = length(r_freqs);
     int bw = *INTEGER(r_bandwidth);
     int nlags = 2 * bw + 1;
     int lags[nlags];
     int q = *INTEGER(r_q);
     for (int i = 0; i < nlags; i++)
-        lags[i] = i-bw;
+        lags[i] = i - bw;
     double tol = *REAL(r_tol);
 
-
     double *covs;
-    covs = (double *) R_Calloc(nrx * nrx * nlags, double);
+    covs = (double *)R_Calloc(nrx * nrx * nlags, double);
     SEXP spec = PROTECT(alloc3DArray(CPLXSXP, nrx, nrx, nfreqs));
-    SEXP evecs = PROTECT(allocMatrix(CPLXSXP, nrx, q));
-    SEXP evals = PROTECT(allocVector(CPLXSXP, q));
+    SEXP evecs = PROTECT(alloc3DArray(CPLXSXP, q, nrx, nfreqs));
+    SEXP evals = PROTECT(allocMatrix(CPLXSXP, q, nfreqs));
     SEXP filters = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
     SEXP input = PROTECT(allocMatrix(REALSXP, q, ncx));
     SEXP dcc = PROTECT(allocMatrix(REALSXP, nrx, ncx));
@@ -31,8 +31,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol) {
     double tmp_accum;
 
     /* compute autocovariances */
-    lagged_covs(REAL(r_x), REAL(r_x), covs, lags, nlags,
-                nrx, ncx, nrx, ncx);
+    lagged_covs(REAL(r_x), REAL(r_x), covs, lags, nlags, nrx, ncx, nrx, ncx, REAL(kernel), 1);
 
     /* compute spectrum */
     fourier_transform(covs, nrx, nrx, freqs,
@@ -45,8 +44,9 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol) {
                      tol, 1, 0);
 
     /* compute filter coefficients */
-    fourier_inverse((double _Complex *) COMPLEX(evecs), nrx, q, lags,
-                    nlags, freqs, nfreqs, REAL(filters), &tmp_accum);
+    fourier_inverse((double _Complex *)COMPLEX(evecs), nrx, q, lags, nlags, freqs,
+                    nfreqs, REAL(filters), &tmp_accum);
+
 
     /* apply filter on output to get input */
     filter_process(REAL(filters), REAL(r_x), lags, nrx, q, nrx,
@@ -57,9 +57,8 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol) {
                    ncx, nlags, REAL(dcc), 1, 0, 1);
 
     /* compute idiosyncratic component */
-    for (int i=0; i < nrx * ncx; i++)
+    for (int i = 0; i < nrx * ncx; i++)
         REAL(dic)[i] = REAL(r_x)[i] - REAL(dcc)[i];
-
 
     // create result list objects
     SEXP eig = PROTECT(allocVector(VECSXP, 2));
@@ -69,7 +68,6 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol) {
     SET_STRING_ELT(nms_eig, 0, mkChar("values"));
     SET_STRING_ELT(nms_eig, 1, mkChar("vectors"));
     setAttrib(eig, R_NamesSymbol, nms_eig);
-
 
     SEXP res = PROTECT(allocVector(VECSXP, 6));
     SET_VECTOR_ELT(res, 0, spec);
