@@ -124,6 +124,10 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
   // rotate according to eigen result:
   double z1 = 1.0, z2 = 0.0;
   int didx, ridx, cidx;
+
+  int evecs_rdim = dim;
+  if (transpose_out) evecs_rdim = q;
+
   // copy results -> how to avoid?
   for (int i = 0; i < q; i++) {
 
@@ -144,12 +148,12 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
     for (int j = 0; j < dim; j++){
       if (transpose_out) {ridx = j; cidx = i;} else {ridx = i; cidx = j;}
 
-      evecs[ridx * dim + cidx].r = creal(z[didx * dim + j]) * z1 - cimag(z[didx * dim + j]) * z2;
+      evecs[ridx * evecs_rdim + cidx].r = creal(z[didx * dim + j]) * z1 - cimag(z[didx * dim + j]) * z2;
       if (row_evecs) {
         // complex conjugate if row eigenvectors are requested (assumes hermitian matrix)
-        evecs[ridx * dim + cidx].i = - cimag(z[didx * dim + j]) * z1 - creal(z[didx * dim + j]) * z2;
+        evecs[ridx * evecs_rdim + cidx].i = - cimag(z[didx * dim + j]) * z1 - creal(z[didx * dim + j]) * z2;
       } else {
-        evecs[ridx * dim + cidx].i = cimag(z[didx * dim + j]) * z1 + creal(z[didx * dim + j]) * z2;
+        evecs[ridx * evecs_rdim + cidx].i = cimag(z[didx * dim + j]) * z1 + creal(z[didx * dim + j]) * z2;
       }
     }
   }
