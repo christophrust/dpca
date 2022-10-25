@@ -10,7 +10,7 @@ test_that("Fourier inverse (C-function)", {
   x <- matrix(rnorm(ncx* nrx), ncol = ncx)
 
 
-  covs <- .Call("R_lagged_covs", x, x, as.integer(-5:5), nrx, ncx, nrx, ncx)
+  covs <- .Call("R_lagged_covs", x, x, as.integer(-5:5), nrx, ncx, nrx, ncy, rep(1, 11), 0L)
 
   spec <- .Call("R_fourier_transform", as.vector(covs), dim(covs)[1], dim(covs)[2],
                 -100:100/100 * pi, 201L, -5L:5L, 11L)
@@ -22,7 +22,7 @@ test_that("Fourier inverse (C-function)", {
   }, matrix(0 + 1i, dim(spec)[1], 4))
 
   res1 <- .Call("R_fourier_inverse", as.vector(eigs), dim(eigs)[1], dim(eigs)[2],
-                   as.integer(-5:5), 11L, -100:100/100 * pi, 201L)
+                   as.integer(-5:5), 11L, -100:100/100 * pi, 201L, 0L)
 
   res2 <- .Call("R_fourier_inverse1", as.vector(eigs), dim(eigs)[1], dim(eigs)[2],
                    as.integer(-5:5), 11L, -100:100/100 * pi, 201L)
@@ -40,7 +40,7 @@ test_that("Fourier inverse (C-function)", {
   y <- matrix(rnorm(ncy* nry), ncol = ncy)
 
 
-  covs <- .Call("R_lagged_covs", x, y, as.integer(-5:5), nrx, ncx, nry, ncy)
+  covs <- .Call("R_lagged_covs", x, y, as.integer(-5:5), nrx, ncx, nry, ncy, rep(1, 11), 0L)
 
   spec <- .Call("R_fourier_transform", as.vector(covs), dim(covs)[1], dim(covs)[2],
                 -100:100/100 * pi, 201L, -5L:5L, 11L)
@@ -53,7 +53,7 @@ test_that("Fourier inverse (C-function)", {
 
   fu1 <- function(){
     res1 <- .Call("R_fourier_inverse", as.vector(eigs), dim(eigs)[1], dim(eigs)[2],
-                  as.integer(-5:5), 11L, -100:100/100 * pi, 201L)
+                  as.integer(-5:5), 11L, -100:100/100 * pi, 201L, 0L)
   }
   fu2 <- function() {
     res2 <- .Call("R_fourier_inverse1", as.vector(eigs), dim(eigs)[1], dim(eigs)[2],
@@ -61,6 +61,6 @@ test_that("Fourier inverse (C-function)", {
   }
 
   ## minibenchmark
-  bm <- microbenchmark::microbenchmark(fu1(), fu2(), times = 100)
+  ##bm <- microbenchmark::microbenchmark(fu1(), fu2(), times = 100)
 
 })
