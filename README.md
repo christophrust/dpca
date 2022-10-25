@@ -4,14 +4,13 @@ This package provides a fast and reliable implementation of dynamic principal co
 
 We are aware of the R package `freqdom`, developed by Siegried Hörmann and Lukas Kidzinsiki, which is a pure R implementation and therefore quite slow and not really useful for the use in simulations. We draw on many implementation designs used by them. This package to some extent is a `C` port of `freqdom` but deviates at some points. For instance, the convoluted filter which computes the dynamic common component from the output in freqdom is obtained by filtering the output twice: first to get the inputs \(what in `freqdom` is called "scores" in analogy to their FDA context\) and, second these inputs are filtered again to get the dynamic common component \("KLexpansion"\). `dpca` computes the convolution in the frequency domain. The advantage of this approach is that this filter is invariant with respect to multiplications of dynamic eigenvectors by a unit-length complex number.
 
-
 This package currently is not in a very mature state and will hopefully soon be available on CRAN in a more mature version.
 
 ## Installation
 
 `dpca` requires [`ARPACK`](https://en.wikipedia.org/wiki/ARPACK) to compute dynamic eigenvalues/eigenvectors using the Implicitly Restarted Arnoldi Method which is much faster than `base::eigen()` which does full spectral decomposition which is in most times not required.
 
-Currently, `dpca` does not include `ARPACK` and the user has to make it available on his system. In addition, the R header files must also be available.
+Currently, `dpca` does not include `ARPACK` and the user has to make it available on his system. We assume the correct include path is `/usr/include/arpack`. In case this is not true, please change `src/Makevars` accordingly. Additionally, the R header files must also be available.
 
 On Debian this can be easily achieved running:
 
@@ -25,6 +24,7 @@ Then, `dpca`can be installed with `devtools`:
 devtools::install_github("https://github.com/christophrust/dpca.git")
 ```
 
+For later releases, it is of course planned to have our own configure script which can resolve all the above dependencies on different platforms.
 
 ## Examples
 
