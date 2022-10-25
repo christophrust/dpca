@@ -1,53 +1,20 @@
 library(dpca)
 library(freqdom)
 
-test_that("Test dpca (C-function)", {
-
-  nrx <- 100L
-  ncx <- 1000L
-  q <- 4L
-
-  epsilon <- matrix(rnorm(ncx * q), nrow = q)
-
-  b_filter <- vapply(1:10, function(l) {
-    matrix(rnorm(q * nrx, sd = 1/l), q, nrx)
-  }, matrix(0, q, nrx))
-
-  chi <- .Call("R_filter_process", b_filter, epsilon, as.integer(1:10),
-               nrx, q, q, ncx, 10L, 1L, 0L, 0L)
-
-  x <- chi + rnorm(nrx * ncx, sd = 0.1 * sd(chi))
-
-  weights <- weights.Bartlett(-15:15/15)
-  system.time(res_dpca <- .Call("R_dpca", x, 4L, -10:10/10 * pi, 15L, .Machine$double.eps, weights))
-
-  system.time(res_freqdom <- freqdom::dpca(X = t(x), q = 15, freq = -10:10/10 * pi, Ndpc = 4))
-  str(res_freqdom)
-  str(res_dpca)
-
-  plot(x = as.vector(x), y = as.vector(t(res_freqdom$Xhat)))
-  points(x = as.vector(x), y = as.vector(res_dpca$dcc), col = "red")
-  res1 <- Re(res_dpca$spectrum)
-  res2 <- Re(res_freqdom$spec.density$operators)
-  apply((res1 - res2)^2 > 1e-9, 3, sum)
-  rowSums((res1[,,1] - res2[,,1])^2 > 1e-9)
-  cbind(res1[1,,1], res2[1,,1])
-  plot(x = as.vector(Re(res_dpca$spectrum)), y = as.vector(Re(res_freqdom$spec.density$operators)))
-  lm(as.vector(Re(res_dpca$spectrum)) ~as.vector(Re(res_freqdom$spec.density$operators)))
-  plot(x = as.vector(Im(res_dpca$spectrum)), y = as.vector(Im(res_freqdom$spec.density$operators)))
-  lm(as.vector(Im(res_dpca$spectrum)) ~ as.vector(Im(res_freqdom$spec.density$operators)))
-})
-
-
 
 test_that("Test dpca, stepwise", {
 
-  set.seed(123456)
-  ## simulate some data
+  ## settings
   nrx <- 100L
   ncx <- 1000L
   q <- 4L
+  bw <- as.integer(floor(ncx^(1/3)))
+  freqs <- -10:10/10 * pi
+  weights <- weights.Bartlett(-bw:bw/bw)
+  ones <- rep(1, length(weights))
 
+  ## simulate some data
+  set.seed(123456)
   epsilon <- matrix(rnorm(ncx * q), nrow = q)
 
   b_filter <- vapply(1:10, function(l) {
@@ -56,22 +23,20 @@ test_that("Test dpca, stepwise", {
 
   chi <- .Call("R_filter_process", b_filter, epsilon, as.integer(1:10),
                nrx, q, q, ncx, 10L, 1L, 0L, 0L)
-
   x <- chi + rnorm(nrx * ncx, sd = 0.1 * sd(chi))
-  bw <- as.integer(floor(ncol(x)^(1/3)))
-  weights <- weights.Bartlett(-bw:bw/bw)
-  system.time(res_dpca <- .Call("R_dpca", x, 4L, -10:10/10 * pi, bw, .Machine$double.eps, weights))
+
+
+  ## run dpca for both implementation (freqdom and our)
+  system.time(res_dpca <- .Call("R_dpca", x, 4L, freqs, bw, .Machine$double.eps, weights))
   system.time(res_freqdom <- freqdom::dpca(t(x), bw, -10:10/10 * pi, 4L))
 
-  ones <- rep(1, length(weights))
+
 
   ## 1. compute covariance structure without weights
   covs1 <- .Call("R_lagged_covs", x, x, -bw:bw, nrx, ncx, nrx, ncx, ones, 1L)
   covs2 <- cov.structure(t(x), t(x), -bw:bw)$operators
-  ## covs2[,,2]/covs1[,,2]
-  ## covs2[,,16]/covs1[,,16]
-  ## covs2[,,17]/covs1[,,17]
   expect_lt(sum(vapply(seq_len(length(weights)), function(i) sum((covs1[,,i] - covs2[,,i])^2), 0)), 1e-12)
+
 
   ## 2. compute covariance structure with weights
   covs1 <- .Call("R_lagged_covs", x, x, -bw:bw, nrx, ncx, nrx, ncx, weights, 1L)
@@ -99,7 +64,8 @@ test_that("Test dpca, stepwise", {
   ## 4. Eigendecomposition of spectrum (uses different numerical algorithms)
   spec1 <- res_dpca$spectrum
   spec2 <- res_freqdom$spec.density$operators
-  abs(sum((spec1 - spec2)^2))
+  expect_lt(abs(sum((spec1 - spec2)^2)), 1e-10)
+
   tmp1 <- lapply(seq_len(dim(spec1)[3]),
                  function(i) .Call("R_arnoldi_eigs", mat = spec1[,,i], dim = nrx, 4L,
                                    .Machine$double.eps, 1L, 0L, 1L, 1L))
@@ -128,16 +94,13 @@ test_that("Test dpca, stepwise", {
   f1 <- fourier.inverse(freqdom(tmp2$vectors[1:4,,], freq = -10:10/10*pi), -bw:bw)$operators
   f2 <- .Call("R_fourier_inverse", tmp2$vectors[1:4,,], 4L, 100L,
               as.integer(-bw:bw), length(-bw:bw), -10:10/10 * pi, 21L)
-  f3 <- .Call("R_fourier_inverse", ev1, 4L, 100L,
-              as.integer(-bw:bw), length(-bw:bw), -10:10/10 * pi, 21L)
   expect_lt( sum((f1 - f2)^2) , 1e-12)
-  expect_lt( sum((f1 - f3)^2) , 1e-12)
 
 
   ## approach 2: compute p~ * p and apply fourier transformation thereafter.
   k_theta1 <- vapply( seq_len(dim(ev1)[3]), function(i) t(Conj(ev1[,,i])) %*% ev1[,,i], matrix(0 + 0i, nrx, nrx))
   k_theta2 <- vapply( seq_len(dim(ev2)[3]), function(i) t(Conj(ev2[,,i])) %*% ev2[,,i], matrix(0 + 0i, nrx, nrx))
-  sum((k_theta1 - k_theta2)^2)
+  expect_lt(sum(abs(k_theta1 - k_theta2)^2), 1e-10)
 
   ff1 <- .Call("R_fourier_inverse", k_theta1, 100L, 100L,
               as.integer(-bw:bw), length(-bw:bw), -10:10/10 * pi, 21L)
@@ -153,30 +116,11 @@ test_that("Test dpca, stepwise", {
   dcc3 <- res_dpca$dcc
   expect_equal(dcc1, dcc3)
 
-  plot(x = as.vector(x), y = as.vector(t(dcc2)))
-  points(x = as.vector(x), y = as.vector(dcc3), col = "red")
 
-  summary(lm(as.vector(x) ~as.vector(dcc3)))
-  summary(lm(as.vector(x) ~as.vector(t(dcc2))))
-
-  plot(x = as.vector(chi), y = as.vector(t(dcc2)))
-  points(x = as.vector(chi), y = as.vector(dcc1), col = "red")
-
-  idx <- abs(x)> 3 & abs(dcc1) < 0.2
-
-
-  res1 <- res_dpca$filters
-  res2 <- .Call("R_fourier_inverse", )
-  res2 <- vapply(seq_len(bw*2+1),
-                 function(i) t(res_freqdom$filters$operators[,,i]),
-                matrix(0, nrow = nrx, ncol = q))
-
-  expect_lt( sum((res1-res2)^2) , 1e-12)
-
-
-  m1 <- matrix(runif(10) + runif(10) * 1i, ncol = 2)
-  m1 %*% Conj(t(m1))
-
+  ## check superiority of dpca compared to freqdom
+  r2_dpca <- summary(lm(as.vector(x) ~as.vector(dcc3)))$r.squared
+  r2_freqdom <- summary(lm(as.vector(x) ~as.vector(t(dcc2))))$r.squared
+  expect_lt(r2_freqdom, r2_dpca)
 
 
 

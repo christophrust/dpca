@@ -13,35 +13,36 @@ test_that("Lagged covariance estimation", {
   xc <- x - rowMeans(x)
   yc <- y - rowMeans(y)
 
-  system.time(res1 <- .Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy, 1, 0L))
-  system.time(res2 <- tcrossprod(x, y)/ncx)
+  ## contemporaneous, no center
+  res1 <- .Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy, 1, 0L)
+  res2 <- tcrossprod(x, y)/ncx
+  expect_lt(sum((res1 - res2)^2), 1e-10)
+
+  ## contemporaneous, centered
+  res1 <- .Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy, 1, 1L)
+  res2 <- tcrossprod(xc, yc)/ncx
   expect_lt(sum((res1 - res2)^2), 1e-10)
 
 
-  system.time(res1 <- .Call("R_lagged_cov", x, y, 0L, nrx, ncx, nry, ncy, 1, 1L))
-  system.time(res2 <- tcrossprod(xc, yc)/ncx)
+  ## lag1, no center
+  res1 <- .Call("R_lagged_cov", x, y, 1L, nrx, ncx, nry, ncy, 1, 0L)
+  res2 <- tcrossprod(x[,-1], y[,-ncy])/ncx
   expect_lt(sum((res1 - res2)^2), 1e-10)
 
 
-
-  system.time(res1 <- .Call("R_lagged_cov", x, y, 1L, nrx, ncx, nry, ncy, 1, 0L))
-  system.time(res2 <- tcrossprod(x[,-1], y[,-ncy])/(ncx-1))
+  res1 <- .Call("R_lagged_cov", x, y, -1L, nrx, ncx, nry, ncy, 1, 0L)
+  res2 <- tcrossprod(x[,-ncx], y[,-1])/ncx
   expect_lt(sum((res1 - res2)^2), 1e-10)
 
 
-  system.time(res1 <- .Call("R_lagged_cov", x, y, -1L, nrx, ncx, nry, ncy, 1, 0L))
-  system.time(res2 <- tcrossprod(x[,-ncx], y[,-1])/(ncx-1))
+  res1 <- .Call("R_lagged_cov", x, y, -2L, nrx, ncx, nry, ncy, 1, 0L)
+  res2 <- tcrossprod(x[,-ncx+c(1,0)], y[,-c(1:2)])/ncx
   expect_lt(sum((res1 - res2)^2), 1e-10)
 
 
-  system.time(res1 <- .Call("R_lagged_cov", x, y, -2L, nrx, ncx, nry, ncy, 1, 0L))
-  system.time(res2 <- tcrossprod(x[,-ncx+c(1,0)], y[,-c(1:2)])/(ncx-2))
-  expect_lt(sum((res1 - res2)^2), 1e-10)
-
-
-  system.time(res1 <- .Call("R_lagged_cov", x, y, -2L, nrx, ncx, nry, ncy, 1, 1L))
-  system.time(res2 <- .Call("R_lagged_cov", xc, yc, -2L, nrx, ncx, nry, ncy, 1, 0L))
-  system.time(res3 <- tcrossprod(xc[,-ncx+c(1,0)], yc[,-c(1:2)])/(ncx-2))
+  res1 <- .Call("R_lagged_cov", x, y, -2L, nrx, ncx, nry, ncy, 1, 1L)
+  res2 <- .Call("R_lagged_cov", xc, yc, -2L, nrx, ncx, nry, ncy, 1, 0L)
+  res3 <- tcrossprod(xc[,-ncx+c(1,0)], yc[,-c(1:2)])/ncx
   expect_lt(sum((res1 - res2)^2), 1e-10)
   expect_lt(sum((res1 - res3)^2), 1e-10)
   expect_lt(sum((res2 - res3)^2), 1e-10)
@@ -116,11 +117,11 @@ test_that("Multiple lagged covariance estimation", {
                 vapply(-5:5,
                        function(l) {
                          if (l<0)
-                           return(tcrossprod(x[,-ncx+(-l-1):0], y[,-c(1:abs(l))])/(ncx  + l))
+                           return(tcrossprod(x[,-ncx+(-l-1):0], y[,-c(1:abs(l))])/ncx)
                          if (l == 0)
                            return(tcrossprod(x, y)/ncx)
 
-                         tcrossprod(x[,-(1:l)], y[,-ncy + (l-1):0])/(ncx  - l)
+                         tcrossprod(x[,-(1:l)], y[,-ncy + (l-1):0])/ncx
 
                        }, matrix(0, nrx, nry))
               )

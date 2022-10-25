@@ -1,5 +1,5 @@
 library(dpca)
-##library(freqdom)
+library(freqdom)
 
 test_that("Fourier transform (C-function)", {
 
@@ -15,5 +15,7 @@ test_that("Fourier transform (C-function)", {
 
   res1 <- .Call("R_fourier_transform", as.vector(covs), dim(covs)[1], dim(covs)[2],
                 -100:100/100 * pi, 201L, -5L:5L, 11L)
+  res2 <- fourier.transform(timedom(covs, lags = -5L:5L), -100:100/100 * pi)$operators
 
+  expect_lt(sum(abs((res1 - res2)^2)), 1e-10)
 })
