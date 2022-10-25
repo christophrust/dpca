@@ -7,7 +7,7 @@
 
 
 SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
-                    SEXP r_normalize_evals, SEXP r_verbose,
+                    SEXP r_normalize_evecs, SEXP r_verbose,
                     SEXP r_row_evecs, SEXP r_transpose_out);
 
 SEXP R_zMatVec(SEXP r_mat, SEXP r_vec, SEXP r_dim, SEXP version);
@@ -69,7 +69,7 @@ void fourier_transform(double *z, int nrz, int ncz,
 
 void arnoldi_eigs(Rcomplex *mat, int dim, int q,
                   Rcomplex *eval, Rcomplex *evecs,
-                  double tol, int normalize_evals, int verbose,
+                  double tol, int normalize_evecs, int verbose,
                   int row_evecs, int transpose_out);
 
 void filter_process(double *f, double *x, int *lags, int nrf,

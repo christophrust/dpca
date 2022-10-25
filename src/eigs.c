@@ -28,7 +28,7 @@ void get_rank(double *values, int *rank, int n) {
 
 void arnoldi_eigs(Rcomplex *mat, int dim, int q,
                   Rcomplex *eval, Rcomplex *evecs, double tol,
-                  int normalize_evals, int verbose, int row_evecs,
+                  int normalize_evecs, int verbose, int row_evecs,
                   int transpose_out) {
 
 
@@ -135,7 +135,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
     eval[i].r = creal(d[didx]);
     eval[i].i = cimag(d[didx]);
 
-    if (normalize_evals) {
+    if (normalize_evecs) {
 
       z2 = sqrt(1.0 / (1.0 + pow(creal(z[didx * dim + 0]) / cimag(z[didx * dim + 0]), 2.0)));
       z1 = - creal(z[didx * dim + 0]) / cimag(z[didx * dim + 0]) * z2;
@@ -163,14 +163,14 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 
 
 SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
-                    SEXP r_normalize_evals, SEXP r_verbose,
+                    SEXP r_normalize_evecs, SEXP r_verbose,
                     SEXP r_row_evecs, SEXP r_transpose_out) {
 
   Rcomplex *mat = COMPLEX(r_mat);
   int dim = *INTEGER(r_dim);
   int q = *INTEGER(r_q);
   double tol = *REAL(r_tol);
-  int normalize_evals = *INTEGER(r_normalize_evals);
+  int normalize_evecs = *INTEGER(r_normalize_evecs);
   int verbose = *INTEGER(r_verbose);
   int row_evecs = *INTEGER(r_row_evecs);
   int transpose_out = *INTEGER(r_transpose_out);
@@ -186,7 +186,7 @@ SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
   SEXP evals = PROTECT(allocVector(CPLXSXP, q));
 
   arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol,
-               normalize_evals, verbose, row_evecs, transpose_out);
+               normalize_evecs, verbose, row_evecs, transpose_out);
 
   SET_VECTOR_ELT(res, 0, evals);
   SET_VECTOR_ELT(res, 1, evecs);
