@@ -36,15 +36,19 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP
     /* compute autocovariances */
     lagged_covs(REAL(r_x), REAL(r_x), covs, lags, nlags, nrx, ncx, nrx, ncx, REAL(kernel), 1);
 
+
     /* compute spectrum */
-    fourier_transform(covs, nrx, nrx, freqs,
-                      nfreqs, lags, nlags, (double _Complex *) COMPLEX(spec));
+    fourier_transform(covs, nrx, nrx, freqs, nfreqs, lags, nlags,
+                      (double _Complex *)COMPLEX(spec));
+
+
+    // TODO: compute eigendecomposition only on 0 to pi and get
+    // eigenvalues for -pi to 0 by conjugating them!!
 
     /* eigen decomposition of spectrum */
     for (int i = 0; i < nfreqs; i++)
-        arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, q,
-                     COMPLEX(evals) + q * i, COMPLEX(evecs) + nrx * q * i,
-                     tol, 1, 0);
+        arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, q, COMPLEX(evals) + q * i,
+                     COMPLEX(evecs) + nrx * q * i, tol, 1, 0, 1, 1);
 
     for (int i = 0; i < nfreqs; i++)
         complex_crossprod((double _Complex *) COMPLEX(evecs) + nrx * q * i,
@@ -69,6 +73,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP
     /* compute idiosyncratic component */
     for (int i = 0; i < nrx * ncx; i++)
         REAL(dic)[i] = REAL(r_x)[i] - REAL(dcc)[i];
+
 
     // create result list objects
     SEXP eig = PROTECT(allocVector(VECSXP, 2));
