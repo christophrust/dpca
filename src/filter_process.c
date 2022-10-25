@@ -18,7 +18,8 @@
 **
 ** NB: it must hold that ncf = nrx
 */
-void filter_process1(double *f, double *x, int *lags, int nrf, int ncf, int nrx, int ncx, int nlags, double *y) {
+void filter_process1(double *f, double *x, int *lags, int nrf, int ncf,
+                     int nrx, int ncx, int nlags, double *y) {
 
     int fdim12 = nrf * ncf;
     int maxlag = 0;

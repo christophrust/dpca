@@ -39,7 +39,8 @@ SEXP R_fourier_inverse1(SEXP f, SEXP dim_f1, SEXP dim_f2,
 SEXP R_filter_process(SEXP r_f, SEXP r_x, SEXP r_lags,
                       SEXP r_nrf, SEXP r_ncf, SEXP r_nrx,
                       SEXP r_ncx, SEXP r_nlags, SEXP r_inx,
-                      SEXP r_transf);
+                      SEXP r_transf, SEXP r_rev);
+
 SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
             SEXP r_tol, SEXP kernel);
 
