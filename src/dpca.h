@@ -43,6 +43,8 @@ SEXP R_filter_process(SEXP r_f, SEXP r_x, SEXP r_lags,
 SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
             SEXP r_tol, SEXP kernel);
 
+SEXP R_complex_crossprod(SEXP r_x, SEXP r_trans_conj);
+
 void lagged_cov(double *x, double *y, double *res, int lag,
                 int nrx, int ncx, int nry, int center, double weight);
 
@@ -72,5 +74,8 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
 void filter_process(double *f, double *x, int *lags, int nrf,
                     int ncf, int nrx, int ncx, int nlags, double *y,
                     int insert_sample_end, int transf, int rev);
+
+void complex_crossprod(double _Complex *x, int nrx, int ncx,
+                       double _Complex *res, int trans_conj);
 
 #endif // DPCA_H_
