@@ -2,7 +2,7 @@
 #include "R_ext/RS.h"
 #include "R_ext/Rdynload.h"
 #include "Rinternals.h"
-
+#include <complex.h>
 
 
 SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP kernel) {
@@ -24,11 +24,14 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP
     SEXP spec = PROTECT(alloc3DArray(CPLXSXP, nrx, nrx, nfreqs));
     SEXP evecs = PROTECT(alloc3DArray(CPLXSXP, q, nrx, nfreqs));
     SEXP evals = PROTECT(allocMatrix(CPLXSXP, q, nfreqs));
-    SEXP filters = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
+    SEXP filter_input = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
+    SEXP filter_dcc = PROTECT(alloc3DArray(REALSXP, nrx, nrx, nlags));
     SEXP input = PROTECT(allocMatrix(REALSXP, q, ncx));
     SEXP dcc = PROTECT(allocMatrix(REALSXP, nrx, ncx));
     SEXP dic = PROTECT(allocMatrix(REALSXP, nrx, ncx));
     double tmp_accum;
+    double _Complex * evec_cp;
+    evec_cp = (double _Complex *) R_Calloc(nrx * nrx * nfreqs, double _Complex);
 
     /* compute autocovariances */
     lagged_covs(REAL(r_x), REAL(r_x), covs, lags, nlags, nrx, ncx, nrx, ncx, REAL(kernel), 1);
@@ -43,18 +46,25 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP
                      COMPLEX(evals) + q * i, COMPLEX(evecs) + nrx * q * i,
                      tol, 1, 0);
 
+    for (int i = 0; i < nfreqs; i++)
+        complex_crossprod((double _Complex *) COMPLEX(evecs) + nrx * q * i,
+                          q, nrx, evec_cp + i * nrx * nrx, 0);
+
     /* compute filter coefficients */
     fourier_inverse((double _Complex *)COMPLEX(evecs), nrx, q, lags, nlags, freqs,
-                    nfreqs, REAL(filters), &tmp_accum);
+                    nfreqs, REAL(filter_input), &tmp_accum);
 
+    /* compute filter coefficients */
+    fourier_inverse(evec_cp, nrx, nrx, lags, nlags, freqs,
+                    nfreqs, REAL(filter_dcc), &tmp_accum);
 
     /* apply filter on output to get input */
-    filter_process(REAL(filters), REAL(r_x), lags, nrx, q, nrx,
-                   ncx, nlags, REAL(input), 1, 1, 0);
+    filter_process(REAL(filter_input), REAL(r_x), lags, q, q, nrx, ncx, nlags,
+                   REAL(input), 1, 0, 0);
 
     /* apply filter on output to get dcc */
-    filter_process(REAL(filters), REAL(input), lags, nrx, q, q,
-                   ncx, nlags, REAL(dcc), 1, 0, 1);
+    filter_process(REAL(filter_dcc), REAL(r_x), lags, nrx, nrx, nrx, ncx, nlags,
+                   REAL(dcc), 1, 0, 0);
 
     /* compute idiosyncratic component */
     for (int i = 0; i < nrx * ncx; i++)
@@ -69,10 +79,20 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP
     SET_STRING_ELT(nms_eig, 1, mkChar("vectors"));
     setAttrib(eig, R_NamesSymbol, nms_eig);
 
+
+    SEXP filter = PROTECT(allocVector(VECSXP, 2));
+    SET_VECTOR_ELT(filter, 0, filter_input);
+    SET_VECTOR_ELT(filter, 1, filter_dcc);
+    SEXP nms_filter = PROTECT(allocVector(STRSXP, 2));
+    SET_STRING_ELT(nms_filter, 0, mkChar("filter_input"));
+    SET_STRING_ELT(nms_filter, 1, mkChar("filter_dcc"));
+    setAttrib(filter, R_NamesSymbol, nms_filter);
+
+
     SEXP res = PROTECT(allocVector(VECSXP, 6));
     SET_VECTOR_ELT(res, 0, spec);
     SET_VECTOR_ELT(res, 1, eig);
-    SET_VECTOR_ELT(res, 2, filters);
+    SET_VECTOR_ELT(res, 2, filter);
     SET_VECTOR_ELT(res, 3, input);
     SET_VECTOR_ELT(res, 4, dcc);
     SET_VECTOR_ELT(res, 5, dic);
@@ -80,13 +100,14 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP
     SEXP nms = PROTECT(allocVector(STRSXP, 6));
     SET_STRING_ELT(nms, 0, mkChar("spectrum"));
     SET_STRING_ELT(nms, 1, mkChar("eig"));
-    SET_STRING_ELT(nms, 2, mkChar("filters"));
+    SET_STRING_ELT(nms, 2, mkChar("filter"));
     SET_STRING_ELT(nms, 3, mkChar("input"));
     SET_STRING_ELT(nms, 4, mkChar("dcc"));
     SET_STRING_ELT(nms, 5, mkChar("dic"));
     setAttrib(res, R_NamesSymbol, nms);
 
     R_Free(covs);
-    UNPROTECT(11);
+    R_Free(evec_cp);
+    UNPROTECT(14);
     return res;
 }
