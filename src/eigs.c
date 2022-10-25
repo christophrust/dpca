@@ -177,7 +177,12 @@ SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
 
   // result objects
   SEXP res = PROTECT(allocVector(VECSXP, 2));;
-  SEXP evecs = PROTECT(allocMatrix(CPLXSXP, dim, q));
+  SEXP evecs;
+  if (transpose_out){
+    evecs = PROTECT(allocMatrix(CPLXSXP, q, dim));
+  } else {
+    evecs = PROTECT(allocMatrix(CPLXSXP, dim, q));
+  }
   SEXP evals = PROTECT(allocVector(CPLXSXP, q));
 
   arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol,
