@@ -28,8 +28,9 @@ test_that("Test dpca, stepwise", {
 
   ## run dpca for both implementation (freqdom and our)
   system.time(res_dpca <- .Call("R_dpca", x, 4L, freqs, bw, .Machine$double.eps, weights))
-  system.time(res_freqdom <- freqdom::dpca(t(x), bw, -10:10/10 * pi, 4L))
-
+  system.time(res_dpca1 <- dpca::dpca(x, 4, freqs, bw,weights = "Bartlett"))
+  system.time(res_freqdom <- freqdom::dpca(t(x), bw, freqs, 4L))
+  expect_equal(res_dpca, res_dpca1)
 
 
   ## 1. compute covariance structure without weights
@@ -118,8 +119,8 @@ test_that("Test dpca, stepwise", {
 
 
   ## check superiority of dpca compared to freqdom
-  r2_dpca <- summary(lm(as.vector(x) ~as.vector(dcc3)))$r.squared
-  r2_freqdom <- summary(lm(as.vector(x) ~as.vector(t(dcc2))))$r.squared
+  r2_dpca <- summary(lm(as.vector(chi) ~as.vector(dcc3)))$r.squared
+  r2_freqdom <- summary(lm(as.vector(chi) ~as.vector(t(dcc2))))$r.squared
   expect_lt(r2_freqdom, r2_dpca)
 
 

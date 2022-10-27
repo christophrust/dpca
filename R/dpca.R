@@ -7,6 +7,7 @@
 #' @param bandwidth Single integer, giving the width of the lag window estimator.
 #'
 #' @return An object of class "dpca" with different entries.
+#'
 #' @useDynLib dpca
 #' @export
 dpca <- function(x, q, freqs = -100:100/100 * pi, bandwidth,
@@ -15,7 +16,7 @@ dpca <- function(x, q, freqs = -100:100/100 * pi, bandwidth,
   if (length(weights) > 1)
     weights = "Bartlett"
 
-  if (is.matrix(x))
+  if (!is.matrix(x))
     stop("x must be a n by T matrix!")
 
   if (missing(q)) {
@@ -33,12 +34,13 @@ dpca <- function(x, q, freqs = -100:100/100 * pi, bandwidth,
     stop("\"freqs\" must be a numeric vector with values in [-pi, pi]!")
 
 
-  wghts <- get(paste0("weights.", weights))(-bandwidth:bandwidth)
+  wghts <- get(paste0("weights.", weights))(-bandwidth:bandwidth/bandwidth)
 
+  ##browser()
   res <- .Call("R_dpca", x,
                as.integer(q),
                as.numeric(freqs),
-               as.integer(length(freqs)),
+               as.integer(bandwidth),
                .Machine$double.eps,
                wghts,
                PACKAGE = "dpca")
