@@ -10,7 +10,7 @@ test_that("Fourier inverse (C-function)", {
   x <- matrix(rnorm(ncx* nrx), ncol = ncx)
 
 
-  covs <- .Call("R_lagged_covs", x, x, as.integer(-5:5), nrx, ncx, nrx, ncy, rep(1, 11), 0L)
+  covs <- .Call("R_lagged_covs", x, x, as.integer(-5:5), nrx, ncx, nrx, ncx, rep(1, 11), 0L)
 
   spec <- .Call("R_fourier_transform", as.vector(covs), dim(covs)[1], dim(covs)[2],
                 -100:100/100 * pi, 201L, -5L:5L, 11L)
