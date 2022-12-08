@@ -44,7 +44,7 @@ SEXP R_filter_process(SEXP r_f, SEXP r_x, SEXP r_lags,
 SEXP R_recursive_filter(SEXP x, SEXP f, SEXP r_dim, SEXP r_nlags );
 
 SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
-            SEXP r_tol, SEXP kernel);
+            SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q);
 
 SEXP R_complex_crossprod(SEXP r_x, SEXP r_trans_conj);
 
@@ -80,5 +80,8 @@ void filter_process(double *f, double *x, int *lags, int nrf,
 
 void complex_crossprod(double _Complex *x, int nrx, int ncx,
                        double _Complex *res, int trans_conj);
+
+int hl_select_q(double _Complex * spec, double _Complex * evals,
+            int dim, int nfreqs, int max_q, int select_q);
 
 #endif // DPCA_H_

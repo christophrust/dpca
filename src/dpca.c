@@ -5,7 +5,7 @@
 #include <complex.h>
 
 
-SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP kernel) {
+SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q) {
 
     int nrx = Rf_nrows(r_x);
     int ncx = Rf_ncols(r_x);
@@ -18,12 +18,20 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP
     for (int i = 0; i < nlags; i++)
         lags[i] = i - bw;
     double tol = *REAL(r_tol);
+    int select_q = *INTEGER(r_select_q);
+
+    int spec_q;
+    if (select_q) {
+        spec_q = *INTEGER(r_max_q);
+    } else {
+        spec_q = q;
+    }
 
     double *covs;
     covs = (double *)R_Calloc(nrx * nrx * nlags, double);
     SEXP spec = PROTECT(alloc3DArray(CPLXSXP, nrx, nrx, nfreqs));
-    SEXP evecs = PROTECT(alloc3DArray(CPLXSXP, q, nrx, nfreqs));
-    SEXP evals = PROTECT(allocMatrix(CPLXSXP, q, nfreqs));
+    SEXP evecs = PROTECT(alloc3DArray(CPLXSXP, spec_q, nrx, nfreqs));
+    SEXP evals = PROTECT(allocMatrix(CPLXSXP, spec_q, nfreqs));
     SEXP filter_input = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
     SEXP filter_dcc = PROTECT(alloc3DArray(REALSXP, nrx, nrx, nlags));
     SEXP input = PROTECT(allocMatrix(REALSXP, q, ncx));
@@ -47,8 +55,15 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP
 
     /* eigen decomposition of spectrum */
     for (int i = 0; i < nfreqs; i++)
-        arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, q, COMPLEX(evals) + q * i,
-                     COMPLEX(evecs) + nrx * q * i, tol, 1, 0, 1, 1);
+        arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, spec_q, COMPLEX(evals) + spec_q * i,
+                     COMPLEX(evecs) + nrx * spec_q * i, tol, 1, 0, 1, 1);
+
+    // do selection of number of eigenvalues using hallin & liska (2007) method
+    if (select_q) {
+
+    } else {
+
+    }
 
     for (int i = 0; i < nfreqs; i++)
         complex_crossprod((double _Complex *) COMPLEX(evecs) + nrx * q * i,
