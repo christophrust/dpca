@@ -12,6 +12,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"R_filter_process", (DL_FUNC) &R_filter_process, 11},
   {"R_dpca", (DL_FUNC) &R_dpca, 6},
   {"R_complex_crossprod", (DL_FUNC) &R_complex_crossprod, 2},
+  {"R_recursive_filter", (DL_FUNC) &R_recursive_filter, 4},
   {NULL, NULL, 0}
 };
 

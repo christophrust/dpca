@@ -41,6 +41,8 @@ SEXP R_filter_process(SEXP r_f, SEXP r_x, SEXP r_lags,
                       SEXP r_ncx, SEXP r_nlags, SEXP r_inx,
                       SEXP r_transf, SEXP r_rev);
 
+SEXP R_recursive_filter(SEXP x, SEXP f, SEXP r_dim, SEXP r_nlags );
+
 SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
             SEXP r_tol, SEXP kernel);
 
