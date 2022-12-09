@@ -27,9 +27,10 @@ test_that("Test dpca, stepwise", {
 
 
   ## run dpca for both implementation (freqdom and our)
-  system.time(res_dpca <- .Call("R_dpca", x, 4L, freqs, bw, .Machine$double.eps, weights))
+  system.time(res_dpca <- .Call("R_dpca", x, 4L, freqs, bw, .Machine$double.eps, weights, 4L, 0L))
   system.time(res_dpca1 <- dpca::dpca(x, 4, freqs, bw,weights = "Bartlett"))
   system.time(res_freqdom <- freqdom::dpca(t(x), bw, freqs, 4L))
+  class(res_dpca1) <- NULL
   expect_equal(res_dpca, res_dpca1)
 
 

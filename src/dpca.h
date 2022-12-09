@@ -55,7 +55,7 @@ void lagged_covs(double *x, double *y, double *res, int *lags, int nlags,
                  int nrx, int ncx, int nry, int ncy, double * weights, int center);
 
 void zMatVecLa(double _Complex *x, double _Complex* y,
-               Rcomplex* mat, int dim);
+               Rcomplex* mat, int dim, int ldm);
 
 void zMatVec(double _Complex *x, double _Complex* y,
              Rcomplex* mat, int dim);
@@ -69,7 +69,7 @@ void fourier_transform(double *z, int nrz, int ncz,
                        int * lags, int nlags,
                        double _Complex *res);
 
-void arnoldi_eigs(Rcomplex *mat, int dim, int q,
+void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
                   Rcomplex *eval, Rcomplex *evecs,
                   double tol, int normalize_evecs, int verbose,
                   int row_evecs, int transpose_out);

@@ -5,7 +5,8 @@
 #include <complex.h>
 
 
-SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q) {
+SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
+            SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q) {
 
     int nrx = Rf_nrows(r_x);
     int ncx = Rf_ncols(r_x);
@@ -55,7 +56,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth, SEXP r_tol, SEXP
 
     /* eigen decomposition of spectrum */
     for (int i = 0; i < nfreqs; i++)
-        arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, spec_q, COMPLEX(evals) + spec_q * i,
+        arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, nrx, spec_q, COMPLEX(evals) + spec_q * i,
                      COMPLEX(evecs) + nrx * spec_q * i, tol, 1, 0, 1, 1);
 
     // do selection of number of eigenvalues using hallin & liska (2007) method

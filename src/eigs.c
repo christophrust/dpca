@@ -25,8 +25,7 @@ void get_rank(double *values, int *rank, int n) {
 }
 
 
-
-void arnoldi_eigs(Rcomplex *mat, int dim, int q,
+void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
                   Rcomplex *eval, Rcomplex *evecs, double tol,
                   int normalize_evecs, int verbose, int row_evecs,
                   int transpose_out) {
@@ -91,7 +90,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int q,
     znaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, rwork, &info);
 
-    zMatVecLa(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), mat, dim);
+    zMatVecLa(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), mat, dim, ldm);
     cnt++;
   }
 
@@ -185,7 +184,7 @@ SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
   }
   SEXP evals = PROTECT(allocVector(CPLXSXP, q));
 
-  arnoldi_eigs(mat, dim, q, COMPLEX(evals), COMPLEX(evecs), tol,
+  arnoldi_eigs(mat, dim, dim, q, COMPLEX(evals), COMPLEX(evecs), tol,
                normalize_evecs, verbose, row_evecs, transpose_out);
 
   SET_VECTOR_ELT(res, 0, evals);

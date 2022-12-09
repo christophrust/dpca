@@ -23,7 +23,7 @@ void zMatVec(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim) {
 
 }
 
-void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim) {
+void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim, int ldm) {
 
   Rcomplex alpha;
   alpha.r = 1.0; alpha.i = 0.0;
@@ -32,7 +32,7 @@ void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim) {
   int inc = 1;
 
   F77_CALL(zgemv)("N", &dim, &dim, &alpha, mat,
-                  &dim,
+                  &ldm,
                   (Rcomplex*) x, &inc, &beta,
                   (Rcomplex*) y, &inc);
 }
@@ -61,7 +61,7 @@ SEXP R_zMatVec(SEXP r_mat, SEXP r_vec, SEXP r_dim, SEXP version) {
     }
   } else {
     // printf("blube\n");
-    zMatVecLa((double _Complex *) COMPLEX(r_vec), (double _Complex *) COMPLEX(res), COMPLEX(r_mat), dim);
+    zMatVecLa((double _Complex *) COMPLEX(r_vec), (double _Complex *) COMPLEX(res), COMPLEX(r_mat), dim, dim);
   }
 
   UNPROTECT(1);

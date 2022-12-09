@@ -43,6 +43,8 @@ dpca <- function(x, q, freqs = -100:100/100 * pi, bandwidth,
                as.integer(bandwidth),
                .Machine$double.eps,
                wghts,
+               as.integer(q),
+               FALSE,
                PACKAGE = "dpca")
 
   class(res) <- "dpca"
