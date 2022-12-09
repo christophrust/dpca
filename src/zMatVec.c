@@ -43,6 +43,11 @@ void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim, i
 SEXP R_zMatVec(SEXP r_mat, SEXP r_vec, SEXP r_dim, SEXP version) {
   int dim = *INTEGER(r_dim);
   SEXP res = PROTECT(allocVector(CPLXSXP, dim));
+  int ldm = nrows(r_mat);
+
+  if (ldm < dim) {
+    error("ldm must be larger than dim!");
+  }
 
   if (*INTEGER(version) == 1) {
 
@@ -61,7 +66,7 @@ SEXP R_zMatVec(SEXP r_mat, SEXP r_vec, SEXP r_dim, SEXP version) {
     }
   } else {
     // printf("blube\n");
-    zMatVecLa((double _Complex *) COMPLEX(r_vec), (double _Complex *) COMPLEX(res), COMPLEX(r_mat), dim, dim);
+    zMatVecLa((double _Complex *) COMPLEX(r_vec), (double _Complex *) COMPLEX(res), COMPLEX(r_mat), dim, ldm);
   }
 
   UNPROTECT(1);
