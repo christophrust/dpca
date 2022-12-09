@@ -6,7 +6,8 @@
 
 
 SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
-            SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q) {
+            SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q,
+            SEXP r_n_path) {
 
     int nrx = Rf_nrows(r_x);
     int ncx = Rf_ncols(r_x);
@@ -27,6 +28,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     } else {
         spec_q = q;
     }
+    int *n_path = INTEGER(r_n_path);
 
     double *covs;
     covs = (double *)R_Calloc(nrx * nrx * nlags, double);
@@ -54,15 +56,15 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     // TODO: compute eigendecomposition only on 0 to pi and get
     // eigenvalues for -pi to 0 by conjugating them!!
 
-    /* eigen decomposition of spectrum */
-    for (int i = 0; i < nfreqs; i++)
-        arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, nrx, spec_q, COMPLEX(evals) + spec_q * i,
-                     COMPLEX(evecs) + nrx * spec_q * i, tol, 1, 0, 1, 1);
-
     // do selection of number of eigenvalues using hallin & liska (2007) method
     if (select_q) {
 
     } else {
+
+        /* eigen decomposition of spectrum with preselected q */
+        for (int i = 0; i < nfreqs; i++)
+            arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, nrx, spec_q, COMPLEX(evals) + spec_q * i,
+                         COMPLEX(evecs) + nrx * spec_q * i, tol, 1, 0, 1, 1);
 
     }
 

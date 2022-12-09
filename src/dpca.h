@@ -44,7 +44,8 @@ SEXP R_filter_process(SEXP r_f, SEXP r_x, SEXP r_lags,
 SEXP R_recursive_filter(SEXP x, SEXP f, SEXP r_dim, SEXP r_nlags );
 
 SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
-            SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q);
+            SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q,
+            SEXP r_n_path);
 
 SEXP R_complex_crossprod(SEXP r_x, SEXP r_trans_conj);
 

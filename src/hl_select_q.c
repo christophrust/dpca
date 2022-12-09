@@ -24,7 +24,7 @@ int hl_select_q(double _Complex * spec, double _Complex * evals, int dim, int nf
         if (select_q == 2) {
             ic_val[i] = log(ic_val[i]);
         }
-        ic_val[i] += i*1
+        ic_val[i] += i*1;
     }
 
     return 1;
