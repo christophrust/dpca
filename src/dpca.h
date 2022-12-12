@@ -49,6 +49,9 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
 
 SEXP R_complex_crossprod(SEXP r_x, SEXP r_trans_conj);
 
+SEXP R_hl_ic(SEXP r_spec, SEXP r_evals, SEXP r_max_q, SEXP r_nfreqs, SEXP r_dim,
+             SEXP r_ldm, SEXP r_select_q);
+
 void lagged_cov(double *x, double *y, double *res, int lag,
                 int nrx, int ncx, int nry, int center, double weight);
 
@@ -130,14 +133,15 @@ int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex
  * @brief Compute the unpenalized information criterium from Hallin & Liska (2007)
  *
  * @param spec A dim by dim by nfreqs array.
- * @param evals The first max_q eigenvalues of spec.
+ * @param evals The first max_q eigenvalues of spec (max_q nfreq array).
  * @param max_q Maximum number of factors to be considered.
  * @param nfreqs Number of frequencies along the spectrum
- * @param dim Dimension of spectrum.
+ * @param dim Dimension of spec.
+ * @param ldm Leading dimension of spec.
  * @param select_q Which information criterion (IC1 or IC2).
  * @param ic_vals (On output) the computed criteria (must be at least of length max_q).
  * */
 void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreqs,
-           int dim, int select_q, double * ic_vals);
+           int dim, int ldm, int select_q, double * ic_vals);
 
 #endif // DPCA_H_
