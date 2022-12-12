@@ -86,7 +86,7 @@ void fourier_transform(double *z, int nrz, int ncz,
  * @param normalize_evecs If set to a value different from zero, each of the resulting
  *   eigenvectors is normalized such that the complex part of the first entry is zero
  *   (the same is done in R's base::eigen()).
- * @param verbos If different from zero, we show some messages.
+ * @param verbose If different from zero, we show some messages.
  * @param row_evecs If different from zero, the eigenvalues are roweigenvectors instead
  *   of column-eigenvectors
  * @param transpose_out If different from zero, the eigenvectors leading
@@ -104,6 +104,12 @@ void filter_process(double *f, double *x, int *lags, int nrf,
 void complex_crossprod(double _Complex *x, int nrx, int ncx,
                        double _Complex *res, int trans_conj);
 
+/**
+ * @brief Selection of number of dynamic factors.
+ *
+ * @param spec The spectral density matrix (of dimension n by n by nfreqs).
+ * @param evals An max_q by nfreqs array which will hold in the first q by nfreqs
+ * */
 int hl_select_q(double _Complex * spec, double _Complex * evals,
             int dim, int nfreqs, int max_q, int select_q);
 
