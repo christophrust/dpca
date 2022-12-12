@@ -124,6 +124,20 @@ void complex_crossprod(double _Complex *x, int nrx, int ncx,
  * @return The number of chosen dynamic factors (hence, q).
  * */
 int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
-                int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln);
+                int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln, double tol);
+
+/**
+ * @brief Compute the unpenalized information criterium from Hallin & Liska (2007)
+ *
+ * @param spec A dim by dim by nfreqs array.
+ * @param evals The first max_q eigenvalues of spec.
+ * @param max_q Maximum number of factors to be considered.
+ * @param nfreqs Number of frequencies along the spectrum
+ * @param dim Dimension of spectrum.
+ * @param select_q Which information criterion (IC1 or IC2).
+ * @param ic_vals (On output) the computed criteria (must be at least of length max_q).
+ * */
+void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreqs,
+           int dim, int select_q, double * ic_vals);
 
 #endif // DPCA_H_
