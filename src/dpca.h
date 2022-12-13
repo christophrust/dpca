@@ -111,10 +111,35 @@ void complex_crossprod(double _Complex *x, int nrx, int ncx,
  * @brief Selection of number of dynamic factors.
  *
  * @param spec The spectral density matrix (of dimension n by n by nfreqs).
- * @param evals An max_q by nfreqs array which will hold in the first q by nfreqs
+ * @param evals An max_q by nfreqs array which will (on output) hold in
+ * the first q by nfreqs entries the resulting eigenvalues.
+ * @param evecs An n by max_q by nfreqs array which will (on output) hold
+ * in the first n by q by nfreqs entries the resulting eigenvectors.
+ * @param dim Dimension of the spectral density matrix.
+ * @param nfreqs Number of frequencies where the spectrum is evaluated.
+ * @param max_q The maximum number of dynamic factors.
+ * @param select_q At this stage one of 1 or 2. 1 indicates that the IC1
+ * criterion is used to select q, and 2 indicates IC2.
+ * @param n_path Array holding the different values for subspectra to compute
+ * the information criteria on to do fine tuning.
+ * @param ln The length of n_path.
+ *
+ * @return The number of chosen dynamic factors (hence, q).
  * */
-int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex * evecs,
-                int dim, int nfreqs, int max_q, int select_q, int * n_path,
-                int ln, double tol);
+int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
+                int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln, double tol);
 
+/**
+ * @brief Compute the unpenalized information criterium from Hallin & Liska (2007)
+ *
+ * @param spec A dim by dim by nfreqs array.
+ * @param evals The first max_q eigenvalues of spec.
+ * @param max_q Maximum number of factors to be considered.
+ * @param nfreqs Number of frequencies along the spectrum
+ * @param dim Dimension of spectrum.
+ * @param select_q Which information criterion (IC1 or IC2).
+ * @param ic_vals (On output) the computed criteria (must be at least of length max_q).
+ * */
+void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreqs,
+           int dim, int select_q, double * ic_vals);
 #endif // DPCA_H_
