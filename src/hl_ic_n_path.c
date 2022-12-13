@@ -43,7 +43,7 @@ SEXP R_hl_ic_n_path(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
     evals = (double _Complex *) R_Calloc(nfreqs * max_q, double _Complex);
     evecs = (double _Complex *) R_Calloc(nfreqs * max_q * dim, double _Complex);
 
-    hl_select_q((double _Complex *) COMPLEX(r_spec), evals, evecs, dim, nfreqs, max_q, select_q,
+    hl_ic_n_path((double _Complex *) COMPLEX(r_spec), evals, evecs, dim, nfreqs, max_q, select_q,
                 INTEGER(r_n_path), ln, *REAL(r_tol), REAL(res));
     // INTEGER(res)[0] = 1;
     UNPROTECT(1);
