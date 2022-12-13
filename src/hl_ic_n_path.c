@@ -3,7 +3,7 @@
 #include "Rinternals.h"
 #include "dpca.h"
 
-int hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
+void hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
                 int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln,
                 double tol, double * ic_vals) {
 
@@ -26,7 +26,6 @@ int hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Comple
     /*     printf("IC[%i]: %f\n", i, ic_vals[i]); */
     /* } */
 
-    return 1;
 }
 
 

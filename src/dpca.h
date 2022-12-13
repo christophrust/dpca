@@ -129,7 +129,7 @@ void complex_crossprod(double _Complex *x, int nrx, int ncx,
  *
  * @return The number of chosen dynamic factors (hence, q).
  * */
-int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
+void hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
                 int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln, double tol,
                 double * ic_vals);
 
