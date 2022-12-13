@@ -4,7 +4,8 @@
 #include "dpca.h"
 
 int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
-                int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln, double tol, double * ic_vals) {
+                int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln,
+                double tol, double * ic_vals) {
 
     // double ic_vals[max_q * ln];
 

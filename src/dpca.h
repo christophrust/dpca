@@ -141,9 +141,11 @@ int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex
  * @param max_q Maximum number of factors to be considered.
  * @param nfreqs Number of frequencies along the spectrum
  * @param dim Dimension of spectrum.
+ * @param ldm Leading dimension of spec.
  * @param select_q Which information criterion (IC1 or IC2).
  * @param ic_vals (On output) the computed criteria (must be at least of length max_q).
  * */
 void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreqs,
            int dim, int ldm, int select_q, double * ic_vals);
+
 #endif // DPCA_H_
