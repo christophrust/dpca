@@ -23,7 +23,6 @@ void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreq
              ic_vals[i] = log(ic_vals[i]);
          }
      }
-
 }
 
 
