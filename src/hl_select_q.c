@@ -14,9 +14,11 @@ int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex
     /*Compute spectral decomposition for any n in n_path */
     for (int i = 0; i < ln; i++)  {
         curr_dim = n_path[i];
-        arnoldi_eigs((Rcomplex *) spec, curr_dim, dim, max_q,
-                     (Rcomplex *) evals, (Rcomplex *) evecs, tol,
-                     1, 0, 1, 1);
+        for (int j = 0; j < nfreqs; j++) {
+            arnoldi_eigs((Rcomplex *) spec + dim * dim * j, curr_dim, dim, max_q,
+                         (Rcomplex *) evals + j * max_q, (Rcomplex *) evecs + dim * max_q * j, tol,
+                         1, 0, 1, 1);
+        }
         hl_ic(spec, evals, max_q, nfreqs, curr_dim, dim, select_q, ic_vals + i * max_q);
     }
 
