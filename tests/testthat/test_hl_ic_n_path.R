@@ -3,7 +3,7 @@ library(dpca)
 
 context("Hallin & Liska (2007) selection criterium")
 
-test_that("C function hl_select_q", {
+test_that("C function hl_ic_n_path", {
 
   dim <- 150L
   max_q <- 12L
@@ -17,7 +17,7 @@ test_that("C function hl_select_q", {
 
   n_path <- as.integer(seq(90, 150, 10))
 
-  system.time(r1 <- .Call("R_hl_select_q",spec_a, n_path, max_q, dim, nfreqs, 1L, .Machine$double.eps))
+  system.time(r1 <- .Call("R_hl_ic_n_path",spec_a, n_path, max_q, dim, nfreqs, 1L, .Machine$double.eps))
 
   system.time(r2 <- vapply(n_path, function(n) {
     ic_freqs <- vapply(seq_len(nfreqs), function(i) {

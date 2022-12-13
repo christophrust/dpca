@@ -3,7 +3,7 @@
 #include "Rinternals.h"
 #include "dpca.h"
 
-int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
+int hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
                 int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln,
                 double tol, double * ic_vals) {
 
@@ -30,7 +30,7 @@ int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex
 }
 
 
-SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
+SEXP R_hl_ic_n_path(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
                    SEXP r_nfreqs, SEXP r_select_q, SEXP r_tol) {
 
     int nfreqs = *INTEGER(r_nfreqs);

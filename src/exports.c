@@ -14,7 +14,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"R_complex_crossprod", (DL_FUNC) &R_complex_crossprod, 2},
   {"R_recursive_filter", (DL_FUNC) &R_recursive_filter, 4},
   {"R_hl_ic", (DL_FUNC) &R_hl_ic, 7},
-  {"R_hl_select_q", (DL_FUNC) &R_hl_select_q, 7},
+  {"R_hl_ic_n_path", (DL_FUNC) &R_hl_ic_n_path, 7},
   {NULL, NULL, 0}
 };
 
