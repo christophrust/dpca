@@ -16,7 +16,11 @@ test_that("C function hl_select_q", {
 
   r1 <- .Call("R_hl_select_q",spec_a, n_path, max_q, dim, nfreqs, 1L, .Machine$double.eps)
   r2 <- vapply(n_path, function(n) {
-    e_dec <- eigen(spec[seq_len(n), seq_len(n)])
+
+    e_dec <- .Call("R_arnoldi_eigs", mat = spec[seq_len(n), seq_len(n)], dim = as.integer(n),
+                   max_q,
+                   .Machine$double.eps, 1L, 0L, 0L, 0L)
+
     (sum(Re(diag(spec)[seq_len(n)])) - cumsum(Re(e_dec$values[seq_len(max_q)])))/(n)
   }, numeric(max_q))
 
