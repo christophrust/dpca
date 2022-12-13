@@ -113,7 +113,8 @@ void complex_crossprod(double _Complex *x, int nrx, int ncx,
  * @param spec The spectral density matrix (of dimension n by n by nfreqs).
  * @param evals An max_q by nfreqs array which will hold in the first q by nfreqs
  * */
-int hl_select_q(double _Complex * spec, double _Complex * evals,
-            int dim, int nfreqs, int max_q, int select_q);
+int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex * evecs,
+                int dim, int nfreqs, int max_q, int select_q, int * n_path,
+                int ln, double tol);
 
 #endif // DPCA_H_
