@@ -52,6 +52,9 @@ SEXP R_complex_crossprod(SEXP r_x, SEXP r_trans_conj);
 SEXP R_hl_ic(SEXP r_spec, SEXP r_evals, SEXP r_max_q, SEXP r_nfreqs, SEXP r_dim,
              SEXP r_ldm, SEXP r_select_q);
 
+SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
+                   SEXP r_nfreqs, SEXP r_select_q, SEXP r_tol);
+
 void lagged_cov(double *x, double *y, double *res, int lag,
                 int nrx, int ncx, int nry, int center, double weight);
 
