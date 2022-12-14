@@ -1,7 +1,7 @@
 library(dpca)
 
 
-contect("Hallin & Liska (2007) selection criterium")
+context("Hallin & Liska (2007) selection criterium")
 
 test_that("Get q path (c function)", {
 

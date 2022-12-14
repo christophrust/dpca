@@ -13,8 +13,13 @@ int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex
                  dim, nfreqs, max_q, select_q,  n_path, ln, tol,
                  unpenalized_ic_vals);
 
-    /* 2. obtain for any c in the penalty_scales the chosen q */
-
+    /* 2. obtain for any c in the penalty_scales the q-path and compute its sample variability */
+    int q_path[ln * max_q];
+    double penalty_scale;
+    for (int i = 0; i < lps; i++) {
+        penalty_scale = penalty_scales[i];
+        hl_q_path(unpenalized_ic_vals, ln, max_q, penalty_scale, penalties, q_path);
+    }
 
     return 1;
 }
