@@ -133,7 +133,6 @@ void complex_crossprod(double _Complex *x, int nrx, int ncx,
  * @param tol Tolerance used in the ARPACK routine
  * @param ic_vals An array of at least length ln * max_q
  *
- * @return The number of chosen dynamic factors (hence, q).
  * */
 void hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
                 int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln, double tol,
@@ -153,5 +152,23 @@ void hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Compl
  * */
 void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreqs,
            int dim, int ldm, int select_q, double * ic_vals);
+
+/**
+ * @brief Compute q-path for unpenalized values of information criterium and
+ * penalty information.
+ *
+ * @param unpenalized_ic_vals A max_q by ln array with the unpenalized information
+ * criterium.
+ * @param ln Number of columns of unpenalized_ic_vals (= size of n path).
+ * @param max_q Number of rows of unpenalized_ic_vals (= maximum order of the factor space).
+ * @param penalty_scale The scale of the penalty.
+ * @param penalties An array of length ln holding the penalties for each n in n_path.
+ * @param q_path Array of at least lenght ln holding the chosen q for each n in n_path.
+ *
+ * */
+void hl_q_path(double *unpenalized_ic_vals, int ln, int max_q,
+                      double penalty_scale,
+                      double *penalties,
+                      int * q_path);
 
 #endif // DPCA_H_
