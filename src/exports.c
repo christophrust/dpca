@@ -15,6 +15,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"R_recursive_filter", (DL_FUNC) &R_recursive_filter, 4},
   {"R_hl_ic", (DL_FUNC) &R_hl_ic, 7},
   {"R_hl_ic_n_path", (DL_FUNC) &R_hl_ic_n_path, 7},
+  {"R_hl_q_path", (DL_FUNC) &R_hl_q_path, 4},
   {NULL, NULL, 0}
 };
 
