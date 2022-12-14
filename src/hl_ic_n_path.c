@@ -3,6 +3,8 @@
 #include "Rinternals.h"
 #include "dpca.h"
 
+
+// TODO: start with q = 0!!
 void hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
                 int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln,
                 double tol, double * ic_vals) {

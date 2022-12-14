@@ -1,7 +1,7 @@
 #include "Rinternals.h"
 #include "dpca.h"
 
-
+// TODO: start with q = 0!!
 void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreqs,
            int dim, int ldm, int select_q, double * ic_vals) {
 

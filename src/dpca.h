@@ -126,6 +126,8 @@ void complex_crossprod(double _Complex *x, int nrx, int ncx,
  * @param n_path Array holding the different values for subspectra to compute
  * the information criteria on to do fine tuning.
  * @param ln The length of n_path.
+ * @param tol Tolerance used in the ARPACK routine
+ * @param ic_vals An array of at least length ln * max_q
  *
  * @return The number of chosen dynamic factors (hence, q).
  * */
