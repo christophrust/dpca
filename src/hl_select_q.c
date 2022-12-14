@@ -14,13 +14,20 @@ int hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex
                  unpenalized_ic_vals);
 
     /* 2. obtain for any c in the penalty_scales the q-path and compute its sample variability */
-    int q_path[ln * max_q];
+    int q_paths[ln * lps];
     double penalty_scale;
+    double sample_var[lps];
+
     for (int i = 0; i < lps; i++) {
         penalty_scale = penalty_scales[i];
-        hl_q_path(unpenalized_ic_vals, ln, max_q, penalty_scale, penalties, q_path);
+        hl_q_path(unpenalized_ic_vals, ln, max_q, penalty_scale, penalties, q_paths + i * ln);
+
     }
 
+    /* 3.
+     * find first minimum of sample variability  and choose q by majority vote over
+     * the corresponding q_path
+     */
     return 1;
 }
 
