@@ -1,4 +1,5 @@
 #include "R_ext/RS.h"
+#include "Rinternals.h"
 #include "dpca.h"
 
 // TODO: start with q = 0!!
@@ -23,4 +24,19 @@ void hl_q_path(double *unpenalized_ic_vals, int ln, int max_q,
         }
         q_path[i] = q;
     }
+}
+
+
+
+SEXP R_hl_q_path(SEXP r_unpenalized_ic_vals, SEXP r_max_q,
+                 SEXP r_penalty_scale,
+                 SEXP r_penalties) {
+    int ln = ncols(r_unpenalized_ic_vals);
+    SEXP res = PROTECT(allocVector(INTSXP, ln));
+
+    hl_q_path(REAL(r_unpenalized_ic_vals), ln, *INTEGER(r_max_q),
+              *REAL(r_penalty_scale), REAL(r_penalties), INTEGER(res));
+
+    UNPROTECT(1);
+    return res;
 }
