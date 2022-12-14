@@ -12,7 +12,7 @@ void hl_q_path(double *unpenalized_ic_vals, int ln, int max_q,
     double ic, ic_temp;
 
     for (int i = 0; i < ln; i++) {
-        q = 0;
+        q = 1;
         ic = unpenalized_ic_vals[i * max_q] + penalties[i] * penalty_scale;
         for (int j = 1; j < max_q; j++) {
             ic_temp = unpenalized_ic_vals[i * max_q + j] +
