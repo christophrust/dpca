@@ -16,6 +16,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"R_hl_ic", (DL_FUNC) &R_hl_ic, 7},
   {"R_hl_ic_n_path", (DL_FUNC) &R_hl_ic_n_path, 7},
   {"R_hl_q_path", (DL_FUNC) &R_hl_q_path, 4},
+  {"R_find_stability_intervals", (DL_FUNC) &R_find_stability_intervals, 1},
   {NULL, NULL, 0}
 };
 

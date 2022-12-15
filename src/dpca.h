@@ -59,6 +59,8 @@ SEXP R_hl_q_path(SEXP r_unpenalized_ic_vals, SEXP r_max_q,
                  SEXP r_penalty_scale,
                  SEXP r_penalties);
 
+SEXP R_find_stability_intervals(SEXP r_sample_var);
+
 void lagged_cov(double *x, double *y, double *res, int lag,
                 int nrx, int ncx, int nry, int center, double weight);
 
@@ -170,5 +172,7 @@ void hl_q_path(double *unpenalized_ic_vals, int ln, int max_q,
                       double penalty_scale,
                       double *penalties,
                       int * q_path);
+
+int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx);
 
 #endif // DPCA_H_
