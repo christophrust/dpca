@@ -18,7 +18,7 @@ void hl_select_q(double _Complex * spec, double _Complex * evals, double _Comple
     /* 2. obtain for any c in the penalty_scales the q_path and compute its sample variability */
     int q_paths[ln * lps];
     double penalty_scale;
-    // double sample_var[lps];
+
     double x2, x1;
     for (int i = 0; i < lps; i++) {
         penalty_scale = penalty_scales[i];
@@ -36,10 +36,10 @@ void hl_select_q(double _Complex * spec, double _Complex * evals, double _Comple
      * find second 'stability interval' of sample variability and choose q either using q^T_c,n  or
      * by majority vote over the corresponding q_path
      */
+    int stability_interval[4];
+    hl_find_stability_intervals(sample_var, lps, stability_interval);
 
 }
-
-
 
 SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
                    SEXP r_nfreqs, SEXP r_select_q, SEXP r_tol) {
@@ -49,3 +49,6 @@ SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
     INTEGER(res)[0] = 0;
     return res;
 }
+
+
+

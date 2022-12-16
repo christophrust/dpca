@@ -1,5 +1,6 @@
 #include "dpca.h"
-
+#include <float.h>
+#include <math.h>
 
 /**
  * @brief find the stability interval of the sample variance of S_c
@@ -43,7 +44,7 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
         in_itvl = 1;
         for (int i = 1; i < lsv; i++) {
 
-            if ((fabs(sample_var[i] - sample_var[i-1]) < 10* DBL_EPSILON)) {
+            if ((fabs(sample_var[i] - sample_var[i-1]) < 10 * DBL_EPSILON)) {
                 in_itvl = 1;
                 ivl_idx[itvl_cnt * 2 + 1] = i;
 
