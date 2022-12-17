@@ -38,6 +38,13 @@ test_that("Find stability interval",{
   expect_equal(r1, intvl_idx -1)
 
 
+  sample_vars <- (1:100)^0.2
+  sample_vars[c(0:4, 25:40)] <- 1
+  sample_vars[10:14] <- 14^0.2
+  expect_warning(r1 <- .Call("R_find_stability_intervals", sample_vars))
+  expect_equal(r1, c(0,3,24,39))
+
+
   sample_vars <- cumsum(c(0,rnorm(99)))
   expect_warning(r1 <- .Call("R_find_stability_intervals", sample_vars))
   expect_equal(r1[1], which.min(sample_vars) - 1)
