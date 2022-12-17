@@ -36,7 +36,7 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
         }
     }
 
-    /* in case we have not succeed so far, we look stability
+    /* in case we have not succeeded so far, we look stability
      * intervals where S_c is different from zero but still locally minimal (TODO) */
 
     if (info) {
@@ -49,7 +49,12 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
                 ivl_idx[itvl_cnt * 2 + 1] = i;
 
             } else {
-                if (in_itvl) itvl_cnt++;
+                if (in_itvl &&
+                    ((itvl_cnt == 0 && sample_var[i] > sample_var[i-1]) ||
+                     (itvl_cnt == 1 && (sample_var[i] > sample_var[i-1]) &&
+                      sample_var[ivl_idx[itvl_cnt * 2]] < sample_var[ivl_idx[itvl_cnt * 2 ] - 1]))) {
+                    itvl_cnt++;
+                }
                 in_itvl = 0;
                 ivl_idx[itvl_cnt * 2] = i;
             }
