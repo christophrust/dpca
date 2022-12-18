@@ -4,9 +4,9 @@
 
 
 void hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
-                int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln,
-                double tol, double * unpenalized_ic_vals, double * penalties,
-                double * penalty_scales, int lps, double * sample_var) {
+                 int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln,
+                 double tol, double * unpenalized_ic_vals, double * penalties,
+                 double * penalty_scales, int lps, double * sample_var, int *info, int *q) {
 
 
     /* 1. obtain unpenalized ic vals for all q and n in n_path */
@@ -37,8 +37,9 @@ void hl_select_q(double _Complex * spec, double _Complex * evals, double _Comple
      * by majority vote over the corresponding q_path
      */
     int stability_interval[4];
-    hl_find_stability_intervals(sample_var, lps, stability_interval);
+    *info = hl_find_stability_intervals(sample_var, lps, stability_interval);
 
+    *q = q_paths[stability_interval[2] * ln - 1];
 }
 
 SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
