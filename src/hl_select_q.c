@@ -61,7 +61,7 @@ void hl_select_q(double _Complex * spec, double _Complex * evals, double _Comple
             x1 += q_paths[i * ln + j];
         }
 
-        sample_var[i] = x2 / ln - (x1 * x1)/(ln * ln);
+        sample_var[i] = x2 / (ln - 1) - (x1 * x1)/(ln * (ln - 1));
 
         // printf("sample_var[%i]: %f; x2: %f, x1: %f\n", i, sample_var[i], x2, x1);
     }
