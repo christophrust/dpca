@@ -107,7 +107,9 @@ SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
                 REAL(unpenalized_ic_vals),
                 REAL(r_penalties),
                 REAL(r_penalty_scales), length(r_penalty_scales),
-                REAL(sample_var), INTEGER(info), INTEGER(q));
+                REAL(sample_var),
+                INTEGER(info),
+                INTEGER(q));
 
 
     /* for (int i=0; i < dim * max_q * nfreqs; i++) { */

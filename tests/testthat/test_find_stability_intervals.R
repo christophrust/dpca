@@ -6,7 +6,7 @@ context("Hallin & Liska (2007) selection criterium")
 
 test_that("Find stability interval",{
 
-
+  set.seed(as.integer(Sys.Date()))
   intvl_idx <- c(1,sort(sample(2:100, 3)))
   sample_vars <- rep(0, 100)
   repl_idx <- c((intvl_idx[2]+1):(intvl_idx[3]-1) , (intvl_idx[4]+1):100)

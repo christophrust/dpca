@@ -18,12 +18,13 @@ test_that("C function hl_select_q", {
   n_path <- as.integer(seq(90, 150, 10))
   penalty_scales <- seq(0,2, by = 0.01)
   penalties <- runif(length(n_path), min = 10, max = 12)
+
   system.time(r1 <- .Call("R_hl_select_q",
                           spec_a, n_path, max_q, dim, nfreqs, 1L, .Machine$double.eps,
                           penalties, penalty_scales))
   str(r1)
 
-  system.time(r2 <- vapply(n_path, function(n) {
+  system.time(unpenalized_crit <- vapply(n_path, function(n) {
     ic_freqs <- vapply(seq_len(nfreqs), function(i) {
       e_dec <- .Call("R_arnoldi_eigs", mat = spec_a[seq_len(n), seq_len(n), i],
                      dim = as.integer(n),
@@ -34,5 +35,11 @@ test_that("C function hl_select_q", {
     rowMeans(ic_freqs)
   }, numeric(max_q)))
 
-  expect_equal(r1, r2)
+  expect_equal(r1$unpenalized_ic_vals, unpenalized_crit)
+
+  sample_var <- vapply(penalty_scales, function(ps) {
+    var(.Call("R_hl_q_path", unpenalized_crit, max_q, ps, penalties))
+  }, numeric(1))
+  expect_equal(r1$sample_var_criterion, sample_var)
+
 })
