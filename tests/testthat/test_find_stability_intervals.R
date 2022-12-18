@@ -16,7 +16,7 @@ test_that("Find stability interval",{
   ## sample_vars <- dplyr::if_else(sample_vars<0, 0, sample_vars)
   ## zero_idx <- which(sample_vars == 0)
   ## zero_idx[-length(zero_idx)] == zero_idx[-1] -1
-  plot(sample_vars, type = "l")
+  ## plot(sample_vars, type = "l")
 
   r1 <- .Call("R_find_stability_intervals", sample_vars)
   expect_equal(r1, intvl_idx -1)
@@ -32,8 +32,7 @@ test_that("Find stability interval",{
   ## sample_vars <- dplyr::if_else(sample_vars<0, 0, sample_vars)
   ## zero_idx <- which(sample_vars == 0)
   ## zero_idx[-length(zero_idx)] == zero_idx[-1] -1
-  plot(sample_vars, type = "l")
-
+  ##plot(sample_vars, type = "l")
   expect_warning(r1 <- .Call("R_find_stability_intervals", sample_vars))
   expect_equal(r1, intvl_idx -1)
 
@@ -43,6 +42,13 @@ test_that("Find stability interval",{
   sample_vars[10:14] <- 14^0.2
   expect_warning(r1 <- .Call("R_find_stability_intervals", sample_vars))
   expect_equal(r1, c(0,3,24,39))
+
+
+
+  sample_vars <- rep(0, 100)
+  sample_vars[16:25] <- abs(rnorm(10))
+  r1 <- .Call("R_find_stability_intervals", sample_vars)
+  expect_equal(r1, c(0,14,25,99))
 
 
   sample_vars <- cumsum(c(0,rnorm(99)))
