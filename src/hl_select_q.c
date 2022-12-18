@@ -82,6 +82,61 @@ SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
     SEXP res = PROTECT(allocVector(INTSXP, 1));
 
     INTEGER(res)[0] = 0;
+SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
+                   SEXP r_nfreqs, SEXP r_select_q, SEXP r_tol, SEXP r_penalties,
+                   SEXP r_penalty_scales) {
+
+
+    int max_q = *INTEGER(r_max_q);
+    int dim = *INTEGER(r_dim);
+    int nfreqs = *INTEGER(r_nfreqs);
+    int ln = length(r_n_path);
+    int lps = length(r_penalty_scales);
+
+    SEXP evals = PROTECT(allocMatrix(CPLXSXP, max_q, nfreqs));
+    SEXP evecs = PROTECT(alloc3DArray(CPLXSXP, dim, max_q, nfreqs));
+    SEXP unpenalized_ic_vals = PROTECT(allocMatrix(REALSXP, ln, max_q));
+    SEXP sample_var = PROTECT(allocVector(REALSXP, lps));
+    SEXP info = PROTECT(allocVector(INTSXP, 1));
+    SEXP q = PROTECT(allocVector(INTSXP, 1));
+
+
+    hl_select_q((_Complex double *) COMPLEX(r_spec),
+                (_Complex double *) COMPLEX(evals),
+                (_Complex double *) COMPLEX(evecs),
+                dim,
+                *INTEGER(r_nfreqs), max_q, *INTEGER(r_select_q),
+                INTEGER(r_n_path), length(r_n_path),
+                *REAL(r_tol),
+                REAL(unpenalized_ic_vals),
+                REAL(r_penalties),
+                REAL(r_penalty_scales), length(r_penalty_scales),
+                REAL(sample_var), INTEGER(info), INTEGER(q));
+
+
+    /* for (int i=0; i < dim * max_q * nfreqs; i++) { */
+    /*     printf("%f+%fi, ", COMPLEX(evecs)[i].r, COMPLEX(evecs)[i].i); */
+    /* } */
+
+
+    SEXP res = PROTECT(allocVector(VECSXP, 6));
+    SET_VECTOR_ELT(res, 0, evals);
+    SET_VECTOR_ELT(res, 1, evecs);
+    SET_VECTOR_ELT(res, 2, unpenalized_ic_vals);
+    SET_VECTOR_ELT(res, 3, sample_var);
+    SET_VECTOR_ELT(res, 4, info);
+    SET_VECTOR_ELT(res, 5, q);
+
+    SEXP nms = PROTECT(allocVector(STRSXP, 6));
+    SET_STRING_ELT(nms, 0, mkChar("evals"));
+    SET_STRING_ELT(nms, 1, mkChar("evecs"));
+    SET_STRING_ELT(nms, 2, mkChar("unpenalized_ic_vals"));
+    SET_STRING_ELT(nms, 3, mkChar("sample_var_criterion"));
+    SET_STRING_ELT(nms, 4, mkChar("info"));
+    SET_STRING_ELT(nms, 5, mkChar("q"));
+    setAttrib(res, R_NamesSymbol, nms);
+
+    UNPROTECT(8);
     return res;
 }
 
