@@ -58,7 +58,7 @@ SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
     int lps = length(r_penalty_scales);
 
     SEXP evals = PROTECT(allocMatrix(CPLXSXP, max_q, nfreqs));
-    SEXP evecs = PROTECT(alloc3DArray(CPLXSXP, dim, max_q, nfreqs));
+    SEXP evecs = PROTECT(alloc3DArray(CPLXSXP, max_q, dim, nfreqs));
     SEXP unpenalized_ic_vals = PROTECT(allocMatrix(REALSXP, max_q, ln));
     SEXP sample_var = PROTECT(allocVector(REALSXP, lps));
     SEXP info = PROTECT(allocVector(INTSXP, 1));
