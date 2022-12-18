@@ -61,6 +61,10 @@ SEXP R_hl_q_path(SEXP r_unpenalized_ic_vals, SEXP r_max_q,
 
 SEXP R_find_stability_intervals(SEXP r_sample_var);
 
+SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
+                   SEXP r_nfreqs, SEXP r_select_q, SEXP r_tol, SEXP r_penalties,
+                   SEXP r_penalty_scales);
+
 void lagged_cov(double *x, double *y, double *res, int lag,
                 int nrx, int ncx, int nry, int center, double weight);
 
