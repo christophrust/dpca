@@ -22,7 +22,9 @@ test_that("C function hl_select_q", {
   system.time(r1 <- .Call("R_hl_select_q",
                           spec_a, n_path, max_q, dim, nfreqs, 1L, .Machine$double.eps,
                           penalties, penalty_scales))
-  str(r1)
+
+  expect_lt(sum(abs(r1$evecs[,,1] %*% t(Conj(r1$evecs[,,1])) - diag(12))), 1e-10)
+  expect_lt(sum(abs(spec_a[,,1] %*% Conj(r1$evecs[1,,1])  - r1$evals[1,1] * Conj(r1$evecs[1,,1]))), 1e-10)
 
   system.time(unpenalized_crit <- vapply(n_path, function(n) {
     ic_freqs <- vapply(seq_len(nfreqs), function(i) {
