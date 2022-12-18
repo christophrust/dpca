@@ -76,12 +76,8 @@ void hl_select_q(double _Complex * spec, double _Complex * evals, double _Comple
     *q = q_paths[stability_interval[2] * ln - 1];
 }
 
-SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
-                   SEXP r_nfreqs, SEXP r_select_q, SEXP r_tol) {
 
-    SEXP res = PROTECT(allocVector(INTSXP, 1));
 
-    INTEGER(res)[0] = 0;
 SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
                    SEXP r_nfreqs, SEXP r_select_q, SEXP r_tol, SEXP r_penalties,
                    SEXP r_penalty_scales) {

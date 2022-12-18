@@ -33,7 +33,10 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
         if (itvl_cnt > 1) {
             info=0;
             break;
+        } else if ((i + 1) == lsv && itvl_cnt == 1 && sample_var[i] < 10 * DBL_EPSILON) {
+            info = 0;
         }
+
     }
 
     /* in case we have not succeeded so far, we look stability
@@ -100,6 +103,7 @@ SEXP R_find_stability_intervals(SEXP r_sample_var) {
         warning("No stability inverval where S_c is zero was found. Returning indices of second stability interval where S_c is different from zero.");
     if (info == 2)
         warning("No stability inverval found. Using index of global minimum.");
+
     UNPROTECT(1);
     return res;
 }
