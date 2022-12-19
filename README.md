@@ -1,5 +1,9 @@
 # Dynamic Principal Component Analysis and Generalized Dynamic Factor Model Estimation
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/christophrust/dpca/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/christophrust/dpca/actions/workflows/check-standard.yaml)
+<!-- badges: end -->
+
 This package provides a fast and reliable implementation of dynamic principal component analysis ala Brillinger. The main use case is estimation of (real) dynamic factor models (ala Forni, Lippi, Reichlin, Hallin,...).
 
 We are aware of the R package `freqdom`, developed by Siegried Hörmann and Lukas Kidzinsiki, which is a pure R implementation and therefore quite slow and not really useful for the use in simulations. We draw on many implementation designs used by them. This package to some extent is a `C` port of `freqdom` but deviates at some points. For instance, the convoluted filter which computes the dynamic common component from the output in freqdom is obtained by filtering the output twice: first to get the inputs \(what in `freqdom` is called "scores" in analogy to their FDA context\) and, second these inputs are filtered again to get the dynamic common component \("KLexpansion"\). `dpca` computes the convolution in the frequency domain. The advantage of this approach is that this filter is invariant with respect to multiplications of dynamic eigenvectors by a unit-length complex number.
