@@ -27,6 +27,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     } else {
         spec_q = q;
     }
+
     int *n_path = INTEGER(r_n_path);
 
     double *covs;
@@ -39,8 +40,8 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     SEXP dic = PROTECT(allocMatrix(REALSXP, nrx, ncx));
     SEXP evecs, evals;
     double tmp_accum;
-    double _Complex * evec_cp;
-    evec_cp = (double _Complex *) R_Calloc(nrx * nrx * nfreqs, double _Complex);
+    double _Complex * evec_crossprod;
+    evec_crossprod = (double _Complex *) R_Calloc(nrx * nrx * nfreqs, double _Complex);
 
     /* compute autocovariances */
     lagged_covs(REAL(r_x), REAL(r_x), covs, lags, nlags, nrx, ncx, nrx, ncx, REAL(kernel), 1);
@@ -53,6 +54,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
 
     // TODO: compute eigendecomposition only on 0 to pi and get
     // eigenvalues for -pi to 0 by conjugating them!!
+
 
     // do selection of number of eigenvalues using hallin & liska (2007) method
     if (select_q) {
@@ -173,7 +175,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     setAttrib(res, R_NamesSymbol, nms);
 
     R_Free(covs);
-    R_Free(evec_cp);
+    R_Free(evec_crossprod);
     if (select_q) {
         UNPROTECT(18);
     } else{
