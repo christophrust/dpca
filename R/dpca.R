@@ -13,6 +13,13 @@
 #'   Hallin & Liska (2007, JASA) method. Either "IC1" or "IC2".
 #' @param n_path Integer vector specifying Which (nested) subsets of the
 #' cross section are used in the Hallin & Liska procedure.
+#' @param penalties Evaluated values of the penalty function at
+#' each value of the n_path. In case this is missing, the penalies suggested
+#' in Hallin & Liska (2007) are used:
+#' (bandwidth^(-2) + sqrt(bandwidth/bandwidth) + 1/nrow(x) * log(min(n, bandwidth^2, sqrt(T/bandwidth)))).
+#' @param penalty_scales Tuning values for the penalty scaling parameter
+#' c over which the q-path is optimized to stability.
+#'
 #'
 #' @return An object of class "dpca" with different entries.
 #'
@@ -25,7 +32,8 @@ dpca <- function(x,
                  weights = c("Bartlett", "trunc", "Tukey", "Parzen", "Bohman", "Daniell", "ParzenCogburnDavis"),
                  qsel = FALSE,
                  qsel_crit = c("IC1", "IC2"),
-                 n_path = floor(seq(nrow(x)/2, nrow(x), nrow(x)/20))) {
+                 n_path = floor(seq(nrow(x)/2, nrow(x), nrow(x)/20)),
+                 penalties, penalty_scales = seq(0,2, by = 0.01)) {
 
   ##browser()
   if (length(weights) > 1)
@@ -51,6 +59,13 @@ dpca <- function(x,
 
   wghts <- get(paste0("weights.", weights))(-bandwidth:bandwidth/bandwidth)
 
+  if (qsel && missing(penalties)) {
+    penalties <- vapply(n_path, function(n){
+      (bandwidth^(-2) + sqrt(bandwidth/bandwidth) + 1/n * log(min(n, bandwidth^2, sqrt(T/bandwidth))))
+    }, numeric(1))
+  } else {
+    penalties <- rep(0, length(n_path))
+  }
 
   ##browser()
   res <- .Call("R_dpca", x,
@@ -62,6 +77,8 @@ dpca <- function(x,
                as.integer(q),
                FALSE,
                as.integer(n_path),
+               penalties,
+               penalty_scales,
                PACKAGE = "dpca")
 
   class(res) <- "dpca"

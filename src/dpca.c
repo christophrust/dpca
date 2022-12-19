@@ -4,7 +4,6 @@
 #include "Rinternals.h"
 #include <complex.h>
 
-
 SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
             SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q,
             SEXP r_n_path, SEXP r_penalties, SEXP r_penalty_scales) {
@@ -63,7 +62,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
         SEXP unpenalized_ic_vals = PROTECT(allocMatrix(REALSXP, spec_q, length(r_n_path)));
         SEXP sample_var = PROTECT(allocVector(REALSXP, lps));
         SEXP info = PROTECT(allocVector(INTSXP, 1));
-        SEXP q = PROTECT(allocVector(INTSXP, 1));
+        // SEXP q = PROTECT(allocVector(INTSXP, 1));
 
         hl_select_q((_Complex double *) COMPLEX(spec),
                     (_Complex double *) COMPLEX(evals),
@@ -78,7 +77,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
                     REAL(r_penalty_scales), length(r_penalty_scales),
                     REAL(sample_var),
                     INTEGER(info),
-                    INTEGER(q));
+                    &q);
 
     } else {
 
@@ -140,10 +139,10 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     SET_VECTOR_ELT(res, 3, input);
     SET_VECTOR_ELT(res, 4, dcc);
     SET_VECTOR_ELT(res, 5, dic);
-    SET_VECTOR_ELT(res, 6, dic);
+    // SET_VECTOR_ELT(res, 6, dic);
 
 
-    SEXP nms = PROTECT(allocVector(STRSXP, 6));
+    SEXP nms = PROTECT(allocVector(STRSXP, 7));
     SET_STRING_ELT(nms, 0, mkChar("spectrum"));
     SET_STRING_ELT(nms, 1, mkChar("eig"));
     SET_STRING_ELT(nms, 2, mkChar("filter"));
