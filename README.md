@@ -6,6 +6,17 @@ We are aware of the R package `freqdom`, developed by Siegried Hörmann and Luka
 
 This package currently is not in a very mature state and will hopefully soon be available on CRAN in a more mature version.
 
+## Things implemented so far:
+
+- [x] Estimation of multivariate spectral density using lag-window technique.
+- [x] Fast computation of dynamic eigenvalues/eigenvectors of spectrum using [`ARPACK`](https://en.wikipedia.org/wiki/ARPACK).
+- [x] Discrete fourier transformation to obtain filters/transfer functions.
+- [x] The selection criterion of [`Hallin & Liska (2007)`](https://doi.org/10.1198/016214506000001275) to determine the number of dynamic factors.
+- [ ] One-Sided representation of the the dynamic common component using the approach of [`Hallin, Forni, Lippi, Zaffaroni (2015)`](http://dx.doi.org/10.1016/j.jeconom.2013.10.017).
+- [ ] Forecasting methods...
+
+
+
 ## Installation
 
 `dpca` requires [`ARPACK`](https://en.wikipedia.org/wiki/ARPACK) to compute dynamic eigenvalues/eigenvectors using the Implicitly Restarted Arnoldi Method which is much faster than `base::eigen()` which does full spectral decomposition which is in most times not required.
