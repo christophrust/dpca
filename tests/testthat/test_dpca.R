@@ -127,3 +127,45 @@ test_that("Test dpca, stepwise", {
 
 
 })
+
+
+context("Hallin & Liska selection criterium")
+
+test_that("HL switch", {
+
+  ## settings
+  nrx <- 100L
+  ncx <- 1000L
+  q <- 4L
+  bw <- as.integer(floor(ncx^(1/3)))
+  freqs <- -10:10/10 * pi
+  weights <- weights.Bartlett(-bw:bw/bw)
+  ones <- rep(1, length(weights))
+
+  ## simulate some data
+  set.seed(123456)
+  epsilon <- matrix(rnorm(ncx * q), nrow = q)
+
+  b_filter <- vapply(1:10, function(l) {
+    matrix(rnorm(q * nrx, sd = 1/l), q, nrx)
+  }, matrix(0, q, nrx))
+
+  chi <- .Call("R_filter_process", b_filter, epsilon, as.integer(1:10),
+               nrx, q, q, ncx, 10L, 1L, 0L, 0L)
+  x <- chi + rnorm(nrx * ncx, sd = 0.1 * sd(chi))
+
+  res_dpca1 <- dpca::dpca(x = x, q = 10, freqs = freqs, bandwidth = bw, weights = "Bartlett",
+                          qsel = TRUE)
+
+
+  res_dpca2 <- dpca::dpca(x = x, q = res_dpca1$HL_select$q, freqs = freqs, bandwidth = bw, weights = "Bartlett",
+                          qsel = FALSE)
+
+  expect_lt(sum(abs(res_dpca1$spectrum[,,1] %*% Conj(res_dpca1$eig$vectors[1,,1]) -
+            Conj(res_dpca1$eig$vectors[1,,1]) * res_dpca1$eig$values[1,1])), 1e-10)
+
+  expect_equal(res_dpca1$eig, res_dpca2$eig)
+  expect_equal(res_dpca1$dcc, res_dpca2$dcc)
+  expect_equal(res_dpca1$input, res_dpca2$input)
+
+})
