@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/christophrust/dpca/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/christophrust/dpca/actions/workflows/check-standard.yaml)
+[![License](https://img.shields.io/github/license/christophrust/dpca)](./LICENSE)
 <!-- badges: end -->
 
 This package provides a fast and reliable implementation of dynamic principal component analysis ala Brillinger. The main use case is estimation of (real) dynamic factor models (ala Forni, Lippi, Reichlin, Hallin,...).
