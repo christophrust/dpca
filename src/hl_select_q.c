@@ -105,6 +105,3 @@ SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
     UNPROTECT(8);
     return res;
 }
-
-
-

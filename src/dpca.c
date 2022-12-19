@@ -7,7 +7,7 @@
 
 SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
             SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q,
-            SEXP r_n_path) {
+            SEXP r_n_path, SEXP r_penalties, SEXP r_penalty_scales) {
 
     int nrx = Rf_nrows(r_x);
     int ncx = Rf_ncols(r_x);
