@@ -32,13 +32,12 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     double *covs;
     covs = (double *)R_Calloc(nrx * nrx * nlags, double);
     SEXP spec = PROTECT(alloc3DArray(CPLXSXP, nrx, nrx, nfreqs));
-    SEXP evecs = PROTECT(alloc3DArray(CPLXSXP, spec_q, nrx, nfreqs));
-    SEXP evals = PROTECT(allocMatrix(CPLXSXP, spec_q, nfreqs));
     SEXP filter_input = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
     SEXP filter_dcc = PROTECT(alloc3DArray(REALSXP, nrx, nrx, nlags));
     SEXP input = PROTECT(allocMatrix(REALSXP, q, ncx));
     SEXP dcc = PROTECT(allocMatrix(REALSXP, nrx, ncx));
     SEXP dic = PROTECT(allocMatrix(REALSXP, nrx, ncx));
+    SEXP evecs, evals;
     double tmp_accum;
     double _Complex * evec_cp;
     evec_cp = (double _Complex *) R_Calloc(nrx * nrx * nfreqs, double _Complex);
@@ -63,10 +62,13 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
         SEXP sample_var = PROTECT(allocVector(REALSXP, lps));
         SEXP info = PROTECT(allocVector(INTSXP, 1));
         // SEXP q = PROTECT(allocVector(INTSXP, 1));
+        _Complex double * temp_evecs, * temp_evals;
+        temp_evecs = (_Complex double *) R_Calloc(spec_q * nrx * nfreqs, _Complex double);
+        temp_evals = (_Complex double *) R_Calloc(spec_q * nfreqs, _Complex double);
 
         hl_select_q((_Complex double *) COMPLEX(spec),
-                    (_Complex double *) COMPLEX(evals),
-                    (_Complex double *) COMPLEX(evecs),
+                    temp_evals,
+                    temp_evecs,
                     nrx,
                     nfreqs, spec_q,
                     *INTEGER(r_select_q),
@@ -79,25 +81,43 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
                     INTEGER(info),
                     &q);
 
+        evecs = PROTECT(alloc3DArray(CPLXSXP, q, nrx, nfreqs));
+        evals = PROTECT(allocMatrix(CPLXSXP, q, nfreqs));
+
+        // TODO: remove copy of evecs and evals arrays
+        for (int i = 0; i < q; i++) {
+            for (int j = 0; j < nfreqs; j++) {
+                COMPLEX(evals)[i + j * q] = ((Rcomplex *) temp_evecs)[i + j * spec_q];
+                for (int k = 0; k < nrx; k++) {
+                    COMPLEX(evecs)[i + k * q + j * nrx * q] = ((Rcomplex *) temp_evecs)[i + k * spec_q + j * nrx * spec_q];
+                }
+            }
+        }
+        R_Free(temp_evecs);
+        R_Free(temp_evals);
     } else {
+
+        evecs = PROTECT(alloc3DArray(CPLXSXP, q, nrx, nfreqs));
+        evals = PROTECT(allocMatrix(CPLXSXP, q, nfreqs));
 
         /* eigen decomposition of spectrum with preselected q */
         for (int i = 0; i < nfreqs; i++)
-            arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, nrx, spec_q, COMPLEX(evals) + spec_q * i,
-                         COMPLEX(evecs) + nrx * spec_q * i, tol, 1, 0, 1, 1);
+            arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, nrx, q, COMPLEX(evals) + q * i,
+                         COMPLEX(evecs) + nrx * q * i, tol, 1, 0, 1, 1);
 
     }
 
-    for (int i = 0; i < nfreqs; i++)
+    for (int i = 0; i < nfreqs; i++) {
         complex_crossprod((double _Complex *) COMPLEX(evecs) + nrx * q * i,
-                          q, nrx, evec_cp + i * nrx * nrx, 0);
+                          q, nrx, evec_crossprod + i * nrx * nrx, 0);
+    }
 
     /* compute filter coefficients */
     fourier_inverse((double _Complex *)COMPLEX(evecs), nrx, q, lags, nlags, freqs,
                     nfreqs, REAL(filter_input), &tmp_accum);
 
     /* compute filter coefficients */
-    fourier_inverse(evec_cp, nrx, nrx, lags, nlags, freqs,
+    fourier_inverse(evec_crossprod, nrx, nrx, lags, nlags, freqs,
                     nfreqs, REAL(filter_dcc), &tmp_accum);
 
     /* apply filter on output to get input */
