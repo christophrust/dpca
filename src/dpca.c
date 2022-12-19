@@ -59,6 +59,27 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     // do selection of number of eigenvalues using hallin & liska (2007) method
     if (select_q) {
 
+        int lps = length(r_penalty_scales);
+        SEXP unpenalized_ic_vals = PROTECT(allocMatrix(REALSXP, spec_q, length(r_n_path)));
+        SEXP sample_var = PROTECT(allocVector(REALSXP, lps));
+        SEXP info = PROTECT(allocVector(INTSXP, 1));
+        SEXP q = PROTECT(allocVector(INTSXP, 1));
+
+        hl_select_q((_Complex double *) COMPLEX(spec),
+                    (_Complex double *) COMPLEX(evals),
+                    (_Complex double *) COMPLEX(evecs),
+                    nrx,
+                    nfreqs, spec_q,
+                    *INTEGER(r_select_q),
+                    n_path, length(r_n_path),
+                    tol,
+                    REAL(unpenalized_ic_vals),
+                    REAL(r_penalties),
+                    REAL(r_penalty_scales), length(r_penalty_scales),
+                    REAL(sample_var),
+                    INTEGER(info),
+                    INTEGER(q));
+
     } else {
 
         /* eigen decomposition of spectrum with preselected q */
@@ -112,13 +133,15 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     setAttrib(filter, R_NamesSymbol, nms_filter);
 
 
-    SEXP res = PROTECT(allocVector(VECSXP, 6));
+    SEXP res = PROTECT(allocVector(VECSXP, 7));
     SET_VECTOR_ELT(res, 0, spec);
     SET_VECTOR_ELT(res, 1, eig);
     SET_VECTOR_ELT(res, 2, filter);
     SET_VECTOR_ELT(res, 3, input);
     SET_VECTOR_ELT(res, 4, dcc);
     SET_VECTOR_ELT(res, 5, dic);
+    SET_VECTOR_ELT(res, 6, dic);
+
 
     SEXP nms = PROTECT(allocVector(STRSXP, 6));
     SET_STRING_ELT(nms, 0, mkChar("spectrum"));
@@ -127,10 +150,15 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     SET_STRING_ELT(nms, 3, mkChar("input"));
     SET_STRING_ELT(nms, 4, mkChar("dcc"));
     SET_STRING_ELT(nms, 5, mkChar("dic"));
+    SET_STRING_ELT(nms, 6, mkChar("HL_select"));
     setAttrib(res, R_NamesSymbol, nms);
 
     R_Free(covs);
     R_Free(evec_cp);
-    UNPROTECT(14);
+    if (select_q) {
+        UNPROTECT(18);
+    } else{
+        UNPROTECT(14);
+    }
     return res;
 }
