@@ -21,8 +21,8 @@ test_that("Fourier inverse (C-function)", {
     edec$vectors
   }, matrix(0 + 1i, dim(spec)[1], 4))
 
-  res1 <- .Call("R_fourier_inverse", as.vector(eigs), dim(eigs)[1], dim(eigs)[2],
-                   as.integer(-5:5), 11L, -100:100/100 * pi, 201L)
+  res1 <- suppressWarnings(.Call("R_fourier_inverse", as.vector(eigs), dim(eigs)[1], dim(eigs)[2],
+                   as.integer(-5:5), 11L, -100:100/100 * pi, 201L))
   res2 <- fourier.inverse(freqdom(eigs, freq = -100:100/100 * pi), as.integer(-5:5))$operators
 
   expect_lt(sum(abs(res2 - res1)^2), 1e-10)
