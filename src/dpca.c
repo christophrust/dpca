@@ -15,17 +15,15 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     int bw = *INTEGER(r_bandwidth);
     int nlags = 2 * bw + 1;
     int lags[nlags];
-    int q = *INTEGER(r_q);
+    int q;
     for (int i = 0; i < nlags; i++)
         lags[i] = i - bw;
     double tol = *REAL(r_tol);
     int select_q = *INTEGER(r_select_q);
 
-    int spec_q;
+    int max_q;
     if (select_q) {
-        spec_q = *INTEGER(r_max_q);
-    } else {
-        spec_q = q;
+        max_q = *INTEGER(r_max_q);
     }
 
     int *n_path = INTEGER(r_n_path);
@@ -33,16 +31,15 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     double *covs;
     covs = (double *)R_Calloc(nrx * nrx * nlags, double);
     SEXP spec = PROTECT(alloc3DArray(CPLXSXP, nrx, nrx, nfreqs));
-    SEXP filter_input = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
+    SEXP filter_input;
     SEXP filter_dcc = PROTECT(alloc3DArray(REALSXP, nrx, nrx, nlags));
-    SEXP input = PROTECT(allocMatrix(REALSXP, q, ncx));
+    SEXP input;
     SEXP dcc = PROTECT(allocMatrix(REALSXP, nrx, ncx));
     SEXP dic = PROTECT(allocMatrix(REALSXP, nrx, ncx));
-    SEXP evecs, evals;
+    SEXP evecs, evals, unpenalized_ic_vals, sample_var, info;
     double tmp_accum;
     double _Complex * evec_crossprod;
     evec_crossprod = (double _Complex *) R_Calloc(nrx * nrx * nfreqs, double _Complex);
-
     /* compute autocovariances */
     lagged_covs(REAL(r_x), REAL(r_x), covs, lags, nlags, nrx, ncx, nrx, ncx, REAL(kernel), 1);
 
@@ -52,55 +49,60 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
                       (double _Complex *)COMPLEX(spec));
 
 
-    // TODO: compute eigendecomposition only on 0 to pi and get
-    // eigenvalues for -pi to 0 by conjugating them!!
-
-
-    // do selection of number of eigenvalues using hallin & liska (2007) method
-    if (select_q) {
+    if (select_q) { // chose q ( number of dynamic factors) using Hallin & Liska (2007) method
 
         int lps = length(r_penalty_scales);
-        SEXP unpenalized_ic_vals = PROTECT(allocMatrix(REALSXP, spec_q, length(r_n_path)));
-        SEXP sample_var = PROTECT(allocVector(REALSXP, lps));
-        SEXP info = PROTECT(allocVector(INTSXP, 1));
-        // SEXP q = PROTECT(allocVector(INTSXP, 1));
-        _Complex double * temp_evecs, * temp_evals;
-        temp_evecs = (_Complex double *) R_Calloc(spec_q * nrx * nfreqs, _Complex double);
-        temp_evals = (_Complex double *) R_Calloc(spec_q * nfreqs, _Complex double);
+        unpenalized_ic_vals = PROTECT(allocMatrix(REALSXP, max_q, length(r_n_path)));
+        sample_var = PROTECT(allocVector(REALSXP, lps));
+        info = PROTECT(allocVector(INTSXP, 1));
 
+        _Complex double * temp_evecs, * temp_evals;
+        temp_evecs = (_Complex double *) R_Calloc(max_q * nrx * nfreqs, _Complex double);
+        temp_evals = (_Complex double *) R_Calloc(max_q * nfreqs, _Complex double);
         hl_select_q((_Complex double *) COMPLEX(spec),
                     temp_evals,
                     temp_evecs,
                     nrx,
-                    nfreqs, spec_q,
+                    nfreqs,
+                    max_q,
                     *INTEGER(r_select_q),
-                    n_path, length(r_n_path),
+                    n_path,
+                    length(r_n_path),
                     tol,
                     REAL(unpenalized_ic_vals),
                     REAL(r_penalties),
-                    REAL(r_penalty_scales), length(r_penalty_scales),
+                    REAL(r_penalty_scales),
+                    length(r_penalty_scales),
                     REAL(sample_var),
                     INTEGER(info),
                     &q);
 
         evecs = PROTECT(alloc3DArray(CPLXSXP, q, nrx, nfreqs));
         evals = PROTECT(allocMatrix(CPLXSXP, q, nfreqs));
-
+        filter_input = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
+        input = PROTECT(allocMatrix(REALSXP, q, ncx));
         // TODO: remove copy of evecs and evals arrays
         for (int i = 0; i < q; i++) {
             for (int j = 0; j < nfreqs; j++) {
-                COMPLEX(evals)[i + j * q] = ((Rcomplex *) temp_evecs)[i + j * spec_q];
+                COMPLEX(evals)[i + j * q] = ((Rcomplex *) temp_evals)[i + j * max_q];
+
                 for (int k = 0; k < nrx; k++) {
-                    COMPLEX(evecs)[i + k * q + j * nrx * q] = ((Rcomplex *) temp_evecs)[i + k * spec_q + j * nrx * spec_q];
+                    COMPLEX(evecs)[i + k * q + j * nrx * q] =
+                        ((Rcomplex *) temp_evecs)[i + k * max_q + j * nrx * max_q];
                 }
             }
         }
         R_Free(temp_evecs);
         R_Free(temp_evals);
-    } else {
 
+    } else { // user-specfied q
+        q = *INTEGER(r_q);
         evecs = PROTECT(alloc3DArray(CPLXSXP, q, nrx, nfreqs));
         evals = PROTECT(allocMatrix(CPLXSXP, q, nfreqs));
+        filter_input = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
+        input = PROTECT(allocMatrix(REALSXP, q, ncx));
+        // TODO: compute eigendecomposition only on 0 to pi and get
+        // eigenvalues for -pi to 0 by conjugating them!!
 
         /* eigen decomposition of spectrum with preselected q */
         for (int i = 0; i < nfreqs; i++)
@@ -153,6 +155,24 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     SET_STRING_ELT(nms_filter, 1, mkChar("filter_dcc"));
     setAttrib(filter, R_NamesSymbol, nms_filter);
 
+    SEXP hl_select;
+    if (select_q) {
+        hl_select = PROTECT(allocVector(VECSXP, 4));
+        SEXP chosen_q = PROTECT(allocVector(INTSXP, 1));
+        *INTEGER(chosen_q) = q;
+        SET_VECTOR_ELT(hl_select, 0, unpenalized_ic_vals);
+        SET_VECTOR_ELT(hl_select, 1, sample_var);
+        SET_VECTOR_ELT(hl_select, 2, chosen_q);
+        SET_VECTOR_ELT(hl_select, 3, info);
+        SEXP nms_hl_select = PROTECT(allocVector(STRSXP, 4));
+        SET_STRING_ELT(nms_hl_select, 0, mkChar("unpenalized_ic_vals"));
+        SET_STRING_ELT(nms_hl_select, 1, mkChar("sample_var"));
+        SET_STRING_ELT(nms_hl_select, 2, mkChar("q"));
+        SET_STRING_ELT(nms_hl_select, 3, mkChar("info"));
+        setAttrib(hl_select, R_NamesSymbol, nms_hl_select);
+    } else {
+        hl_select = PROTECT(allocVector(VECSXP, 0));
+    }
 
     SEXP res = PROTECT(allocVector(VECSXP, 7));
     SET_VECTOR_ELT(res, 0, spec);
@@ -161,7 +181,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     SET_VECTOR_ELT(res, 3, input);
     SET_VECTOR_ELT(res, 4, dcc);
     SET_VECTOR_ELT(res, 5, dic);
-    // SET_VECTOR_ELT(res, 6, dic);
+    SET_VECTOR_ELT(res, 6, hl_select);
 
 
     SEXP nms = PROTECT(allocVector(STRSXP, 7));
@@ -177,9 +197,9 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     R_Free(covs);
     R_Free(evec_crossprod);
     if (select_q) {
-        UNPROTECT(18);
+        UNPROTECT(20);
     } else{
-        UNPROTECT(14);
+        UNPROTECT(15);
     }
     return res;
 }
