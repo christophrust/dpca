@@ -67,18 +67,29 @@ dpca <- function(x,
     penalties <- rep(0, length(n_path))
   }
 
+  select_q <-
+    if (isFALSE(qsel))
+    {
+      0L
+    } else if (qsel_crit[1] == "IC1") {
+      1L
+    } else if (qsel_crit[1] == "IC2") {
+      2L
+    }
   ##browser()
-  res <- .Call("R_dpca", x,
+  mode(x) <- "numeric"
+  res <- .Call("R_dpca",
+               x,
                as.integer(q),
                as.numeric(freqs),
                as.integer(bandwidth),
                .Machine$double.eps,
-               wghts,
+               as.numeric(wghts),
                as.integer(q),
-               FALSE,
+               select_q,
                as.integer(n_path),
-               penalties,
-               penalty_scales,
+               as.numeric(penalties),
+               as.numeric(penalty_scales),
                PACKAGE = "dpca")
 
   class(res) <- "dpca"
