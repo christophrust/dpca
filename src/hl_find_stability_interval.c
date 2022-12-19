@@ -33,7 +33,7 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
         if (itvl_cnt > 1) {
             info=0;
             break;
-        } else if ((i + 1) == lsv && itvl_cnt == 1 && sample_var[i] < 10 * DBL_EPSILON) {
+        } else if ((i + 1) == lsv && itvl_cnt == 1 && fabs(sample_var[i]) < 10 * DBL_EPSILON) {
             info = 0;
         }
 
