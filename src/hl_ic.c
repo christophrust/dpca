@@ -1,7 +1,6 @@
 #include "Rinternals.h"
 #include "dpca.h"
 
-// TODO: start with q = 0!!
 void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreqs,
            int dim, int ldm, int select_q, double * ic_vals) {
 
@@ -13,9 +12,12 @@ void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreq
         }
      }
 
-     for (int i = 0; i < max_q; i++) {
-         for (int j = 0; j < nfreqs; j++) {
-             total_trace -= creal(evals[j * max_q + i]);
+     for (int i = 0; i <= max_q; i++) {
+
+         if (i > 0){
+             for (int j = 0; j < nfreqs; j++) {
+                 total_trace -= creal(evals[j * max_q + (i - 1)]);
+             }
          }
          ic_vals[i] = total_trace/((double) (dim * nfreqs));
 
@@ -32,7 +34,7 @@ void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreq
 SEXP R_hl_ic(SEXP r_spec, SEXP r_evals, SEXP r_max_q, SEXP r_nfreqs, SEXP r_dim,
              SEXP r_ldm, SEXP r_select_q) {
 
-    SEXP res = PROTECT(allocVector(REALSXP, *INTEGER(r_max_q)));
+    SEXP res = PROTECT(allocVector(REALSXP, *INTEGER(r_max_q) + 1));
 
     hl_ic((double _Complex *) COMPLEX(r_spec),
           (double _Complex *) COMPLEX(r_evals),

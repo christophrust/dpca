@@ -32,10 +32,10 @@ test_that("C function hl_select_q", {
                      dim = as.integer(n),
                      max_q,
                      .Machine$double.eps, 1L, 0L, 0L, 0L)
-      (sum(Re(diag(spec_a[,,i])[seq_len(n)])) - cumsum(Re(e_dec$values[seq_len(max_q)])))/(n)
-    }, numeric(max_q))
+      (sum(Re(diag(spec_a[,,i])[seq_len(n)])) - c(0,cumsum(Re(e_dec$values[seq_len(max_q)]))))/(n)
+    }, numeric(max_q + 1))
     rowMeans(ic_freqs)
-  }, numeric(max_q)))
+  }, numeric(max_q + 1)))
 
   expect_equal(r1$unpenalized_ic_vals, unpenalized_crit)
 

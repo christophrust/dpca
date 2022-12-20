@@ -137,7 +137,7 @@ void complex_crossprod(double _Complex *x, int nrx, int ncx,
  * the information criteria on to do fine tuning.
  * @param ln The length of n_path.
  * @param tol Tolerance used in the ARPACK routine
- * @param ic_vals An array of at least length ln * max_q
+ * @param ic_vals An array of at least length ln * (max_q + 1)
  *
  * */
 void hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
@@ -154,7 +154,7 @@ void hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Compl
  * @param dim Dimension of spectrum.
  * @param ldm Leading dimension of spec.
  * @param select_q Which information criterion (IC1 or IC2).
- * @param ic_vals (On output) the computed criteria (must be at least of length max_q).
+ * @param ic_vals (On output) the computed criteria (must be at least of length max_q + 1).
  * */
 void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreqs,
            int dim, int ldm, int select_q, double * ic_vals);

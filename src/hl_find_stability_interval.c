@@ -40,7 +40,7 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
     }
 
     /* in case we have not succeeded so far, we look stability
-     * intervals where S_c is different from zero but still locally minimal (TODO) */
+     * intervals where S_c is different from zero but still locally minimal */
 
     if (info) {
         itvl_cnt = 0;
@@ -95,6 +95,7 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
 
 
 SEXP R_find_stability_intervals(SEXP r_sample_var) {
+
     SEXP res = PROTECT(allocVector(INTSXP, 4));
 
     int info = hl_find_stability_intervals(REAL(r_sample_var), length(r_sample_var) , INTEGER(res));

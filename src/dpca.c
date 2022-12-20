@@ -52,7 +52,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     if (select_q) { // chose q ( number of dynamic factors) using Hallin & Liska (2007) method
 
         int lps = length(r_penalty_scales);
-        unpenalized_ic_vals = PROTECT(allocMatrix(REALSXP, max_q, length(r_n_path)));
+        unpenalized_ic_vals = PROTECT(allocMatrix(REALSXP, max_q + 1, length(r_n_path)));
         sample_var = PROTECT(allocVector(REALSXP, lps));
         info = PROTECT(allocVector(INTSXP, 1));
 
@@ -196,6 +196,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
 
     R_Free(covs);
     R_Free(evec_crossprod);
+
     if (select_q) {
         UNPROTECT(20);
     } else{

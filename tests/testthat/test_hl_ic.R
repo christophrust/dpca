@@ -16,12 +16,12 @@ test_that("C function hl_ic", {
   ## single frequency
   r1 <- .Call("R_hl_ic", spec, e_dec$values, max_q, 1L, dim,
               dim, 1L)
-  r2 <- (sum(Re(diag(spec))) - cumsum(Re(e_dec$values)))/dim
+  r2 <- (sum(Re(diag(spec))) - c(0,cumsum(Re(e_dec$values))))/dim
   expect_equal(r1, r2)
 
   r1 <- .Call("R_hl_ic", spec, e_dec$values, max_q, 1L, dim,
               dim, 2L)
-  r2 <- log((sum(Re(diag(spec))) - cumsum(Re(e_dec$values)))/dim)
+  r2 <- log((sum(Re(diag(spec))) - c(0, cumsum(Re(e_dec$values))))/dim)
   expect_equal(r1, r2)
 
 
@@ -32,12 +32,12 @@ test_that("C function hl_ic", {
   vals_a[] <- e_dec$values
   r1 <- .Call("R_hl_ic", spec_a, vals_a, max_q, 5L, dim,
               dim, 1L)
-  r2 <- (sum(Re(diag(spec))) - cumsum(Re(e_dec$values)))/dim
+  r2 <- (sum(Re(diag(spec))) - c(0, cumsum(Re(e_dec$values))))/dim
   expect_equal(r1, r2)
 
   r1 <- .Call("R_hl_ic", spec, e_dec$values, max_q, 1L, dim,
               dim, 2L)
-  r2 <- log((sum(Re(diag(spec))) - cumsum(Re(e_dec$values)))/dim)
+  r2 <- log((sum(Re(diag(spec))) - c(0, cumsum(Re(e_dec$values))))/dim)
   expect_equal(r1, r2)
 
 
@@ -45,7 +45,7 @@ test_that("C function hl_ic", {
   ## sub spectrum
   r1 <- .Call("R_hl_ic", spec_a, vals_a, max_q, 5L, as.integer(dim/2),
               dim, 1L)
-  r2 <- (sum(Re(diag(spec)[seq_len(dim/2)])) - cumsum(Re(e_dec$values)))/(dim/2)
+  r2 <- (sum(Re(diag(spec)[seq_len(dim/2)])) - c(0, cumsum(Re(e_dec$values))))/(dim/2)
   expect_equal(r1, r2)
 
 })
