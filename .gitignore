@@ -9,3 +9,5 @@ man/
 /src/.ccls
 /src/*.so
 /src/*.o
+/src/*.gcda
+/src/*.gcno
