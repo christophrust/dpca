@@ -17,8 +17,11 @@ This package currently is not in a very mature state and will hopefully soon be 
 - [x] Fast computation of dynamic eigenvalues/eigenvectors of spectrum using [`ARPACK`](https://en.wikipedia.org/wiki/ARPACK).
 - [x] Discrete fourier transformation to obtain filters/transfer functions.
 - [x] The selection criterion of [`Hallin & Liska (2007)`](https://doi.org/10.1198/016214506000001275) to determine the number of dynamic factors.
-- [ ] One-Sided representation of the the dynamic common component using the approach of [`Hallin, Forni, Lippi, Zaffaroni (2015)`](http://dx.doi.org/10.1016/j.jeconom.2013.10.017).
+- [ ] One-Sided representation of the the dynamic common component using the approach of [`Forni, Hallin, Lippi, Zaffaroni (2015)`](http://dx.doi.org/10.1016/j.jeconom.2013.10.017).
 - [ ] Forecasting methods...
+- [ ] Model assessment...
+- [ ] ...
+- [ ] Ship ARPACK
 
 
 
