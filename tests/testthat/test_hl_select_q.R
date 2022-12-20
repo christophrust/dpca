@@ -1,9 +1,8 @@
 library(dpca)
 
 
-context("Hallin & Liska (2007) selection criterium")
 
-test_that("C function hl_select_q", {
+test_that("HL: C function hl_select_q", {
 
   dim <- 150L
   max_q <- 12L

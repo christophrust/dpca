@@ -1,10 +1,7 @@
 library(dpca)
 
 
-context("Hallin & Liska (2007) selection criterium")
-
-
-test_that("Find stability interval",{
+test_that("HL: Find stability interval",{
 
   set.seed(as.integer(Sys.Date()))
   intvl_idx <- c(1,sort(sample(2:100, 3)))

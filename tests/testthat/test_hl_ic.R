@@ -1,9 +1,8 @@
 library(dpca)
 
 
-context("Hallin & Liska (2007) selection criterium")
 
-test_that("C function hl_ic", {
+test_that("HL: C function hl_ic", {
 
   dim <- 150L
   m <- matrix(cos(runif(dim^2, -pi, pi)) + 1i * sin(runif(dim^2, -pi, pi)), ncol = dim)

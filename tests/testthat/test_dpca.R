@@ -129,9 +129,7 @@ test_that("Test dpca, stepwise", {
 })
 
 
-context("Hallin & Liska selection criterium")
-
-test_that("HL switch", {
+test_that("dpca: HL switch", {
 
   ## settings
   nrx <- 100L
@@ -153,6 +151,7 @@ test_that("HL switch", {
   chi <- .Call("R_filter_process", b_filter, epsilon, as.integer(1:10),
                nrx, q, q, ncx, 10L, 1L, 0L, 0L)
   x <- chi + rnorm(nrx * ncx, sd = 0.1 * sd(chi))
+
 
   res_dpca1 <- dpca::dpca(x = x, q = 10, freqs = freqs, bandwidth = bw, weights = "Bartlett",
                           qsel = TRUE)

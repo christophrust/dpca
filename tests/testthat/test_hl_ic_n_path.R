@@ -1,9 +1,8 @@
 library(dpca)
 
 
-context("Hallin & Liska (2007) selection criterium")
 
-test_that("C function hl_ic_n_path", {
+test_that("HL: C function hl_ic_n_path", {
 
   dim <- 150L
   max_q <- 12L

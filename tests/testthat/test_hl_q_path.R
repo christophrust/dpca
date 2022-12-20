@@ -1,9 +1,8 @@
 library(dpca)
 
 
-context("Hallin & Liska (2007) selection criterium")
 
-test_that("Get q path (c function)", {
+test_that("HL: Get q path (c function)", {
 
   max_q <- 12L
   ln <- 10L
