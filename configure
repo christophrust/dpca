@@ -11,5 +11,6 @@ LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
 cd src/arpack-ng
 sh bootstrap
 ./configure --enable-icb
+mkdir -p build
 cd build && cmake -D ICB=ON ..
 ${MAKE}
