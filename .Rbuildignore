@@ -1,1 +1,7 @@
 ^\.github$
+^src/\.ccls
+^src/\.dir-locals.el
+^src/.cache
+^src/.*gcno
+^src/.*gcda
+^src/compile_commands.json

@@ -21,29 +21,20 @@ This package currently is not in a very mature state and will hopefully soon be 
 - [ ] Forecasting methods...
 - [ ] Model assessment...
 - [ ] ...
-- [ ] Ship ARPACK
+- [x] Ship ARPACK
 
 
 
 ## Installation
 
-`dpca` requires [`ARPACK`](https://en.wikipedia.org/wiki/ARPACK) to compute dynamic eigenvalues/eigenvectors using the Implicitly Restarted Arnoldi Method which is much faster than `base::eigen()` which does full spectral decomposition which is in most times not required.
+`dpca` requires [`ARPACK`](https://en.wikipedia.org/wiki/ARPACK) to compute dynamic eigenvalues/eigenvectors using the Implicitly Restarted Arnoldi Method which is much faster than `base::eigen()` which does full spectral decomposition which is in most times not required. `ARPACK` is shipped with `dpca`.
 
-Currently, `dpca` does not include `ARPACK` and the user has to make it available on his system. We assume the correct include path is `/usr/include/arpack`. In case this is not true, please change `src/Makevars` accordingly. Additionally, the R header files must also be available.
-
-On Debian this can be easily achieved running:
-
-```bash
-apt-get install libarpack2-dev r-base-dev
-```
-
-Then, `dpca`can be installed with `devtools`:
+`dpca`can be installed with `devtools`:
 
 ```r
 devtools::install_github("https://github.com/christophrust/dpca.git")
 ```
 
-For later releases, it is of course planned to have our own configure script which can resolve all the above dependencies on different platforms.
 
 ## Examples
 
