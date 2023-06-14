@@ -46,6 +46,10 @@ SEXP R_hl_ic_n_path(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
 
     hl_ic_n_path((double _Complex *) COMPLEX(r_spec), evals, evecs, dim, nfreqs, max_q, select_q,
                 INTEGER(r_n_path), ln, *REAL(r_tol), REAL(res));
+
+    R_Free(evals);
+    R_Free(evecs);
+
     // INTEGER(res)[0] = 1;
     UNPROTECT(1);
     return res;
