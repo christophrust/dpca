@@ -109,7 +109,7 @@ SEXP R_fourier_inverse(SEXP r_f, SEXP r_nrf, SEXP r_ncf,
     fourier_inverse((double _Complex *) COMPLEX(r_f), nrf, ncf,
                     INTEGER(r_lags), nlags, REAL(r_freqs), nfreqs, REAL(res), &accum);
 
-    printf("Accum %f\n", accum);
+    Rprintf("Accum %f\n", accum);
 
     if (accum > 1e-9) {
         warning("The imaginary part of the coefficients was not zero, probably due to an assymmetric spectrum!");
@@ -159,10 +159,10 @@ SEXP R_fourier_inverse1(SEXP f, SEXP dim_f1, SEXP dim_f2,
         REAL(res)[i] = creal(tmp_cmplx_array[i])/(double) *INTEGER(n_freqs);
     }
 
-    printf("Accum %f\n", accum);
+    Rprintf("Accum %f\n", accum);
     if (accum > 1e-9) {
         warning("The imaginary part of the coefficients was not zero, probably due to an assymmetric spectrum!");
-        printf("The accumulated value of the complex part is: %f \n", accum);
+        Rprintf("The accumulated value of the complex part is: %f \n", accum);
     }
 
     Free(tmp_cmplx_array);
