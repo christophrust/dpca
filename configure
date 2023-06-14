@@ -8,7 +8,8 @@ CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
 
-cd src/arpack-ng
+tar -xf inst/arpack-ng-3.9.0.tar.gz -C src
+cd src/arpack-ng-3.9.0
 sh bootstrap
 ./configure --enable-icb
 mkdir -p build
