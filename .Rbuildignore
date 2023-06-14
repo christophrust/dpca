@@ -4,12 +4,17 @@
 tmp/
 
 
-man/
-src/.cache/
+src/.cache
 src/.ccls
-src/*.so
-src/*.o
-src/*.gcda
-src/*.gcno
+src/.*\.so
+src/.*\.o
+src/.*\.gcda
+src/.*\.gcno
+src/.dir-locals.el
+src/.ccls
+src/compile_commands.json
 
-src/arpack-ng/.*
+\.github
+\.git
+
+src/arpack-ng.*
