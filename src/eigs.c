@@ -82,7 +82,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
   iparam[9] = 0;
   iparam[10] = 0;
 
-  if (verbose) printf("starting znaupd iteration\n");
+  if (verbose) Rprintf("starting znaupd iteration\n");
 
   int cnt = 0;
   while (ido != 99) {
@@ -94,11 +94,11 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
     cnt++;
   }
 
-  if (verbose) printf("finished znaupd iteration, info: %d, numer of iterations: %d\n", info, cnt);
+  if (verbose) Rprintf("finished znaupd iteration, info: %d, numer of iterations: %d\n", info, cnt);
 
 
   if (iparam[4] != nev) {
-    printf("Error: iparam[4] %d, nev %d\n", iparam[4], nev); // check number of ev found by arpack.
+    Rprintf("Error: iparam[4] %d, nev %d\n", iparam[4], nev); // check number of ev found by arpack.
   }
 
 
@@ -107,9 +107,9 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
            tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl, rwork,
            &info);
 
-  if (verbose) printf("finished zneupd call, info: %d\n", info);
+  if (verbose) Rprintf("finished zneupd call, info: %d\n", info);
 
-  if (verbose) printf("copying results\n");
+  if (verbose) Rprintf("copying results\n");
 
   // sort eigenvalues and eigenvectors
   int rank[q];
