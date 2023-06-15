@@ -8,6 +8,7 @@ Description: Efficient implementations for the GDFM as
   projection on common component space.
 Author: Christoph Rust [aut,cre]
 Maintainer: Christoph Rust <christoph.g.rust@gmail.com>
+SystemRequirements: GNU make
 Depends: R (>= 3.0.0)
 License: GPL-3 + file LICENSE
 Encoding: UTF-8

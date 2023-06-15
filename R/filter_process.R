@@ -14,5 +14,9 @@ filter_process <- function(x, filter, ...) {
                 as.numeric(filter),
                 as.numeric(x),
                 as.integer(seq_len(dim(filter)[3]) - 1),
-                nrf, nrx, nrx, ncx, 1L, 0L, 0L, 0L)
+                as.integer(nrow(filter)),
+                as.integer(nrow(x)),
+                as.integer(nrow(x)),
+                as.integer(ncol(x)),
+                1L, 0L, 0L, 0L)
 }
