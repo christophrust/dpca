@@ -1,4 +1,4 @@
 #PKG_LIBS = -llapack -lblas -lgfortran -lm -lquadmath -larpack
 #PKG_LIBS = -llapack -larpack -lblas -lgcov
-PKG_LIBS = -llapack -lblas -lgcov -L"arpack-ng-3.9.0/build/lib" -larpack
+PKG_LIBS = -llapack -lblas -lgcov -L"arpack-ng-3.9.0/build" -l:libarpack.a
 PKG_CFLAGS = -I"arpack-ng-3.9.0/ICB/" -I"arpack-ng-3.9.0/" -O0 --coverage
