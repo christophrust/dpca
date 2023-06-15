@@ -7,7 +7,8 @@
  * over the range of c
  * @param sample_var Array of length lsv with the sample variance of S_c
  * @param lsv the length of sample_var
- * @param ivl_idx On output this holds the indices (start, end) of the
+ * @param ivl_idx Pointer to an integer array of length 4.
+ * On output this holds the indices (start, end) of the
  * first two stability intervals.
  * */
 int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
@@ -20,7 +21,7 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
     int info = 2;
     for (int i = 1; i < lsv; i++) {
 
-        if ((fabs(sample_var[i]) < 10* DBL_EPSILON) && (fabs(sample_var[i-1]) < 10 * DBL_EPSILON)) {
+        if ((fabs(sample_var[i]) < 10 * DBL_EPSILON) && (fabs(sample_var[i-1]) < 10 * DBL_EPSILON)) {
             in_itvl = 1;
             ivl_idx[itvl_cnt * 2 + 1] = i;
 
