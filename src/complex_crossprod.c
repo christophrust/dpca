@@ -1,10 +1,10 @@
 #ifndef  USE_FC_LEN_T
 # define USE_FC_LEN_T
 #endif
-#include "Rinternals.h"
-#include "dpca.h"
+#include <Rconfig.h>
+#include <Rinternals.h>
 #include <complex.h>
-#include <R_ext/Lapack.h>
+#include <R_ext/BLAS.h>
 #ifndef FCONE
 # define FCONE
 #endif

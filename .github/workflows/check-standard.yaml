@@ -47,9 +47,3 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: install-all
-          path: /home/runner/work/dpca/dpca/check/dpca.Rcheck/00*
-          retention-days: 5
