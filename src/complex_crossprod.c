@@ -1,7 +1,13 @@
+#ifndef  USE_FC_LEN_T
+# define USE_FC_LEN_T
+#endif
 #include "Rinternals.h"
 #include "dpca.h"
 #include <complex.h>
 #include <R_ext/Lapack.h>
+#ifndef FCONE
+# define FCONE
+#endif
 
 void complex_crossprod(double _Complex *x, int nrx, int ncx, double _Complex *res, int trans_conj) {
 
@@ -18,7 +24,7 @@ void complex_crossprod(double _Complex *x, int nrx, int ncx, double _Complex *re
         ldc = nrx;
 
         F77_CALL(zgemm)("N", "C",  &m, &n, &k, (Rcomplex *) &alpha, (Rcomplex *) x, &lda,
-                        (Rcomplex *) x, &lda, (Rcomplex *) &beta, (Rcomplex *) res, &ldc);
+                        (Rcomplex *) x, &lda, (Rcomplex *) &beta, (Rcomplex *) res, &ldc FCONE FCONE);
 
     } else {
 
@@ -29,7 +35,7 @@ void complex_crossprod(double _Complex *x, int nrx, int ncx, double _Complex *re
         ldc = ncx;
 
         F77_CALL(zgemm)("C", "N",  &m, &n, &k, (Rcomplex *) &alpha, (Rcomplex *) x, &lda,
-                        (Rcomplex *) x, &lda, (Rcomplex *) &beta, (Rcomplex *) res, &ldc);
+                        (Rcomplex *) x, &lda, (Rcomplex *) &beta, (Rcomplex *) res, &ldc FCONE FCONE);
 
     }
 
