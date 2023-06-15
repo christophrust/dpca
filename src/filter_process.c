@@ -1,8 +1,15 @@
+#ifndef  USE_FC_LEN_T
+# define USE_FC_LEN_T
+#endif
+#include <Rconfig.h>
 #include <R.h>
 #include "R_ext/RS.h"
 #include "Rinternals.h"
 // #include "dpca.h"
-#include "R_ext/Lapack.h"
+#include "R_ext/BLAS.h"
+#ifndef FCONE
+# define FCONE
+#endif
 
 /*
 ** Compute the convolution of a (multiple) filters f and a (multivariate) time series x
@@ -91,11 +98,11 @@ void filter_process(double *f, double *x, int *lags, int nrf, int ncf,
         if (transf) {
             F77_CALL(dgemm)("T", "N", &ncf, &n, &nrx, &alpha,
                             f + offsetf, &nrf, x + offsetx, &nrx,
-                            &beta, y + offsety, &nry);
+                            &beta, y + offsety, &nry FCONE FCONE);
         } else {
             F77_CALL(dgemm)("N", "N", &nrf, &n, &nrx, &alpha,
                             f + offsetf, &nrf, x + offsetx, &nrx,
-                            &beta, y + offsety, &nry);
+                            &beta, y + offsety, &nry FCONE FCONE);
         }
     }
 
