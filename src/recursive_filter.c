@@ -1,9 +1,16 @@
+#ifndef  USE_FC_LEN_T
+# define USE_FC_LEN_T
+#endif
+#include <Rconfig.h>
 #include "dpca.h"
 #include <R.h>
 #include "R_ext/RS.h"
 #include "Rinternals.h"
 // #include "dpca.h"
 #include "R_ext/Lapack.h"
+#ifndef FCONE
+# define FCONE
+#endif
 
 
 SEXP R_recursive_filter(SEXP x, SEXP f, SEXP r_dim, SEXP r_nlags ) {
@@ -28,7 +35,7 @@ SEXP R_recursive_filter(SEXP x, SEXP f, SEXP r_dim, SEXP r_nlags ) {
             //printf("%i; %i; %i; %i\n", i, j, offsetx, offsetf);
             F77_CALL(dgemv)("N", &dim, &dim, &alpha,
                             REAL(f) + offsetf, &dim, REAL(res) + offsetx, &one, &beta,
-                            REAL(res) + offsety, &one);
+                            REAL(res) + offsety, &one FCONE);
         }
     }
 

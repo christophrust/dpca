@@ -1,8 +1,15 @@
+#ifndef  USE_FC_LEN_T
+# define USE_FC_LEN_T
+#endif
+#include <Rconfig.h>
 #include <R.h>
 #include <Rinternals.h>
 #include <R_ext/Lapack.h>
 #include <complex.h>
 #include "dpca.h"
+#ifndef FCONE
+# define FCONE
+#endif
 
 
 void zMatVec(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim) {
@@ -34,7 +41,7 @@ void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim, i
   F77_CALL(zgemv)("N", &dim, &dim, &alpha, mat,
                   &ldm,
                   (Rcomplex*) x, &inc, &beta,
-                  (Rcomplex*) y, &inc);
+                  (Rcomplex*) y, &inc FCONE);
 }
 
 

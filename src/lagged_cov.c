@@ -1,10 +1,17 @@
+#ifndef  USE_FC_LEN_T
+# define USE_FC_LEN_T
+#endif
+#include <Rconfig.h>
 #include <R.h>
 #include "Rinternals.h"
 #include "R_ext/RS.h"
-#include <R_ext/Lapack.h>
+#include <R_ext/BLAS.h>
 #include "R_ext/Error.h"
 #include <math.h>
 #include "dpca.h"
+#ifndef FCONE
+# define FCONE
+#endif
 
 void lagged_cov(double *x, double *y, double *res,
                 int lag, int nrx, int ncx, int nry,
@@ -34,10 +41,10 @@ void lagged_cov(double *x, double *y, double *res,
         double beta1 = 0.0;
 
         F77_CALL(dgemv)("N", &nrx, &ncx, &alpha1, x,
-                        &nrx, ones, &one, &beta1, meanx, &one);
+                        &nrx, ones, &one, &beta1, meanx, &one FCONE);
 
         F77_CALL(dgemv)("N", &nry, &ncx, &alpha1, y,
-                        &nry, ones, &one, &beta1, meany, &one);
+                        &nry, ones, &one, &beta1, meany, &one FCONE);
 
         // create centered versions of x and y
         double *xc, *yc;
@@ -51,13 +58,13 @@ void lagged_cov(double *x, double *y, double *res,
             yc[i] = y[i] - meany[i%nry];
 
         F77_CALL(dgemm)("N", "T", &m, &n, &k, &alpha, xc + offsetx,
-                        &ldx, yc + offsety, &ldy, &beta, res, &ldx);
+                        &ldx, yc + offsety, &ldy, &beta, res, &ldx FCONE FCONE);
         Free(xc);
         Free(yc);
     } else {
 
         F77_CALL(dgemm)("N", "T", &m, &n, &k, &alpha, x + offsetx,
-                        &ldx, y + offsety, &ldy, &beta, res, &ldx);
+                        &ldx, y + offsety, &ldy, &beta, res, &ldx FCONE FCONE);
     }
 
 }
@@ -78,10 +85,10 @@ void lagged_covs(double *x, double *y, double *res, int *lags, int nlags, int nr
         double beta1 = 0.0;
 
         F77_CALL(dgemv)("N", &nrx, &ncx, &alpha1, x,
-                        &nrx, ones, &one, &beta1, meanx, &one);
+                        &nrx, ones, &one, &beta1, meanx, &one FCONE);
 
         F77_CALL(dgemv)("N", &nry, &ncx, &alpha1, y,
-                        &nry, ones, &one, &beta1, meany, &one);
+                        &nry, ones, &one, &beta1, meany, &one FCONE);
 
         // create centered versions of x and y
         double *xc, *yc;
