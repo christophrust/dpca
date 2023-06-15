@@ -4,7 +4,7 @@ library(dpca)
 test_that("HL: Find stability interval",{
 
   set.seed(as.integer(Sys.Date()))
-  intvl_idx <- c(1,sort(sample(2:100, 3)))
+  intvl_idx <- c(1,sort(sample(2:99, 3)))
   sample_vars <- rep(0, 100)
   repl_idx <- c((intvl_idx[2]+1):(intvl_idx[3]-1) , (intvl_idx[4]+1):100)
   sample_vars[repl_idx] <- abs(rnorm(length(repl_idx)))
