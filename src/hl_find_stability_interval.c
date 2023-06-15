@@ -27,7 +27,8 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
         } else {
             if (in_itvl) itvl_cnt++;
             in_itvl = 0;
-            ivl_idx[itvl_cnt * 2] = i;
+            if (itvl_cnt <= 1)
+                ivl_idx[itvl_cnt * 2] = i;
         }
 
         if (itvl_cnt > 1) {
@@ -59,7 +60,8 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
                     itvl_cnt++;
                 }
                 in_itvl = 0;
-                ivl_idx[itvl_cnt * 2] = i;
+                if (itvl_cnt <= 1)
+                    ivl_idx[itvl_cnt * 2] = i;
             }
 
             if (itvl_cnt > 1) {
