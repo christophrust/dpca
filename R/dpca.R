@@ -33,6 +33,7 @@ dpca <- function(x,
                  qsel = FALSE,
                  qsel_crit = c("IC1", "IC2"),
                  n_path = floor(seq(nrow(x)/2, nrow(x), nrow(x)/20)),
+                 t_path = floor(seq(ncol(x)/2, ncol(x), ncol(x)/20)),
                  penalties, penalty_scales = seq(0,2, by = 0.01)) {
 
   ##browser()
