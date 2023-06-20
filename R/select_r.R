@@ -38,9 +38,9 @@ select_r <- function(x, penalty = c("IC1", "IC2", "IC3"), penalty_scales = seq(0
   penalties <- if (penalty == "IC1") {
     (n_path + t_len)/(n_path * t_len) * log((n_path * t_len)/(n_path + t_len))
   } else if (penalty == "IC2") {
-    (n_path + t_len)/(n_path * t_len) * 2 * log(pmin(n_path, t_len))
+    (n_path + t_len)/(n_path * t_len) * log(pmin(n_path, t_len))
   } else if (penalty == "IC3") {
-    2 * log(pmin(n_path, t_len)) / (pmin(n_path, t_len)^2)
+    log(pmin(n_path, t_len)) / (pmin(n_path, t_len))
   } else {
     stop("penalty must be either of \"IC1\", \"IC2\", or \"IC3\"")
   }
