@@ -28,7 +28,7 @@
 dpca <- function(x,
                  q,
                  freqs = -100:100/100 * pi,
-                 bandwidth = floor(nrow(x)^(1/3)),
+                 bandwidth = floor(ncol(x)^(1/3)),
                  weights = c("Bartlett", "trunc", "Tukey", "Parzen", "Bohman", "Daniell", "ParzenCogburnDavis"),
                  qsel = FALSE,
                  qsel_crit = c("IC1", "IC2"),
