@@ -60,9 +60,7 @@ dpca <- function(x,
   wghts <- get(paste0("weights.", weights))(-bandwidth:bandwidth/bandwidth)
 
   if (qsel && missing(penalties)) {
-    penalties <- vapply(n_path, function(n){
-      (bandwidth^(-2) + sqrt(bandwidth/bandwidth) + 1/n * log(min(n, bandwidth^2, sqrt(T/bandwidth))))
-    }, numeric(1))
+    penalties <- (bandwidth^(-2) + sqrt(bandwidth/ncol(x)) + 1/n_path * log(pmin(n_path, bandwidth^2, sqrt(ncol(x)/bandwidth))))
   } else {
     penalties <- rep(0, length(n_path))
   }
