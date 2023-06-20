@@ -48,7 +48,7 @@ select_r <- function(x, penalty = c("IC1", "IC2", "IC3"), penalty_scales = seq(0
   res <- .Call(
     "R_hl_select_q",
     cx,
-    npath,
+    n_path,
     max_r,
     n,
     1L,
