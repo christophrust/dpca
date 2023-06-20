@@ -61,6 +61,7 @@ dpca <- function(x,
 
   if (qsel && missing(penalties)) {
     penalties <- (bandwidth^(-2) + sqrt(bandwidth/ncol(x)) + 1/n_path) * log(pmin(n_path, bandwidth^2, sqrt(ncol(x)/bandwidth)))
+  } else if (isFALSE(qsel)) {
     penalties <- rep(0, length(n_path))
   }
 
