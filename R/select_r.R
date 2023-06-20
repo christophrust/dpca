@@ -6,7 +6,7 @@
 #'
 #' @param x A data frame of variables (each row one time observation)
 #' or a data matrix (n by T).
-@export
+#' @export
 select_r <- function(x, penalty = c("IC1", "IC2", "IC3"), penalty_scales = seq(0,2, by = 0.01), n_path, max_r,...) {
 
   if (is.data.frame(x)) {
@@ -55,7 +55,7 @@ select_r <- function(x, penalty = c("IC1", "IC2", "IC3"), penalty_scales = seq(0
     2L,
     .Machine$double.eps,
     penalties,
-    penalty_scales
+    penalty_scales,
     PACKAGE = "dpca"
   )
 
