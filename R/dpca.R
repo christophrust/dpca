@@ -86,6 +86,7 @@ dpca <- function(x,
                as.integer(q),
                select_q,
                as.integer(n_path),
+               as.integer(t_path),
                as.numeric(penalties),
                as.numeric(penalty_scales),
                PACKAGE = "dpca")
