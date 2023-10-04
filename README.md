@@ -22,6 +22,8 @@ This package currently is not in a very mature state and will hopefully soon be 
 - [ ] Model assessment...
 - [ ] ...
 - [x] Ship ARPACK
+- [ ] Refactor C code
+
 
 
 
