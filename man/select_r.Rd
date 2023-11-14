@@ -28,6 +28,9 @@ is evaluated. See Hallin and Liska (2007) for details.}
 cross section are used in the Hallin & Liska procedure.}
 
 \item{max_r}{Integer, maximum number of components considered.}
+
+\item{...}{Further arguments passed to internal
+methods, currently without functionality.}
 }
 \description{
 Select the number of "static" factors for a static factor sequence

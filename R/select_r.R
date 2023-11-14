@@ -14,7 +14,10 @@
 #' @param n_path Integer vector specifying which (nested) subsets of the
 #' cross section are used in the Hallin & Liska procedure.
 #' @param max_r Integer, maximum number of components considered.
+#' @param ... Further arguments passed to internal
+#' methods, currently without functionality.
 #'
+#' @importFrom stats cov
 #' @export
 select_r <- function(
   x,
