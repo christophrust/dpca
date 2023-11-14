@@ -11,8 +11,6 @@ tmp/
 /src/*.gcda
 /src/*.gcno
 
-/src/arpack-ng*
-
 /dpca.Rcheck/
 /dpca_*.tar.gz
 /src/arpack/
