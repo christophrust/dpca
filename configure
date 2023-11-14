@@ -8,41 +8,18 @@ CC=`"${R_HOME}/bin/R" CMD config CC`
 CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
+FC=`"${R_HOME}/bin/R" CMD config FC`
 
-if test -z "$CMAKE"; then CMAKE="`which cmake`"; fi
-if test -z "$CMAKE"; then CMAKE=/Applications/CMake.app/Contents/bin/cmake; fi
-if test -f "$CMAKE"; then echo "found cmake!"; else echo "no ‘cmake’ command found"; exit 1; fi
+FSRC="z*.f icbazn.F90 debug.h stat.h"
+USRC="icnteq.f icopy.f iset.f iswap.f dvout.f ivout.f second_NONE.f zvout.f zmout.f"
+FSRC_C="*.f icbazn.F90"
 
-## check for libtool
-# if test -n "`which libtool`"
-# then
-#   echo "Found libtool at `which libtool`"
-#   libtool --version
-if test -f "/Applications/CMake.app/Contents/bin/cmake"
-then
-  export PATH=${R_HOME}/bin/:$PATH
-  echo "using libtool from R installation"
-  echo "`which libtool`"
-  $LIBTOOL --version
-elif test -n "`which libtool`"
-then
-   echo "Found libtool at `which libtool`"
-   libtool --version
-else
-  echo "libtool not found"
-  exit 1
-fi
-
-tar -xf tools/arpack-ng-3.9.0.tar.gz -C src
-cd src/arpack-ng-3.9.0
-sh bootstrap
-./configure --enable-icb
-mkdir -p build && cd build
-${CMAKE} -D ICB=ON -D BUILD_SHARED_LIBS=NO -D TESTS=OFF -D EXAMPLES=OFF -D CMAKE_C_FLAGS=-fPIC -D CMAKE_Fortran_FLAGS=-fPIC ..
-${MAKE}
-echo "Files in build:"
-ls -l
-echo "Files in ."
-ls -l ../
-echo "Files in ICB"
-ls -l ../ICB
+tar -xf tools/arpack-ng-3.9.0.tar.gz -C tools/
+mkdir -p src/arpack
+for f in $FSRC; do cp tools/arpack-ng-3.9.0/SRC/$f src/arpack/; done
+for f in $USRC; do cp tools/arpack-ng-3.9.0/UTIL/$f src/arpack/; done
+cat tools/arpack-ng-3.9.0/arpackdef.h.in | sed -e 's/@INTERFACE64@/0/g' > src/arpack/arpackdef.h
+cat tools/arpack-ng-3.9.0/arpackicb.h.in | sed -e 's/@INTERFACE64@/0/g' > src/arpack/arpackicb.h
+cp tools/arpack-ng-3.9.0/ICB/arpack.h src/arpack/
+cd src/arpack &&
+  for f in $FSRC_C; do ${FC} -c -fpic $f; done
