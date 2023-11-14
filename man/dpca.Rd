@@ -28,7 +28,8 @@ the maximum number of dynamic factors.}
 \item{freqs}{Numeric vector in [-pi, pi] giving the frequencies where the
 spectral density is evaluated.}
 
-\item{bandwidth}{Single integer, giving the width of the lag window estimator.}
+\item{bandwidth}{Single integer, giving the width of the
+lag window estimator.}
 
 \item{weights}{Kernel used for the lag window estimation of spectrum.}
 
@@ -47,7 +48,8 @@ time domain are used in the Hallin & Liska procedure.}
 \item{penalties}{Evaluated values of the penalty function at
 each value of the n_path. In case this is missing, the penalies suggested
 in Hallin & Liska (2007) are used:
-(bandwidth^(-2) + sqrt(bandwidth/bandwidth) + 1/nrow(x) * log(min(n, bandwidth^2, sqrt(T/bandwidth)))).}
+(bandwidth^(-2) + sqrt(bandwidth/bandwidth) + 1/nrow(x) *
+log(min(n, bandwidth^2, sqrt(T/bandwidth)))).}
 
 \item{penalty_scales}{Tuning values for the penalty scaling parameter
 c over which the q-path is optimized to stability.}
