@@ -8,12 +8,13 @@ dpca(
   x,
   q,
   freqs = -100:100/100 * pi,
-  bandwidth = floor(nrow(x)^(1/3)),
+  bandwidth = floor(ncol(x)^(1/3)),
   weights = c("Bartlett", "trunc", "Tukey", "Parzen", "Bohman", "Daniell",
     "ParzenCogburnDavis"),
   qsel = FALSE,
   qsel_crit = c("IC1", "IC2"),
   n_path = floor(seq(nrow(x)/2, nrow(x), nrow(x)/20)),
+  t_path = floor(seq(ncol(x)/2, ncol(x), ncol(x)/20)),
   penalties,
   penalty_scales = seq(0, 2, by = 0.01)
 )
@@ -39,6 +40,9 @@ Hallin & Liska (2007, JASA) method. Either "IC1" or "IC2".}
 
 \item{n_path}{Integer vector specifying Which (nested) subsets of the
 cross section are used in the Hallin & Liska procedure.}
+
+\item{t_path}{Integer vector specifying Which (nested) subsets of the
+time domain are used in the Hallin & Liska procedure.}
 
 \item{penalties}{Evaluated values of the penalty function at
 each value of the n_path. In case this is missing, the penalies suggested

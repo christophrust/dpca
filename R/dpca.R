@@ -13,6 +13,8 @@
 #'   Hallin & Liska (2007, JASA) method. Either "IC1" or "IC2".
 #' @param n_path Integer vector specifying Which (nested) subsets of the
 #' cross section are used in the Hallin & Liska procedure.
+#' @param t_path Integer vector specifying Which (nested) subsets of the
+#' time domain are used in the Hallin & Liska procedure.
 #' @param penalties Evaluated values of the penalty function at
 #' each value of the n_path. In case this is missing, the penalies suggested
 #' in Hallin & Liska (2007) are used:
