@@ -1,0 +1,2 @@
+PKG_LIBS = arpack/*.o  -llapack -lblas -lgfortran -lquadmath
+PKG_CFLAGS = -I"arpack"
