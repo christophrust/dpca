@@ -16,9 +16,21 @@ select_r(
 \arguments{
 \item{x}{A data frame of variables (each row one time observation)
 or a data matrix (n by T).}
+
+\item{penalty}{Either of "IC1", "IC2", "IC3", specifying which penalty
+to use. See Bai and Ng (2002) for details on the criteria.
+Defaults to "IC1"}
+
+\item{penalty_scales}{A vector of penalty scales over which the stability
+is evaluated. See Hallin and Liska (2007) for details.}
+
+\item{n_path}{Integer vector specifying which (nested) subsets of the
+cross section are used in the Hallin & Liska procedure.}
+
+\item{max_r}{Integer, maximum number of components considered.}
 }
 \description{
 Select the number of "static" factors for a static factor sequence
 via the criteria of Bai and Ng (2002) but using the stability interval
-method suggested by Hallin and Liska (2007.
+method suggested by Hallin and Liska (2007).
 }

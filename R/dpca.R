@@ -11,7 +11,7 @@
 #' choose q from the data.
 #' @param qsel_crit Criterion to select the number of factors using the
 #'   Hallin & Liska (2007, JASA) method. Either "IC1" or "IC2".
-#' @param n_path Integer vector specifying Which (nested) subsets of the
+#' @param n_path Integer vector specifying which (nested) subsets of the
 #' cross section are used in the Hallin & Liska procedure.
 #' @param t_path Integer vector specifying Which (nested) subsets of the
 #' time domain are used in the Hallin & Liska procedure.
