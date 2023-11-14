@@ -3,4 +3,5 @@
 export(dpca)
 export(filter_process)
 export(recursive_filter)
+export(select_r)
 useDynLib(dpca)
