@@ -8,12 +8,13 @@ dpca(
   x,
   q,
   freqs = -100:100/100 * pi,
-  bandwidth = floor(nrow(x)^(1/3)),
+  bandwidth = floor(ncol(x)^(1/3)),
   weights = c("Bartlett", "trunc", "Tukey", "Parzen", "Bohman", "Daniell",
     "ParzenCogburnDavis"),
   qsel = FALSE,
   qsel_crit = c("IC1", "IC2"),
   n_path = floor(seq(nrow(x)/2, nrow(x), nrow(x)/20)),
+  t_path = floor(seq(ncol(x)/2, ncol(x), ncol(x)/20)),
   penalties,
   penalty_scales = seq(0, 2, by = 0.01)
 )
@@ -27,7 +28,8 @@ the maximum number of dynamic factors.}
 \item{freqs}{Numeric vector in [-pi, pi] giving the frequencies where the
 spectral density is evaluated.}
 
-\item{bandwidth}{Single integer, giving the width of the lag window estimator.}
+\item{bandwidth}{Single integer, giving the width of the
+lag window estimator.}
 
 \item{weights}{Kernel used for the lag window estimation of spectrum.}
 
@@ -37,13 +39,17 @@ choose q from the data.}
 \item{qsel_crit}{Criterion to select the number of factors using the
 Hallin & Liska (2007, JASA) method. Either "IC1" or "IC2".}
 
-\item{n_path}{Integer vector specifying Which (nested) subsets of the
+\item{n_path}{Integer vector specifying which (nested) subsets of the
 cross section are used in the Hallin & Liska procedure.}
+
+\item{t_path}{Integer vector specifying Which (nested) subsets of the
+time domain are used in the Hallin & Liska procedure.}
 
 \item{penalties}{Evaluated values of the penalty function at
 each value of the n_path. In case this is missing, the penalies suggested
 in Hallin & Liska (2007) are used:
-(bandwidth^(-2) + sqrt(bandwidth/bandwidth) + 1/nrow(x) * log(min(n, bandwidth^2, sqrt(T/bandwidth)))).}
+(bandwidth^(-2) + sqrt(bandwidth/bandwidth) + 1/nrow(x) *
+log(min(n, bandwidth^2, sqrt(T/bandwidth)))).}
 
 \item{penalty_scales}{Tuning values for the penalty scaling parameter
 c over which the q-path is optimized to stability.}

@@ -1,7 +1,8 @@
-#include "dpca.h"
+#include "fourier_transform.h"
 #include <complex.h>
-#include <string.h>
 
+#include <R.h>
+#include <Rinternals.h>
 
 /*
   Discrete fourier transform, moving heavy stuff of fourier.transform into C code
@@ -18,10 +19,10 @@
 
 
 
-void fourier_transform(double *z, int nrz, int ncz,
-                       double * freqs, int nfreq,
-                       int * lags, int nlags,
-                       double _Complex *res) {
+void fourier_transform(double* z, int nrz, int ncz,
+                       double* freqs, int nfreq,
+                       int* lags, int nlags,
+                       double _Complex* res) {
 
     double _Complex w;
     int sub_dim = nrz * ncz;
@@ -36,22 +37,4 @@ void fourier_transform(double *z, int nrz, int ncz,
             }
         }
     }
-}
-
-SEXP R_fourier_transform(SEXP z, SEXP dim_z1, SEXP dim_z2,
-                       SEXP freq, SEXP n_freq,
-                         SEXP lags, SEXP
-                         n_lags)
-{
-
-
-    SEXP res = PROTECT(alloc3DArray(CPLXSXP, *INTEGER(dim_z1), *INTEGER(dim_z2), *INTEGER(n_freq)));
-
-    fourier_transform(REAL(z), *INTEGER(dim_z1), *INTEGER(dim_z2),
-                       REAL(freq), *INTEGER(n_freq),
-                       INTEGER(lags), *INTEGER(n_lags),
-                       (double _Complex *) COMPLEX(res));
-
-    UNPROTECT(1);
-    return res;
 }

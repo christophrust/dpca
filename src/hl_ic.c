@@ -1,5 +1,6 @@
-#include "Rinternals.h"
-#include "dpca.h"
+#include "hl_ic.h"
+#include <complex.h>
+#include <math.h>
 
 void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreqs,
            int dim, int ldm, int select_q, double * ic_vals) {
@@ -25,26 +26,4 @@ void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreq
              ic_vals[i] = log(ic_vals[i]);
          }
      }
-}
-
-
-
-
-
-SEXP R_hl_ic(SEXP r_spec, SEXP r_evals, SEXP r_max_q, SEXP r_nfreqs, SEXP r_dim,
-             SEXP r_ldm, SEXP r_select_q) {
-
-    SEXP res = PROTECT(allocVector(REALSXP, *INTEGER(r_max_q) + 1));
-
-    hl_ic((double _Complex *) COMPLEX(r_spec),
-          (double _Complex *) COMPLEX(r_evals),
-          *INTEGER(r_max_q),
-          *INTEGER(r_nfreqs),
-          *INTEGER(r_dim),
-          *INTEGER(r_ldm),
-          *INTEGER(r_select_q),
-          REAL(res));
-
-    UNPROTECT(1);
-    return res;
 }

@@ -3,5 +3,6 @@
 #####
 # PKG_LIBS = -llapack -lblas -lgcov -L"arpack-ng-3.9.0/build" -l:libarpack.a
 # PKG_CFLAGS = -I"arpack-ng-3.9.0/ICB/" -I"arpack-ng-3.9.0/" -O0 --coverage
-PKG_LIBS = -lblas -L"arpack-ng-3.9.0/build" -l:libarpack.a
-PKG_CFLAGS = -I"arpack-ng-3.9.0/ICB/" -I"arpack-ng-3.9.0/"
+# PKG_LIBS = -lblas -L"arpack-ng-3.9.0/build" -l:libarpack.a
+PKG_LIBS = arpack/*.o -lblas -llapack
+PKG_CFLAGS = -I"arpack"

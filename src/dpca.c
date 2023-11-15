@@ -6,7 +6,7 @@
 
 SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
             SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q,
-            SEXP r_n_path, SEXP r_penalties, SEXP r_penalty_scales) {
+            SEXP r_n_path, SEXP r_t_path, SEXP r_penalties, SEXP r_penalty_scales) {
 
     int nrx = Rf_nrows(r_x);
     int ncx = Rf_ncols(r_x);
@@ -29,7 +29,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     int *n_path = INTEGER(r_n_path);
 
     double *covs;
-    covs = (double *)R_Calloc(nrx * nrx * nlags, double);
+    covs = (double *) R_Calloc(nrx * nrx * nlags, double);
     SEXP spec = PROTECT(alloc3DArray(CPLXSXP, nrx, nrx, nfreqs));
     SEXP filter_input;
     SEXP filter_dcc = PROTECT(alloc3DArray(REALSXP, nrx, nrx, nlags));
@@ -40,6 +40,7 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
     double tmp_accum;
     double _Complex * evec_crossprod;
     evec_crossprod = (double _Complex *) R_Calloc(nrx * nrx * nfreqs, double _Complex);
+
     /* compute autocovariances */
     lagged_covs(REAL(r_x), REAL(r_x), covs, lags, nlags, nrx, ncx, nrx, ncx, REAL(kernel), 1);
 

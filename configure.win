@@ -10,16 +10,17 @@ CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
 FC=`"${R_HOME}/bin/R" CMD config FC`
 
-FSRC="z*.f icbazn.F90 debug.h stat.h"
+ZSRC="z*.f icbazn.F90 debug.h stat.h"
 USRC="icnteq.f icopy.f iset.f iswap.f dvout.f ivout.f second_NONE.f zvout.f zmout.f"
 FSRC_C="*.f icbazn.F90"
 
 tar -xf tools/arpack-ng-3.9.0.tar.gz -C tools/
 mkdir -p src/arpack
-for f in $FSRC; do cp tools/arpack-ng-3.9.0/SRC/$f src/arpack/; done
+for f in $ZSRC; do cp tools/arpack-ng-3.9.0/SRC/$f src/arpack/; done
 for f in $USRC; do cp tools/arpack-ng-3.9.0/UTIL/$f src/arpack/; done
 cat tools/arpack-ng-3.9.0/arpackdef.h.in | sed -e 's/@INTERFACE64@/0/g' > src/arpack/arpackdef.h
 cat tools/arpack-ng-3.9.0/arpackicb.h.in | sed -e 's/@INTERFACE64@/0/g' > src/arpack/arpackicb.h
 cp tools/arpack-ng-3.9.0/ICB/arpack.h src/arpack/
 cd src/arpack &&
-  for f in $FSRC_C; do ${FC} -c -fpic $f; done
+  for f in $FSRC_C; do ${FC} -c -fpic $f; done &&
+  ar cr libarpack.a *.o
