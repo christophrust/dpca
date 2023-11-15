@@ -48,8 +48,8 @@ void lagged_cov(double *x, double *y, double *res,
 
         // create centered versions of x and y
         double *xc, *yc;
-        xc = (double *) Calloc(nrx * ncx, double);
-        yc = (double *) Calloc(nry * ncx, double);
+        xc = (double *) R_Calloc(nrx * ncx, double);
+        yc = (double *) R_Calloc(nry * ncx, double);
 
         for (int i = 0; i< nrx * ncx; i++)
             xc[i] = x[i] - meanx[i%nrx];
@@ -59,8 +59,8 @@ void lagged_cov(double *x, double *y, double *res,
 
         F77_CALL(dgemm)("N", "T", &m, &n, &k, &alpha, xc + offsetx,
                         &ldx, yc + offsety, &ldy, &beta, res, &ldx FCONE FCONE);
-        Free(xc);
-        Free(yc);
+        R_Free(xc);
+        R_Free(yc);
     } else {
 
         F77_CALL(dgemm)("N", "T", &m, &n, &k, &alpha, x + offsetx,
@@ -106,8 +106,8 @@ void lagged_covs(double *x, double *y, double *res, int *lags, int nlags, int nr
             lagged_cov(xc, yc, res + i * dim, lags[i], nrx, ncx, nry, 0, weights[i]);
         }
 
-        Free(xc);
-        Free(yc);
+        R_Free(xc);
+        R_Free(yc);
 
     } else {
 
