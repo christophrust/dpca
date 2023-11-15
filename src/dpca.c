@@ -133,8 +133,10 @@ SEXP R_dpca
 
         /* eigen decomposition of spectrum with preselected q */
         for (int i = 0; i < nfreqs; i++)
-            arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, nrx, q, COMPLEX(evals) + q * i,
-                         COMPLEX(evecs) + nrx * q * i, tol, 1, 0, 1, 1);
+            arnoldi_eigs(
+                (double _Complex *) COMPLEX(spec) + nrx * nrx * i, nrx, nrx, q,
+                (double _Complex *) COMPLEX(evals) + q * i,
+                (double _Complex *) COMPLEX(evecs) + nrx * q * i, tol, 1, 0, 1, 1);
 
     }
 

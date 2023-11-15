@@ -47,8 +47,12 @@ SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
   }
   SEXP evals = PROTECT(allocVector(CPLXSXP, q));
 
-  arnoldi_eigs(mat, dim, ldm, q, COMPLEX(evals), COMPLEX(evecs), tol,
-               normalize_evecs, verbose, row_evecs, transpose_out);
+  arnoldi_eigs(
+      (double _Complex *) mat, dim, ldm, q,
+      (double _Complex *) COMPLEX(evals),
+      (double _Complex *) COMPLEX(evecs), tol,
+      normalize_evecs, verbose, row_evecs,
+      transpose_out);
 
   SET_VECTOR_ELT(res, 0, evals);
   SET_VECTOR_ELT(res, 1, evecs);
@@ -73,7 +77,10 @@ SEXP R_zMatVec(SEXP r_mat, SEXP r_vec, SEXP r_dim, SEXP version) {
     error("ldm must be larger than dim!");
   }
 
-  complex_mv_product((double _Complex *) COMPLEX(r_vec), (double _Complex *) COMPLEX(res), COMPLEX(r_mat), dim, ldm);
+  complex_mv_product(
+      (double _Complex *) COMPLEX(r_vec),
+      (double _Complex *) COMPLEX(res),
+      (double _Complex *) COMPLEX(r_mat), dim, ldm);
 
   UNPROTECT(1);
   return res;

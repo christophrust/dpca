@@ -18,8 +18,8 @@ void hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Compl
         curr_dim = n_path[i];
 
         for (int j = 0; j < nfreqs; j++) {
-            arnoldi_eigs((Rcomplex *) spec + dim * dim * j, curr_dim, dim, max_q,
-                         (Rcomplex *) evals + j * max_q, (Rcomplex *) evecs + dim * max_q * j, tol,
+            arnoldi_eigs(spec + dim * dim * j, curr_dim, dim, max_q,
+                         evals + j * max_q, evecs + dim * max_q * j, tol,
                          1, 0, 1, 1);
         }
 
