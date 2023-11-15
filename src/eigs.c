@@ -1,13 +1,12 @@
 
 #include <R.h>
 #include <Rinternals.h>
+#include <R_ext/Lapack.h>
 #include <complex.h>
 #include <arpack.h>
-#include <R_ext/Lapack.h>
-#include <math.h>
 
-#include "dpca.h"
-
+#include "eigs.h"
+#include "complex_mv_product.h"
 
 void get_rank(double *values, int *rank, int n) {
 
@@ -80,7 +79,8 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
   iparam[9] = 0;
   iparam[10] = 0;
 
-  if (verbose) Rprintf("starting znaupd iteration\n");
+  if (verbose)
+    Rprintf("starting znaupd iteration\n");
 
   int cnt = 0;
   while (ido != 99) {
@@ -92,7 +92,8 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
     cnt++;
   }
 
-  if (verbose) Rprintf("finished znaupd iteration, info: %d, numer of iterations: %d\n", info, cnt);
+  if (verbose)
+    Rprintf("finished znaupd iteration, info: %d, numer of iterations: %d\n", info, cnt);
 
 
   if (iparam[4] != nev) {
@@ -105,9 +106,11 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
            tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl, rwork,
            &info);
 
-  if (verbose) Rprintf("finished zneupd call, info: %d\n", info);
+  if (verbose)
+    Rprintf("finished zneupd call, info: %d\n", info);
 
-  if (verbose) Rprintf("copying results\n");
+  if (verbose)
+    Rprintf("copying results\n");
 
   // sort eigenvalues and eigenvectors
   int rank[q];
@@ -154,48 +157,4 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
       }
     }
   }
-
 }
-
-
-
-SEXP R_arnoldi_eigs(SEXP r_mat, SEXP r_dim, SEXP r_q, SEXP r_tol,
-                    SEXP r_normalize_evecs, SEXP r_verbose,
-                    SEXP r_row_evecs, SEXP r_transpose_out) {
-
-  Rcomplex *mat = COMPLEX(r_mat);
-  int ldm = nrows(r_mat);
-  int dim = *INTEGER(r_dim);
-  int q = *INTEGER(r_q);
-  double tol = *REAL(r_tol);
-  int normalize_evecs = *INTEGER(r_normalize_evecs);
-  int verbose = *INTEGER(r_verbose);
-  int row_evecs = *INTEGER(r_row_evecs);
-  int transpose_out = *INTEGER(r_transpose_out);
-
-  // result objects
-  SEXP res = PROTECT(allocVector(VECSXP, 2));;
-  SEXP evecs;
-  if (transpose_out){
-    evecs = PROTECT(allocMatrix(CPLXSXP, q, dim));
-  } else {
-    evecs = PROTECT(allocMatrix(CPLXSXP, dim, q));
-  }
-  SEXP evals = PROTECT(allocVector(CPLXSXP, q));
-
-  arnoldi_eigs(mat, dim, ldm, q, COMPLEX(evals), COMPLEX(evecs), tol,
-               normalize_evecs, verbose, row_evecs, transpose_out);
-
-  SET_VECTOR_ELT(res, 0, evals);
-  SET_VECTOR_ELT(res, 1, evecs);
-
-  SEXP nms = PROTECT(allocVector(STRSXP, 2));
-  SET_STRING_ELT(nms, 0, mkChar("values"));
-  SET_STRING_ELT(nms, 1, mkChar("vectors"));
-
-  setAttrib(res, R_NamesSymbol, nms);
-
-  UNPROTECT(4);
-  return res;
-}
-

@@ -1,15 +1,17 @@
+#include "filter_process.h"
+#include <stdlib.h>
+
 #ifndef  USE_FC_LEN_T
 # define USE_FC_LEN_T
 #endif
+
 #include <Rconfig.h>
-#include <R.h>
-#include "R_ext/RS.h"
-#include "Rinternals.h"
-// #include "dpca.h"
-#include "R_ext/BLAS.h"
+#include <R_ext/Lapack.h>
+
 #ifndef FCONE
 # define FCONE
 #endif
+
 
 /*
 ** Compute the convolution of a (multiple) filters f and a (multivariate) time series x
@@ -25,35 +27,6 @@
 **
 ** NB: it must hold that ncf = nrx
 */
-void filter_process1(double *f, double *x, int *lags, int nrf, int ncf,
-                     int nrx, int ncx, int nlags, double *y) {
-
-    int fdim12 = nrf * ncf;
-    int maxlag = 0;
-    int minlag = 0;
-
-    for (int i = 0; i < nlags; i++) {
-        if (lags[i] > maxlag) maxlag = lags[i];
-        if (lags[i] < minlag) minlag = lags[i];
-    }
-
-    memset(y, NA_REAL, nrf * ncx * sizeof(double));
-    double tempval;
-
-    for (int t = maxlag; t < ncx + minlag; t++) {
-        for (int i=0; i < nrf; i++) {
-            tempval = 0;
-            for (int j = 0; j < nrx; j++){
-                for (int k = 0; k < nlags; k++) {
-                    tempval += f[i + j * nrf + k * fdim12 ] * x[j + nrx * (t - lags[k])];
-                }
-            }
-            y[i + nrf * t] = tempval;
-        }
-    }
-}
-
-
 void filter_process(double *f, double *x, int *lags, int nrf, int ncf,
                     int nrx, int ncx, int nlags, double *y, int insert_sample_end,
                     int transf, int rev) {
@@ -127,26 +100,4 @@ void filter_process(double *f, double *x, int *lags, int nrf, int ncf,
             }
         }
     }
-}
-
-
-
-SEXP R_filter_process(SEXP r_f, SEXP r_x, SEXP r_lags,
-                      SEXP r_nrf, SEXP r_ncf, SEXP r_nrx, SEXP r_ncx,
-                      SEXP r_nlags, SEXP r_inx, SEXP r_transf, SEXP r_rev) {
-
-    int nrf = *INTEGER(r_nrf);
-    int ncf = *INTEGER(r_ncf);
-    int ncx = *INTEGER(r_ncx);
-    int transf = *INTEGER(r_transf);
-    int rev = *INTEGER(r_rev);
-    int nry = nrf;
-    if (transf) nry = ncf;
-    SEXP res = PROTECT(allocMatrix(REALSXP, nry , ncx));
-
-    filter_process(REAL(r_f), REAL(r_x), INTEGER(r_lags), nrf, *INTEGER(r_ncf),
-                   *INTEGER(r_nrx), *INTEGER(r_ncx), *INTEGER(r_nlags), REAL(res),
-                   *INTEGER(r_inx), transf, rev);
-    UNPROTECT(1);
-    return res;
 }

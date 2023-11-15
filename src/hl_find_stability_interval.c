@@ -1,16 +1,8 @@
-#include "dpca.h"
 #include <float.h>
 #include <math.h>
 
-/**
- * @brief find the stability interval of the sample variance of S_c
- * over the range of c
- * @param sample_var Array of length lsv with the sample variance of S_c
- * @param lsv the length of sample_var
- * @param ivl_idx Pointer to an integer array of length 4.
- * On output this holds the indices (start, end) of the
- * first two stability intervals.
- * */
+#include "hl_find_stability_interval.h"
+
 int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
 
     ivl_idx[0] = 0;
@@ -93,21 +85,4 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
     /* } */
 
     return info;
-}
-
-
-
-SEXP R_find_stability_intervals(SEXP r_sample_var) {
-
-    SEXP res = PROTECT(allocVector(INTSXP, 4));
-
-    int info = hl_find_stability_intervals(REAL(r_sample_var), length(r_sample_var) , INTEGER(res));
-
-    if (info == 1)
-        warning("No stability inverval where S_c is zero was found. Returning indices of second stability interval where S_c is different from zero.");
-    if (info == 2)
-        warning("No stability inverval found. Using index of global minimum.");
-
-    UNPROTECT(1);
-    return res;
 }
