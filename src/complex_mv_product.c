@@ -12,7 +12,7 @@
 #endif
 
 
-void zMatVecLa(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim, int ldm) {
+void complex_mv_product(double _Complex *x, double _Complex* y, Rcomplex* mat, int dim, int ldm) {
 
   Rcomplex alpha;
   alpha.r = 1.0; alpha.i = 0.0;

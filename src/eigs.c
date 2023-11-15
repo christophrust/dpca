@@ -88,7 +88,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
     znaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, rwork, &info);
 
-    zMatVecLa(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), mat, dim, ldm);
+    complex_mv_product(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), mat, dim, ldm);
     cnt++;
   }
 

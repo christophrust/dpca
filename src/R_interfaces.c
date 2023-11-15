@@ -73,7 +73,7 @@ SEXP R_zMatVec(SEXP r_mat, SEXP r_vec, SEXP r_dim, SEXP version) {
     error("ldm must be larger than dim!");
   }
 
-  zMatVecLa((double _Complex *) COMPLEX(r_vec), (double _Complex *) COMPLEX(res), COMPLEX(r_mat), dim, ldm);
+  complex_mv_product((double _Complex *) COMPLEX(r_vec), (double _Complex *) COMPLEX(res), COMPLEX(r_mat), dim, ldm);
 
   UNPROTECT(1);
   return res;
