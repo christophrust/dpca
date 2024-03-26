@@ -2,16 +2,16 @@
 % Please edit documentation in R/recursive_filter.R
 \name{recursive_filter}
 \alias{recursive_filter}
-\title{Multivariate recursive filter}
+\title{Multivariate recursive filter.}
 \usage{
-recursive_filter(x, f)
+recursive_filter(x, filter_coefficients)
 }
 \arguments{
-\item{x}{A multiple time series supplied as a n by T matrix}
+\item{x}{A multivariate time series provided as a q by T matrix.}
 
-\item{f}{Filter coefficient matrices supplied as n by n by p array,
-where p is the maximum lag order.}
+\item{filter_coefficients}{An n by q by p array holding
+filter coefficients, where p is the maximum lag order.}
 }
 \description{
-Multivariate recursive filter
+Apply a recursive filter to a multivariate time series.
 }
