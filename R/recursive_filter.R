@@ -1,12 +1,18 @@
-#' Multivariate recursive filter
+#' Multivariate recursive filter.
 #'
-#' @param x A multiple time series supplied as a n by T matrix
-#' @param f Filter coefficient matrices supplied as n by n by p array,
-#'   where p is the maximum lag order.
+#' Apply a recursive filter to a multivariate time series.
+#'
+#' @param x A multivariate time series provided as a q by T matrix.
+#' @param filter_coefficients An n by q by p array holding
+#' filter coefficients, where p is the maximum lag order.
+#'
 #' @export
-recursive_filter <- function(x, f) {
+recursive_filter <- function(x, filter_coefficients) {
 
-  nlags <- if (is.matrix(f)) 1L else dim(f)[3]
+  if (dim(x)[1] != dim(filter_coefficients)[2])
+    stop("Incompatible dimension of \"x\" and \"filter_coefficients\"!")
 
-  .Call("R_recursive_filter", x, as.numeric(f), nrow(x), nlags)
+  nlags <- if (is.matrix(filter_coefficients)) 1L else dim(filter_coefficients)[3]
+
+  .Call("R_recursive_filter", x, as.numeric(filter_coefficients), nrow(x), nlags)
 }
