@@ -331,9 +331,9 @@ SEXP R_lagged_cov(SEXP r_x, SEXP r_y, SEXP r_lag, SEXP r_nrx,
     int center = *INTEGER(r_center);
 
     if (length(r_x) != nrx * ncx)
-        error("Supplied dimension of X do not fit to passed array length!");
+        error("Supplied dimension of X do not fit to supplied array length!");
     if (length(r_y) != nry * ncy)
-        error("Supplied dimension of Y do not fit to passed array length!");
+        error("Supplied dimension of Y do not fit to supplied array length!");
     if (ncx != ncy)
         error("X and Y must have same number of columns!");
     if (ncx - 1 <= lag)
@@ -364,9 +364,9 @@ SEXP R_lagged_covs(SEXP r_x, SEXP r_y, SEXP r_lags, SEXP r_nrx, SEXP r_ncx,
         if (abs(lags[i]) > maxlag) maxlag = abs(lags[i]);
 
     if (length(r_x) != nrx * ncx)
-        error("Supplied dimension of X do not fit to passed array length!");
+        error("Supplied dimension of X do not fit to supplied array length!");
     if (length(r_y) != nry * ncy)
-        error("Supplied dimension of Y do not fit to passed array length!");
+        error("Supplied dimension of Y do not fit to supplied array length!");
     if (ncx != ncy)
         error("X and Y must have same number of columns!");
     if (ncx - 1 <= maxlag)

@@ -24,12 +24,14 @@ test_that("Test dpca, stepwise", {
   chi <- .Call("R_filter_process", b_filter, epsilon, as.integer(1:10),
                nrx, q, q, ncx, 10L, 1L, 0L, 0L)
   x <- chi + rnorm(nrx * ncx, sd = 0.1 * sd(chi))
+  x <- x - rowMeans(x)
 
 
   ## run dpca for both implementation (freqdom and our)
   system.time(res_dpca <- .Call("R_dpca", x, 4L, freqs, bw, .Machine$double.eps, weights, 4L, 0L, 0L, 0L, 0.1, 0.1))
   system.time(res_dpca1 <- dpca::dpca(x = x, q = 4, freqs = freqs, bandwidth = bw, weights = "Bartlett"))
   system.time(res_freqdom <- freqdom::dpca(t(x), bw, freqs, 4L))
+  res_dpca$xmean <- rowMeans(x)
   class(res_dpca1) <- NULL
   expect_equal(res_dpca, res_dpca1)
 

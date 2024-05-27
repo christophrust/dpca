@@ -11,7 +11,9 @@ multivariate_filter(
 )
 }
 \arguments{
-\item{x}{A multivariate time series provided as a q by T matrix.}
+\item{x}{A multivariate time series provided either as a matrix (rows correspond
+to cross-sectional units and columnts to observations in the time domain) or a
+multivariate object of class `ts` or `zoo`.}
 
 \item{filter_coefficients}{An n by q by l array holding
 filter coefficients.}
@@ -20,7 +22,9 @@ filter coefficients.}
 specifying the lag index.}
 }
 \value{
-A matrix of dimension n by T where
+A matrix of dimension n by T - max(c(0, lags)) - max(c(0, -lags)) where
+n and T are the input dimension, and
+
   y[t] = f[,,1] * x[t - lags[1]] + f[,,2] * x[t-lags[2]] ...
 }
 \description{

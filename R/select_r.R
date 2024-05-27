@@ -5,23 +5,49 @@
 #' method suggested by Hallin and Liska (2007).
 #'
 #' @param x A data frame of variables (each row one time observation)
-#' or a data matrix (n by T).
-#' @param penalty Either of "IC1", "IC2", "IC3", specifying which penalty
+#' or a data matrix (rows correspond to cross-sectional units and columnts
+#' to observations in the time domain).
+#'
+#' @param crit Either of "IC1", "IC2", "IC3", specifying which penalty
 #' to use. See Bai and Ng (2002) for details on the criteria.
 #' Defaults to "IC1"
+#'
 #' @param penalty_scales A vector of penalty scales over which the stability
 #' is evaluated. See Hallin and Liska (2007) for details.
+#'
 #' @param n_path Integer vector specifying which (nested) subsets of the
 #' cross section are used in the Hallin & Liska procedure.
+#'
 #' @param max_r Integer, maximum number of components considered.
+#'
 #' @param ... Further arguments passed to internal
 #' methods, currently without functionality.
+#'
+#' @return A list with the entries
+#' \itemize{
+#'   \item \code{evals}: the first r values are the eigenvalues of the covariance matrix
+#'   \item \code{evecs}: the first r eigenvectors of the covariance matrix
+#'   \item \code{unpenalized_ic_vals}: Unpenalized values of the selected information criterion.
+#'   \item \code{sample_var_criterion}: \code{sample variance} of the selected \code{r} overall
+#'     entries in \code{n_path} and \code{penalty_scales}.
+#'   \item \code{info}: single integer indicating success/failure finding a stability interval.
+#'     It can take the following values
+#'      0: everything went fine.
+#'      1: no zero stability invervals were found.
+#'      2: no stability was found, such that the penalty scale which globally
+#'         minimizes the sample variance is chosen.
+#'   \item \code{r}: the number of selected components.
+#' }
+#'
+#' @references Hallin, M. and Liska, R. (2007). Determining the Number of
+#' Factors in the General Dynamic Factor Model. Journal of the American
+#' Statistical Association, 102 (478).
 #'
 #' @importFrom stats cov
 #' @export
 select_r <- function(
   x,
-  penalty = c("IC1", "IC2", "IC3"),
+  crit = c("IC1", "IC2", "IC3"),
   penalty_scales = seq(0, 2, by = 0.01),
   n_path,
   max_r,
@@ -44,7 +70,6 @@ select_r <- function(
     stop("x must be either a data frame, a data matrix (n by T)!")
   }
 
-
   if (missing(n_path)) {
     n_path <- floor(seq(n / 2, n, n / 20))
   }
@@ -54,15 +79,15 @@ select_r <- function(
   }
 
   ## penalties suggested by Bai & Ng (2002)
-  penalties <- if (penalty == "IC1") {
+  penalties <- if (crit == "IC1") {
     (n_path + t_len) / (n_path * t_len) *
       log((n_path * t_len) / (n_path + t_len))
-  } else if (penalty == "IC2") {
+  } else if (crit == "IC2") {
     (n_path + t_len) / (n_path * t_len) * log(pmin(n_path, t_len))
-  } else if (penalty == "IC3") {
+  } else if (crit == "IC3") {
     log(pmin(n_path, t_len)) / (pmin(n_path, t_len))
   } else {
-    stop("penalty must be either of \"IC1\", \"IC2\", or \"IC3\"")
+    stop("crit must be either of \"IC1\", \"IC2\", or \"IC3\"")
   }
 
   res <- .Call(

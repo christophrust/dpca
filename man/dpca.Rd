@@ -2,25 +2,27 @@
 % Please edit documentation in R/dpca.R
 \name{dpca}
 \alias{dpca}
-\title{Dynamic Principal Component Analysis and Large Dynamic Factor Models}
+\title{Dynamic Principal Component Analysis and Large Dynamic Factor Model Estimation}
 \usage{
 dpca(
   x,
   q,
   freqs = -100:100/100 * pi,
-  bandwidth = floor(ncol(x)^(1/3)),
+  bandwidth = NULL,
   weights = c("Bartlett", "trunc", "Tukey", "Parzen", "Bohman", "Daniell",
     "ParzenCogburnDavis"),
   qsel = FALSE,
   qsel_crit = c("IC1", "IC2"),
-  n_path = floor(seq(nrow(x)/2, nrow(x), nrow(x)/20)),
-  t_path = floor(seq(ncol(x)/2, ncol(x), ncol(x)/20)),
+  n_path = NULL,
+  t_path = NULL,
   penalties,
   penalty_scales = seq(0, 2, by = 0.01)
 )
 }
 \arguments{
-\item{x}{Input data (n by T) matrix}
+\item{x}{Input data supplied either as a matrix (rows correspond to cross-sectional
+units and columnts to observations in the time domain) or a multivariate object of
+class `ts` or `zoo`.}
 
 \item{q}{Number of dynamic factors. If qsel = TRUE, this is
 the maximum number of dynamic factors.}
@@ -29,21 +31,24 @@ the maximum number of dynamic factors.}
 spectral density is evaluated.}
 
 \item{bandwidth}{Single integer, giving the width of the
-lag window estimator.}
+lag window estimator. If unspecified, the cube root of the number of time
+observations is used as default.}
 
 \item{weights}{Kernel used for the lag window estimation of spectrum.}
 
-\item{qsel}{Logical, if TRUE one of the Hallin & Liska criteria are used to
+\item{qsel}{Logical, if TRUE one of the Hallin & Liska (2007) criteria are used to
 choose q from the data.}
 
 \item{qsel_crit}{Criterion to select the number of factors using the
 Hallin & Liska (2007, JASA) method. Either "IC1" or "IC2".}
 
 \item{n_path}{Integer vector specifying which (nested) subsets of the
-cross section are used in the Hallin & Liska procedure.}
+cross section are used in the Hallin & Liska procedure. If unspecified,
+a regular sequence of length 20 from n/2 to n is used.}
 
 \item{t_path}{Integer vector specifying Which (nested) subsets of the
-time domain are used in the Hallin & Liska procedure.}
+time domain are used in the Hallin & Liska procedure. If unspecified,
+a regular sequence of length 20 from T/2 to T is used.}
 
 \item{penalties}{Evaluated values of the penalty function at
 each value of the n_path. In case this is missing, the penalies suggested
@@ -55,8 +60,32 @@ log(min(n, bandwidth^2, sqrt(T/bandwidth)))).}
 c over which the q-path is optimized to stability.}
 }
 \value{
-An object of class "dpca" with different entries.
+A list with entries
+\itemize{
+  \item \code{xmean}: a vector holding the mean of each cross-sectional unit
+  \item \code{spectrum}: the estimated spectral density
+  \item \code{eig}: eigen decomposition of the spectral density
+  \item \code{filter}: a list holding the filter coefficients for the filter
+    returning input and dynamic common component.
+  \item \code{input}: the input series.
+  \item \code{dcc}: (dynamic) common component
+  \item \code{dic}: (dynamic) idiosyncratic component
+  \item \code{HL_select}: results of the selection methodology of Hallin & Liska (2007),
+}
+see also \code{select_r}.
 }
 \description{
-Dynamic Principal Component Analysis and Large Dynamic Factor Models
+Dynamic Principal Component Analysis and Large Dynamic Factor Model Estimation
+}
+\examples{
+data(fredmd)
+
+freqs <- -100:100/100 * pi
+res <- dpca::dpca(fredmd, freqs = freqs, qsel = TRUE, q = 20)
+
+}
+\references{
+Hallin, M. and Liska, R. (2007). Determining the Number of
+Factors in the General Dynamic Factor Model. Journal of the American
+Statistical Association, 102(478).
 }

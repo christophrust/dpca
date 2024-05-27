@@ -18,10 +18,11 @@ Moreover, `dpca` implements the method to select the number of dynamic principal
 - [x] Discrete fourier transformation to obtain filters/transfer functions.
 - [x] The selection criterion of [Hallin & Liska (2007)](https://doi.org/10.1198/016214506000001275) to determine the number of dynamic factors.
 - [x] Ship ARPACK
-- [ ] One-Sided representation of the the dynamic common component using the approach of [Forni, Hallin, Lippi, Zaffaroni (2015)](http://dx.doi.org/10.1016/j.jeconom.2013.10.017).
+- [x] Refactor C code
+- [x] Interface to common time series data formats (`zoo`, `ts`).
+- [ ] One-Sided representation of the the dynamic common component using the approach of [`Forni, Hallin, Lippi, Zaffaroni (2015)`](http://dx.doi.org/10.1016/j.jeconom.2013.10.017).
 - [ ] Forecasting methods...
 - [ ] Model assessment...
-- [ ] Refactor C code
 - [ ] ...
 
 We are aware of the R package [`freqdom`](https://cran.r-project.org/web/packages/freqdom/index.html), developed by Siegfried Hörmann and Lukas Kidzinsiki which is a pure `R` implementation. `dpca` is written mainly in `C`. Although providing a similiar interface to that of `freqdom`, `dpca` has some unique features apart from being much faster.
@@ -43,24 +44,22 @@ devtools::install_github("https://github.com/christophrust/dpca.git")
 
 ```r
 set.seed(123456)
+
 ## simulate some data
 nrx <- 100L
 ncx <- 1000L
 q <- 4L
 
-epsilon <- matrix(rnorm(ncx * q), nrow = q)
+epsilon <- matrix(rnorm((ncx + 10) * q), nrow = q)
 
 b_filter <- vapply(1:10, function(l) {
-  matrix(rnorm(q * nrx, sd = 1/l), q, nrx)
-}, matrix(0, q, nrx))
+  matrix(rnorm(q * nrx, sd = 1/l), nrx, q)
+}, matrix(0, nrx, q))
 
-chi <- .Call("R_filter_process", b_filter, epsilon, as.integer(1:10),
-             nrx, q, q, ncx, 10L, 1L, 0L, 0L, PACKAGE = "dpca")
+chi1 <- multivariate_filter(epsilon, b_filter, as.integer(1:10))
 
 x <- chi + rnorm(nrx * ncx, sd = 0.1 * sd(chi))
 bw <- as.integer(floor(ncol(x)^(1/3)))
-
-
 
 dpc <- dpca(x, q = q, bandwidth = bw)
 str(dpc)

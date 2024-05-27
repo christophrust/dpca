@@ -1,6 +1,16 @@
 #ifndef EIGS_H_
 #define EIGS_H_
 
+/**
+ * @brief obtains the rank of each value in `values` into rank.
+ *
+ * @param values Address of double array (input) at least of length `n`.
+ * @param rank Address of integer array (output) at least of length `n`.
+ * @param n Number of values to be considered.
+ *
+ * @detail
+ * */
+void get_rank(double *values, int *rank, int n);
 
 /**
  * @brief Compute truncated eigendecomposition of a hermitian matrix.

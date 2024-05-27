@@ -14,12 +14,23 @@
 #'   Hallin & Liska (2007, JASA) method. Either "IC1" or "IC2".
 #'
 #' @param n_path Integer vector specifying which (nested) subsets of the
-#' cross section are used in the Hallin & Liska procedure.
+#' cross section are used in the Hallin & Liska procedure. If unspecified,
+#' a regular sequence of length 20 from n/2 to n is used.
 #'
 #' @param penalty_scales Tuning values for the penalty scaling parameter
 #' c over which the q-path is optimized to stability.
 #'
-#' @return An object of class "spca".
+#' @return A list with the entries
+#' \itemize{
+#'   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
+#'   \item \code{cov}: variance-covariance-matrix of x
+#'   \item \code{eig}: eigen decomposition of cov
+#'   \item \code{factors}: an r times T dimensional matrix with the computed factors
+#'   \item \code{cc}: (stati) common component
+#'   \item \code{ic}: (static) idiosyncratic component
+#'   \item \code{HL_select}: results of the selection methodology of Hallin & Liska (2007),
+#' }
+#' see also \code{select_r}.
 #'
 #' @importFrom stats is.ts
 #' @export
@@ -28,7 +39,7 @@ spca <- function(
   r,
   rsel = FALSE,
   rsel_crit = c("IC1", "IC2", "IC3"),
-  n_path = floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20)),
+  n_path = NULL,
   penalty_scales = seq(0, 2, by = 0.01)
 ) {
 
@@ -53,6 +64,10 @@ spca <- function(
 
   if (length(r) > 1 || floor(abs(r)) != r)
     stop("\"r\" has to be a single positive integer!")
+
+  if (is.null(n_path)) {
+    n_path <- floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20))
+  }
 
   if (rsel) {
     hl_select <- select_r(x, crit = rsel_crit, penalty_scales = penalty_scales, n_path = n_path, max_r = r)
@@ -79,7 +94,7 @@ spca <- function(
   ic <- x - cc
 
   res <- list(
-    xmean <- mx,
+    xmean = mx,
     cov = cx,
     eig = edec,
     factors = factors,
@@ -88,6 +103,5 @@ spca <- function(
     HL_select = hl_select
   )
 
-  class(res) <- "dfm"
   res
 }

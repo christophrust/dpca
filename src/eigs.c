@@ -13,7 +13,6 @@
 #define dprint printf
 #endif
 
-// obtains the rank of each value within values into rank
 void get_rank(double *values, int *rank, int n) {
 
   for (int i = 0; i < n; i++) {
@@ -26,7 +25,6 @@ void get_rank(double *values, int *rank, int n) {
     rank[i] = curRank;
   }
 }
-
 
 void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
                   double _Complex *eval, double _Complex *evecs, double tol,
