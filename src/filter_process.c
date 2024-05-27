@@ -13,19 +13,30 @@
 #endif
 
 
-/*
-** Compute the convolution of a (multiple) filters f and a (multivariate) time series x
-**
-** Inputs:
-**  - f: array (of length nrf * ncf * nlags) holding the filter coefficients
-**  - x: array (of length nrx * ncx) where each row is one univariate time series
-**       and each column one observation in time
-**  - lags: array of lags of length nlags
-**
-** Ouput:
-**  - y: array of length nrf * ncx
-**
-** NB: it must hold that ncf = nrx
+/**
+* Multivariate linear filter
+*
+* Compute the convolution of a (multiple) filters f and a (multivariate) time series x.
+*
+* @param f Array (of length nrf * ncf * nlags) holding the filter coefficients
+* @param x Array (of length nrx * ncx) where each row is one univariate time series
+*       and each column one observation in time
+* @param lags Array of lag indices
+* @param nrf Number of rows in f.
+* @param ncf Number of columns in f.
+* @param nrx Number of rows in x.
+* @param ncf Number of columns in x.
+* @param nlags Length of lags.
+* @param y Pointer to memory at least of size nrf * ncx * sizeof(double).
+* @param insert_sample_end If 1, the NA columns at start and/or end of
+* time period will be extrapolated with the mean of each univariate series. Otherwise,
+* these values will remain unchanged.
+* @param transf If 1, f must be passed in transposed form.
+* @param rev If 1, f must be passed in reversed order wrt
+* the last dimension (time periods).
+*
+*
+* NB: it is assumed that ncf = nrx
 */
 void filter_process(double *f, double *x, int *lags, int nrf, int ncf,
                     int nrx, int ncx, int nlags, double *y, int insert_sample_end,

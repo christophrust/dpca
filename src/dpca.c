@@ -129,7 +129,7 @@ SEXP R_dpca
         filter_input = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
         input = PROTECT(allocMatrix(REALSXP, q, ncx));
         // TODO: compute eigendecomposition only on 0 to pi and get
-        // eigenvalues for -pi to 0 by conjugating them!!
+        // eigenvalues for -pi to 0 by using the conjugate!!
 
         /* eigen decomposition of spectrum with preselected q */
         for (int i = 0; i < nfreqs; i++)

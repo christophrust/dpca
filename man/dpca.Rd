@@ -2,7 +2,7 @@
 % Please edit documentation in R/dpca.R
 \name{dpca}
 \alias{dpca}
-\title{Dynamic Principal Component Analysis and Large Dynamic Factor Models}
+\title{Dynamic Principal Component Analysis and Large Dynamic Factor Model Estimation}
 \usage{
 dpca(
   x,
@@ -20,7 +20,9 @@ dpca(
 )
 }
 \arguments{
-\item{x}{Input data (n by T) matrix}
+\item{x}{Input data supplied either as a matrix (rows correspond to cross-sectional
+units and columnts to observations in the time domain) or a multivariate object of
+class `ts` or `zoo`.}
 
 \item{q}{Number of dynamic factors. If qsel = TRUE, this is
 the maximum number of dynamic factors.}
@@ -58,5 +60,5 @@ c over which the q-path is optimized to stability.}
 An object of class "dpca" with different entries.
 }
 \description{
-Dynamic Principal Component Analysis and Large Dynamic Factor Models
+Dynamic Principal Component Analysis and Large Dynamic Factor Model Estimation
 }
