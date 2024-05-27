@@ -1,6 +1,8 @@
-#' Dynamic Principal Component Analysis and Large Dynamic Factor Models
+#' Dynamic Principal Component Analysis and Large Dynamic Factor Model Estimation
 #'
-#' @param x Input data (n by T) matrix
+#' @param x Input data supplied either as a matrix (rows correspond to cross-sectional
+#' units and columnts to observations in the time domain) or a multivariate object of
+#' class `ts` or `zoo`.
 #'
 #' @param q Number of dynamic factors. If qsel = TRUE, this is
 #' the maximum number of dynamic factors.
@@ -34,10 +36,10 @@
 #' @param penalty_scales Tuning values for the penalty scaling parameter
 #' c over which the q-path is optimized to stability.
 #'
-#'
 #' @return An object of class "dpca" with different entries.
 #'
 #' @useDynLib dpca
+#' @importFrom stats is.ts
 #' @export
 dpca <- function(
   x,
@@ -59,8 +61,17 @@ dpca <- function(
   if (length(weights) > 1)
     weights <- "Bartlett"
 
-  if (!is.matrix(x))
-    stop("x must be a n by T matrix!")
+  x <- if (is.ts(x) || "zoo" %in% class(x)) {
+         t(x)
+       } else if (is.matrix(x)) {
+         x
+       } else {
+         stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
+       }
+
+  ## centering
+  mx <- rowMeans(x)
+  x <- x - mx
 
   if (missing(q)) {
     warning(
@@ -99,21 +110,26 @@ dpca <- function(
     }
 
   mode(x) <- "numeric"
-  res <- .Call("R_dpca",
-               x,
-               as.integer(q),
-               as.numeric(freqs),
-               as.integer(bandwidth),
-               .Machine$double.eps,
-               as.numeric(wghts),
-               as.integer(q),
-               select_q,
-               as.integer(n_path),
-               as.integer(t_path),
-               as.numeric(penalties),
-               as.numeric(penalty_scales),
-               PACKAGE = "dpca")
+  res <- .Call(
+    "R_dpca",
+    x,
+    as.integer(q),
+    as.numeric(freqs),
+    as.integer(bandwidth),
+    .Machine$double.eps,
+    as.numeric(wghts),
+    as.integer(q),
+    select_q,
+    as.integer(n_path),
+    as.integer(t_path),
+    as.numeric(penalties),
+    as.numeric(penalty_scales),
+    PACKAGE = "dpca"
+  )
 
-  class(res) <- "dpca"
+  ## add cross-sectional means
+  res$xmean <- mx
+
+  class(res) <- "dfm"
   res
 }

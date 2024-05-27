@@ -1,19 +1,31 @@
 Package: dpca
-Version: 0.1.0
+Version: 1.0.0
 Title: Dynamic Principal Component and Factor Analysis
-Description: Efficient implementations for the GDFM as
-  suggested by Forni, Lippi (2001). This package currently
+Authors@R: c(
+  person(given = "Christoph",
+         family = "Rust",
+         role = c("aut","cre"),
+         email = "christoph.g.rust@gmail.com",
+         comment = c(ORCID = "0000-0001-5079-9664")),
+  person(given = "Philipp",
+         family = "Gersing",
+         role = c("ctb"),
+         email = "philipp.gersing@univie.ac.at")
+    )
+Description: Efficient implementations for estimating Generalized
+  Dynamic Factor Models based on the work of Mario Forni and
+  Marco Lippi (2001). This package currently
   covers (multivariate) spectral density estimation, truncated
   eigendecomposition, selection of the number of dynamic factors,
   projection on common component space.
-Author: Christoph Rust [aut,cre]
-Maintainer: Christoph Rust <christoph.g.rust@gmail.com>
 SystemRequirements: GNU make
+NeedsCompilation: yes
 Depends: R (>= 3.0.0)
 License: GPL-3 + file LICENSE
+URL: https://github.com/christophrust/dpca
 Encoding: UTF-8
 RoxygenNote: 7.2.3
-Suggests: 
+Suggests:
     testthat (>= 3.0.0),
     freqdom (>= 2.0.3)
 Config/testthat/edition: 3

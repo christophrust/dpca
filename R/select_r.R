@@ -6,7 +6,7 @@
 #'
 #' @param x A data frame of variables (each row one time observation)
 #' or a data matrix (n by T).
-#' @param penalty Either of "IC1", "IC2", "IC3", specifying which penalty
+#' @param crit Either of "IC1", "IC2", "IC3", specifying which penalty
 #' to use. See Bai and Ng (2002) for details on the criteria.
 #' Defaults to "IC1"
 #' @param penalty_scales A vector of penalty scales over which the stability
@@ -21,7 +21,7 @@
 #' @export
 select_r <- function(
   x,
-  penalty = c("IC1", "IC2", "IC3"),
+  crit = c("IC1", "IC2", "IC3"),
   penalty_scales = seq(0, 2, by = 0.01),
   n_path,
   max_r,
@@ -44,7 +44,6 @@ select_r <- function(
     stop("x must be either a data frame, a data matrix (n by T)!")
   }
 
-
   if (missing(n_path)) {
     n_path <- floor(seq(n / 2, n, n / 20))
   }
@@ -54,15 +53,15 @@ select_r <- function(
   }
 
   ## penalties suggested by Bai & Ng (2002)
-  penalties <- if (penalty == "IC1") {
+  penalties <- if (crit == "IC1") {
     (n_path + t_len) / (n_path * t_len) *
       log((n_path * t_len) / (n_path + t_len))
-  } else if (penalty == "IC2") {
+  } else if (crit == "IC2") {
     (n_path + t_len) / (n_path * t_len) * log(pmin(n_path, t_len))
-  } else if (penalty == "IC3") {
+  } else if (crit == "IC3") {
     log(pmin(n_path, t_len)) / (pmin(n_path, t_len))
   } else {
-    stop("penalty must be either of \"IC1\", \"IC2\", or \"IC3\"")
+    stop("crit must be either of \"IC1\", \"IC2\", or \"IC3\"")
   }
 
   res <- .Call(

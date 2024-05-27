@@ -4,9 +4,35 @@
 #include "Rinternals.h"
 #include <complex.h>
 
-SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
-            SEXP r_tol, SEXP kernel, SEXP r_max_q, SEXP r_select_q,
-            SEXP r_n_path, SEXP r_t_path, SEXP r_penalties, SEXP r_penalty_scales) {
+#include "complex_crossprod.h"
+#include "eigs.h"
+#include "filter_process.h"
+#include "fourier_inverse.h"
+#include "fourier_transform.h"
+#include "complex_mv_product.h"
+#include "hl_find_stability_interval.h"
+#include "hl_ic.h"
+#include "hl_ic_n_path.h"
+#include "hl_q_path.h"
+#include "hl_select_q.h"
+#include "lagged_cov.h"
+
+
+SEXP R_dpca
+(
+    SEXP r_x,
+    SEXP r_q,
+    SEXP r_freqs,
+    SEXP r_bandwidth,
+    SEXP r_tol,
+    SEXP kernel,
+    SEXP r_max_q,
+    SEXP r_select_q,
+    SEXP r_n_path,
+    SEXP r_t_path,
+    SEXP r_penalties,
+    SEXP r_penalty_scales
+) {
 
     int nrx = Rf_nrows(r_x);
     int ncx = Rf_ncols(r_x);
@@ -103,12 +129,14 @@ SEXP R_dpca(SEXP r_x, SEXP r_q, SEXP r_freqs, SEXP r_bandwidth,
         filter_input = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
         input = PROTECT(allocMatrix(REALSXP, q, ncx));
         // TODO: compute eigendecomposition only on 0 to pi and get
-        // eigenvalues for -pi to 0 by conjugating them!!
+        // eigenvalues for -pi to 0 by using the conjugate!!
 
         /* eigen decomposition of spectrum with preselected q */
         for (int i = 0; i < nfreqs; i++)
-            arnoldi_eigs(COMPLEX(spec) + nrx * nrx * i, nrx, nrx, q, COMPLEX(evals) + q * i,
-                         COMPLEX(evecs) + nrx * q * i, tol, 1, 0, 1, 1);
+            arnoldi_eigs(
+                (double _Complex *) COMPLEX(spec) + nrx * nrx * i, nrx, nrx, q,
+                (double _Complex *) COMPLEX(evals) + q * i,
+                (double _Complex *) COMPLEX(evecs) + nrx * q * i, tol, 1, 0, 1, 1);
 
     }
 

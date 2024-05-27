@@ -1,8 +1,6 @@
 #ifndef EIGS_H_
 #define EIGS_H_
 
-#include <Rinternals.h>
-
 
 /**
  * @brief Compute truncated eigendecomposition of a hermitian matrix.
@@ -26,9 +24,9 @@
  * @param transpose_out If different from zero, the eigenvectors leading
  *  dimension is q, otherwise ldm
  */
-void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
-                  Rcomplex *eval, Rcomplex *evecs,
-                  double tol, int normalize_evecs, int verbose,
-                  int row_evecs, int transpose_out);
+void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
+                  double _Complex *eval, double _Complex *evecs, double tol,
+                  int normalize_evecs, int verbose, int row_evecs,
+                  int transpose_out);
 
 #endif // EIGS_H_

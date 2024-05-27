@@ -1,13 +1,19 @@
+#include "eigs.h"
 
-#include <R.h>
-#include <Rinternals.h>
-#include <R_ext/Lapack.h>
 #include <complex.h>
 #include <arpack.h>
-
-#include "eigs.h"
+#include <math.h>
 #include "complex_mv_product.h"
 
+#ifdef USING_R
+#include <R_ext/Print.h>
+#define dprint Rprintf
+#else
+#include <stdio.h>
+#define dprint printf
+#endif
+
+// obtains the rank of each value within values into rank
 void get_rank(double *values, int *rank, int n) {
 
   for (int i = 0; i < n; i++) {
@@ -22,8 +28,8 @@ void get_rank(double *values, int *rank, int n) {
 }
 
 
-void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
-                  Rcomplex *eval, Rcomplex *evecs, double tol,
+void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
+                  double _Complex *eval, double _Complex *evecs, double tol,
                   int normalize_evecs, int verbose, int row_evecs,
                   int transpose_out) {
 
@@ -80,7 +86,7 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
   iparam[10] = 0;
 
   if (verbose)
-    Rprintf("starting znaupd iteration\n");
+    dprint("starting znaupd iteration\n");
 
   int cnt = 0;
   while (ido != 99) {
@@ -88,16 +94,16 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
     znaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, rwork, &info);
 
-    zMatVecLa(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), mat, dim, ldm);
+    complex_mv_product(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), mat, dim, ldm);
     cnt++;
   }
 
   if (verbose)
-    Rprintf("finished znaupd iteration, info: %d, numer of iterations: %d\n", info, cnt);
+    dprint("finished znaupd iteration, info: %d, numer of iterations: %d\n", info, cnt);
 
 
   if (iparam[4] != nev) {
-    Rprintf("Error: iparam[4] %d, nev %d\n", iparam[4], nev); // check number of ev found by arpack.
+    dprint("Error: iparam[4] %d, nev %d\n", iparam[4], nev); // check number of ev found by arpack.
   }
 
 
@@ -107,10 +113,10 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
            &info);
 
   if (verbose)
-    Rprintf("finished zneupd call, info: %d\n", info);
+    dprint("finished zneupd call, info: %d\n", info);
 
   if (verbose)
-    Rprintf("copying results\n");
+    dprint("copying results\n");
 
   // sort eigenvalues and eigenvectors
   int rank[q];
@@ -127,13 +133,12 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
 
   int evecs_rdim = dim;
   if (transpose_out) evecs_rdim = q;
+  double imag;
 
-  // copy results -> how to avoid?
   for (int i = 0; i < q; i++) {
 
     didx = rank[i];
-    eval[i].r = creal(d[didx]);
-    eval[i].i = cimag(d[didx]);
+    eval[i] = d[didx];
 
     if (normalize_evecs) {
 
@@ -148,13 +153,15 @@ void arnoldi_eigs(Rcomplex *mat, int dim, int ldm, int q,
     for (int j = 0; j < dim; j++){
       if (transpose_out) {ridx = j; cidx = i;} else {ridx = i; cidx = j;}
 
-      evecs[ridx * evecs_rdim + cidx].r = creal(z[didx * dim + j]) * z1 - cimag(z[didx * dim + j]) * z2;
+
       if (row_evecs) {
         // complex conjugate if row eigenvectors are requested (assumes hermitian matrix)
-        evecs[ridx * evecs_rdim + cidx].i = - cimag(z[didx * dim + j]) * z1 - creal(z[didx * dim + j]) * z2;
+        imag = - cimag(z[didx * dim + j]) * z1 - creal(z[didx * dim + j]) * z2;
       } else {
-        evecs[ridx * evecs_rdim + cidx].i = cimag(z[didx * dim + j]) * z1 + creal(z[didx * dim + j]) * z2;
+        imag = cimag(z[didx * dim + j]) * z1 + creal(z[didx * dim + j]) * z2;
       }
+      evecs[ridx * evecs_rdim + cidx] = creal(z[didx * dim + j]) * z1 - cimag(z[didx * dim + j]) * z2 +
+        imag * _Complex_I;
     }
   }
 }

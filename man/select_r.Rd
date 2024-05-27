@@ -6,7 +6,7 @@
 \usage{
 select_r(
   x,
-  penalty = c("IC1", "IC2", "IC3"),
+  crit = c("IC1", "IC2", "IC3"),
   penalty_scales = seq(0, 2, by = 0.01),
   n_path,
   max_r,
@@ -17,7 +17,7 @@ select_r(
 \item{x}{A data frame of variables (each row one time observation)
 or a data matrix (n by T).}
 
-\item{penalty}{Either of "IC1", "IC2", "IC3", specifying which penalty
+\item{crit}{Either of "IC1", "IC2", "IC3", specifying which penalty
 to use. See Bai and Ng (2002) for details on the criteria.
 Defaults to "IC1"}
 
