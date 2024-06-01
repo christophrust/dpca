@@ -20,10 +20,11 @@ Description: Efficient implementations for estimating Generalized
   projection on common component space.
 SystemRequirements: GNU make
 NeedsCompilation: yes
-Depends: R (>= 3.0.0)
+Depends: R (>= 3.5.0)
 License: GPL-3 + file LICENSE
 URL: https://github.com/christophrust/dpca
 Encoding: UTF-8
+LazyData: true
 RoxygenNote: 7.2.3
 Suggests:
     testthat (>= 3.0.0),

@@ -19,3 +19,5 @@ src/compile_commands.json
 
 src/arpack-ng.*
 tools/arpack-ng.*/
+
+data-raw
