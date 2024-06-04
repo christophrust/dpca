@@ -83,6 +83,15 @@ data(fredmd)
 freqs <- -100:100/100 * pi
 res <- dpca::dpca(fredmd, freqs = freqs, qsel = TRUE, q = 20)
 
+## eigenvalues
+matplot(x = freqs, y = t(res$eig$values), type = "l")
+
+## q selection
+cat(sprintf("Number of selected dynamic components: \%s\n", res$HL_select$q))
+
+## sample variability of the criterion S^2_C (Hallin & Liska 2007, equation 10)
+plot(x = res$HL_select$penalty_scales, y = res$HL_select$sample_var, type = "l")
+
 }
 \references{
 Hallin, M. and Liska, R. (2007). Determining the Number of
