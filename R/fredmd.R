@@ -11,7 +11,9 @@
 #'
 #' @references Michael W. McCracken and Serena Ng (2016). FRED-MD: A Monthly Database
 #' for Macroeconomic Research. Journal of Business & Economic Statistics, 34(4),
-#' 574–589. https://doi.org/10.1080/07350015.2015.1086655
+#' 574–589.
+#'
+#' https://doi.org/10.1080/07350015.2015.1086655
 #'
 #' @source <https://research.stlouisfed.org/econ/mccracken/fred-databases/>.
 #'

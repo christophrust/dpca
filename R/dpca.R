@@ -2,12 +2,12 @@
 #'
 #' @param x Input data supplied either as a matrix (rows correspond to cross-sectional
 #' units and columnts to observations in the time domain) or a multivariate object of
-#' class `ts` or `zoo`.
+#' class \code{\link[stats]{ts}} or \code{\link[zoo]{zoo}}.
 #'
-#' @param q Number of dynamic factors. If qsel = TRUE, this is
+#' @param q Number of dynamic factors. If \code{qsel} is set to \code{TRUE}, this is
 #' the maximum number of dynamic factors.
 #'
-#' @param freqs Numeric vector in [-pi, pi] giving the frequencies where the
+#' @param freqs Numeric vector in \eqn{[-\pi, \pi]} giving the frequencies where the
 #' spectral density is evaluated.
 #'
 #' @param bandwidth Single integer, giving the width of the
@@ -16,28 +16,33 @@
 #'
 #' @param weights Kernel used for the lag window estimation of spectrum.
 #'
-#' @param qsel Logical, if TRUE one of the Hallin & Liska (2007) criteria are used to
-#' choose q from the data.
+#' @param qsel Logical, if \code{TRUE} one of the Hallin & Liska (2007) criteria
+#' are used to choose \code{q} from the data.
 #'
 #' @param qsel_crit Criterion to select the number of factors using the
-#'   Hallin & Liska (2007, JASA) method. Either "IC1" or "IC2".
+#'   Hallin & Liska (2007, JASA) method. Either \code{"IC1"} or \code{"IC2"}.
 #'
 #' @param n_path Integer vector specifying which (nested) subsets of the
 #' cross section are used in the Hallin & Liska procedure. If unspecified,
-#' a regular sequence of length 20 from n/2 to n is used.
+#' a regular sequence of length \code{20} from \code{n/2} to \code{n} is used.
 #'
 #' @param t_path Integer vector specifying Which (nested) subsets of the
 #' time domain are used in the Hallin & Liska procedure. If unspecified,
-#' a regular sequence of length 20 from T/2 to T is used.
+#' a regular sequence of length \code{20} from \code{T/2} to \code{T} is used.
 #'
 #' @param penalties Evaluated values of the penalty function at
-#' each value of the n_path. In case this is missing, the penalies suggested
-#' in Hallin & Liska (2007) are used:
-#' (bandwidth^(-2) + sqrt(bandwidth/bandwidth) + 1/nrow(x) *
-#' log(min(n, bandwidth^2, sqrt(T/bandwidth)))).
+#' each value of the n_path. In case this is missing, the penalty \eqn{p_1(n,T)}
+#' suggested in Hallin & Liska (2007, p. 611) is used:
+#'
+#' \deqn{
+#'   (h^{-2} + \sqrt{h/T} + 1/n) \cdot \log{\operatorname{min}(n, h^2, \sqrt{T/h})}
+#' }{%
+#'   (bandwidth^(-2) + sqrt(bandwidth / ncol(x)) + 1 / n_path)
+#'    * log(pmin(n_path, bandwidth^2, sqrt(ncol(x) / bandwidth)))
+#' }
 #'
 #' @param penalty_scales Tuning values for the penalty scaling parameter
-#' c over which the q-path is optimized to stability.
+#' \eqn{c} over which the \code{q}-path is optimized to stability.
 #'
 #' @return A list with entries
 #' \itemize{
@@ -51,7 +56,7 @@
 #'   \item \code{dic}: (dynamic) idiosyncratic component
 #'   \item \code{HL_select}: results of the selection methodology of Hallin & Liska (2007),
 #' }
-#' see also \code{select_r}.
+#' see also \code{\link{select_r}}.
 #'
 #' @examples
 #' data(fredmd)

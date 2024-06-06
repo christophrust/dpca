@@ -14,13 +14,13 @@ select_r(
 )
 }
 \arguments{
-\item{x}{A data frame of variables (each row one time observation)
-or a data matrix (rows correspond to cross-sectional units and columnts
-to observations in the time domain).}
+\item{x}{Input data supplied either as a matrix (rows correspond to cross-sectional
+units and columnts to observations in the time domain) or a multivariate object of
+class \code{\link[stats]{ts}} or \code{\link[zoo]{zoo}}.}
 
-\item{crit}{Either of "IC1", "IC2", "IC3", specifying which penalty
-to use. See Bai and Ng (2002) for details on the criteria.
-Defaults to "IC1"}
+\item{crit}{Either of \code{"IC1"}, \code{"IC2"}, \code{"IC3"},
+specifying which penalty to use. See Bai and Ng (2002) for
+details on the criteria. Defaults to \code{"IC1"}}
 
 \item{penalty_scales}{A vector of penalty scales over which the stability
 is evaluated. See Hallin and Liska (2007) for details.}
@@ -36,13 +36,17 @@ methods, currently without functionality.}
 \value{
 A list with the entries
 \itemize{
-  \item \code{evals}: the first r values are the eigenvalues of the covariance matrix
-  \item \code{evecs}: the first r eigenvectors of the covariance matrix
-  \item \code{unpenalized_ic_vals}: Unpenalized values of the selected information criterion.
-  \item \code{sample_var_criterion}: \code{sample variance} of the selected \code{r} overall
-    entries in \code{n_path} and \code{penalty_scales}.
-  \item \code{info}: single integer indicating success/failure finding a stability interval.
-    It can take the following values
+  \item \code{evals}: the first \code{r} values are the eigenvalues
+    of the covariance matrix
+  \item \code{evecs}: the first \code{r} eigenvectors of the
+    covariance matrix
+  \item \code{unpenalized_ic_vals}: Unpenalized values of the selected
+    information criterion.
+  \item \code{sample_var_criterion}: \code{sample variance} of the
+    selected \code{r} overall entries in \code{n_path} and
+    \code{penalty_scales}.
+  \item \code{info}: single integer indicating success/failure finding
+    a stability interval. It can take the following values:
      0: everything went fine.
      1: no zero stability invervals were found.
      2: no stability was found, such that the penalty scale which globally
