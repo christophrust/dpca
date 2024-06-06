@@ -2,24 +2,35 @@
 #'
 #' @param x Input data supplied either as a matrix (rows correspond to cross-sectional
 #' units and columnts to observations in the time domain) or a multivariate object of
-#' class `ts` or `zoo`.
+#' class \code{\link[stats]{ts}} or \code{\link[zoo]{zoo}}.
 #'
-#' @param r Number of static factors. If rsel = TRUE, this is
+#' @param r Number of static factors. If \code{rsel} is set to \code{TRUE}, this is
 #' the maximum number of static factors.
-#'#'
-#' @param rsel Logical, if TRUE one of the Hallin & Liska criteria are used to
-#' choose q from the data.
+#'
+#' @param rsel Logical, if \code{TRUE} one of the Hallin & Liska criteria are used to
+#' choose \code{r} from the data.
 #'
 #' @param rsel_crit Criterion to select the number of factors using the
-#'   Hallin & Liska (2007, JASA) method. Either "IC1" or "IC2".
+#'   Hallin & Liska (2007, JASA) method. Either \code{"IC1"} or \code{"IC2"}.
 #'
 #' @param n_path Integer vector specifying which (nested) subsets of the
-#' cross section are used in the Hallin & Liska procedure.
+#' cross section are used in the Hallin & Liska procedure. If unspecified,
+#' a regular sequence of length \code{20} from \code{n/2} to \code{n} is used.
 #'
 #' @param penalty_scales Tuning values for the penalty scaling parameter
-#' c over which the q-path is optimized to stability.
+#' \eqn{c} over which the \code{q}-path is optimized to stability.
 #'
-#' @return An object of class "spca".
+#' @return A list with the entries
+#' \itemize{
+#'   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
+#'   \item \code{cov}: variance-covariance-matrix of \code{x}
+#'   \item \code{eig}: eigen decomposition of \code{cov}
+#'   \item \code{factors}: an \eqn{r} times \eqn{T} dimensional matrix with the computed factors
+#'   \item \code{cc}: (static) common component
+#'   \item \code{ic}: (static) idiosyncratic component
+#'   \item \code{HL_select}: results of the selection methodology of Hallin & Liska (2007),
+#' }
+#' see also \code{\link{select_r}}.
 #'
 #' @importFrom stats is.ts
 #' @export
@@ -28,7 +39,7 @@ spca <- function(
   r,
   rsel = FALSE,
   rsel_crit = c("IC1", "IC2", "IC3"),
-  n_path = floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20)),
+  n_path = NULL,
   penalty_scales = seq(0, 2, by = 0.01)
 ) {
 
@@ -53,6 +64,10 @@ spca <- function(
 
   if (length(r) > 1 || floor(abs(r)) != r)
     stop("\"r\" has to be a single positive integer!")
+
+  if (is.null(n_path)) {
+    n_path <- floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20))
+  }
 
   if (rsel) {
     hl_select <- select_r(x, crit = rsel_crit, penalty_scales = penalty_scales, n_path = n_path, max_r = r)
@@ -79,7 +94,7 @@ spca <- function(
   ic <- x - cc
 
   res <- list(
-    xmean <- mx,
+    xmean = mx,
     cov = cx,
     eig = edec,
     factors = factors,
@@ -88,6 +103,5 @@ spca <- function(
     HL_select = hl_select
   )
 
-  class(res) <- "dfm"
   res
 }

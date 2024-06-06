@@ -62,7 +62,7 @@ SEXP R_dpca
     SEXP input;
     SEXP dcc = PROTECT(allocMatrix(REALSXP, nrx, ncx));
     SEXP dic = PROTECT(allocMatrix(REALSXP, nrx, ncx));
-    SEXP evecs, evals, unpenalized_ic_vals, sample_var, info;
+    SEXP evecs, evals, unpenalized_ic_vals, sample_var, info, q_path;
     double tmp_accum;
     double _Complex * evec_crossprod;
     evec_crossprod = (double _Complex *) R_Calloc(nrx * nrx * nfreqs, double _Complex);
@@ -82,6 +82,7 @@ SEXP R_dpca
         unpenalized_ic_vals = PROTECT(allocMatrix(REALSXP, max_q + 1, length(r_n_path)));
         sample_var = PROTECT(allocVector(REALSXP, lps));
         info = PROTECT(allocVector(INTSXP, 1));
+        q_path = PROTECT(allocVector(INTSXP, lps));
 
         _Complex double * temp_evecs, * temp_evals;
         temp_evecs = (_Complex double *) R_Calloc(max_q * nrx * nfreqs, _Complex double);
@@ -102,7 +103,8 @@ SEXP R_dpca
                     length(r_penalty_scales),
                     REAL(sample_var),
                     INTEGER(info),
-                    &q);
+                    &q,
+                    INTEGER(q_path));
 
         evecs = PROTECT(alloc3DArray(CPLXSXP, q, nrx, nfreqs));
         evals = PROTECT(allocMatrix(CPLXSXP, q, nfreqs));
@@ -186,18 +188,20 @@ SEXP R_dpca
 
     SEXP hl_select;
     if (select_q) {
-        hl_select = PROTECT(allocVector(VECSXP, 4));
+        hl_select = PROTECT(allocVector(VECSXP, 5));
         SEXP chosen_q = PROTECT(allocVector(INTSXP, 1));
         *INTEGER(chosen_q) = q;
         SET_VECTOR_ELT(hl_select, 0, unpenalized_ic_vals);
         SET_VECTOR_ELT(hl_select, 1, sample_var);
         SET_VECTOR_ELT(hl_select, 2, chosen_q);
         SET_VECTOR_ELT(hl_select, 3, info);
-        SEXP nms_hl_select = PROTECT(allocVector(STRSXP, 4));
+        SET_VECTOR_ELT(hl_select, 4, q_path);
+        SEXP nms_hl_select = PROTECT(allocVector(STRSXP, 5));
         SET_STRING_ELT(nms_hl_select, 0, mkChar("unpenalized_ic_vals"));
         SET_STRING_ELT(nms_hl_select, 1, mkChar("sample_var"));
         SET_STRING_ELT(nms_hl_select, 2, mkChar("q"));
         SET_STRING_ELT(nms_hl_select, 3, mkChar("info"));
+        SET_STRING_ELT(nms_hl_select, 4, mkChar("q_path"));
         setAttrib(hl_select, R_NamesSymbol, nms_hl_select);
     } else {
         hl_select = PROTECT(allocVector(VECSXP, 0));
@@ -227,7 +231,7 @@ SEXP R_dpca
     R_Free(evec_crossprod);
 
     if (select_q) {
-        UNPROTECT(20);
+        UNPROTECT(21);
     } else{
         UNPROTECT(15);
     }

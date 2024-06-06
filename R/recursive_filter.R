@@ -4,15 +4,19 @@
 #'
 #' @param x A multivariate time series provided either as a matrix (rows correspond
 #' to cross-sectional units and columnts to observations in the time domain) or a
-#' multivariate object of class `ts` or `zoo`.
+#' multivariate object of class \code{\link[stats]{ts}} or \code{\link[zoo]{zoo}}.
 #'
-#' @param filter_coefficients An n by q by p array holding
-#' filter coefficients, where p is the maximum lag order.
+#' @param filter_coefficients An \eqn{n} by \eqn{m} by \eqn{p} array holding
+#' filter coefficients, where \eqn{p} is the maximum lag order.
 #'
-#' @return A matrix of dimension n by T - p where
-#' n and T are the input dimension, and
+#' @return A matrix of dimension \eqn{n} by \eqn{T - p} where
+#' \eqn{n} and \eqn{T} are the input dimension, and
 #'
+#' \deqn{%
+#'   y_t = f_{(,,1)} * y_{t-1} + ... +  f_{(,,p)} * y_{t-p} + x_t
+#' }{%
 #'   y[t] = f[,,1] * y[t-1] + ... +  f[,,p] * y[t-p] + x[t]
+#' }
 #'
 #' @importFrom stats is.ts
 #' @export

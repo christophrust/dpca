@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/christophrust/dpca/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/christophrust/dpca/actions/workflows/check-standard.yaml)
+[![Codecov test coverage](https://codecov.io/gh/christophrust/dpca/branch/main/graph/badge.svg)](https://app.codecov.io/gh/christophrust/dpca?branch=main)
 [![License](https://img.shields.io/github/license/christophrust/dpca)](./LICENSE)
 <!-- badges: end -->
 
@@ -18,10 +19,11 @@ Moreover, `dpca` implements the method to select the number of dynamic principal
 - [x] Discrete fourier transformation to obtain filters/transfer functions.
 - [x] The selection criterion of [Hallin & Liska (2007)](https://doi.org/10.1198/016214506000001275) to determine the number of dynamic factors.
 - [x] Ship ARPACK
-- [ ] One-Sided representation of the the dynamic common component using the approach of [Forni, Hallin, Lippi, Zaffaroni (2015)](http://dx.doi.org/10.1016/j.jeconom.2013.10.017).
+- [x] Refactor C code
+- [x] Interface to common time series data formats (`zoo`, `ts`).
+- [ ] One-Sided representation of the the dynamic common component using the approach of [`Forni, Hallin, Lippi, Zaffaroni (2015)`](http://dx.doi.org/10.1016/j.jeconom.2013.10.017).
 - [ ] Forecasting methods...
 - [ ] Model assessment...
-- [ ] Refactor C code
 - [ ] ...
 
 We are aware of the R package [`freqdom`](https://cran.r-project.org/web/packages/freqdom/index.html), developed by Siegfried Hörmann and Lukas Kidzinsiki which is a pure `R` implementation. `dpca` is written mainly in `C`. Although providing a similiar interface to that of `freqdom`, `dpca` has some unique features apart from being much faster.

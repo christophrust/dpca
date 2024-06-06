@@ -13,19 +13,25 @@ multivariate_filter(
 \arguments{
 \item{x}{A multivariate time series provided either as a matrix (rows correspond
 to cross-sectional units and columnts to observations in the time domain) or a
-multivariate object of class `ts` or `zoo`.}
+multivariate object of class \code{\link[stats]{ts}} or \code{\link[zoo]{zoo}}.}
 
-\item{filter_coefficients}{An n by q by l array holding
+\item{filter_coefficients}{An \eqn{n} by \eqn{m} by \eqn{l} array holding
 filter coefficients.}
 
-\item{lags}{A vector of length dim(filter_coefficients)[3]
-specifying the lag index.}
+\item{lags}{A vector of length \eqn{l} specifying the lag corresponding to the
+\eqn{l} subviews of filter_coefficients.}
 }
 \value{
-A matrix of dimension n by T - max(c(0, lags)) - max(c(0, -lags)) where
-n and T are the input dimension, and
+A matrix of dimension \eqn{n} by
+\eqn{T - \operatorname{max}(0, \texttt{lags}_1,\dots,\texttt{lags}_l) - %
+\operatorname{max}(0, - \texttt{lags}_1,\dots,-\texttt{lags}_l)} where
+\eqn{T} is the number of time observations of the input, and
 
-  y[t] = f[,,1] * x[t - lags[1]] + f[,,2] * x[t-lags[2]] ...
+\deqn{%
+  y_t = f_{(,,1)} x_{t - \texttt{lags}_1} + f_{(,,2)} x_{t - \texttt{lags}_1} + \dots
+}{%
+  y[t] = f[,,1] * x[t - lags[1]] + f[,,2] * x[t-lags[2]] + ...
+}
 }
 \description{
 Applies linear filter to a multivariate time series.
