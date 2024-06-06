@@ -61,8 +61,8 @@
 #' @examples
 #' data(fredmd)
 #'
-#' freqs <- -100:100/100 * pi
-#' res <- dpca::dpca(fredmd, freqs = freqs, qsel = TRUE, q = 20)
+#' freqs <- -50:50/50 * pi
+#' res <- dpca::dpca(fredmd, freqs = freqs, qsel = TRUE, q = 10)
 #'
 #' ## eigenvalues
 #' matplot(x = freqs, y = t(res$eig$values), type = "l")
@@ -71,7 +71,14 @@
 #' cat(sprintf("Number of selected dynamic components: %s\n", res$HL_select$q))
 #'
 #' ## sample variability of the criterion S^2_C (Hallin & Liska 2007, equation 10)
-#' plot(x = res$HL_select$penalty_scales, y = res$HL_select$sample_var, type = "l")
+#' plot(x = res$HL_select$penalty_scales, y = res$HL_select$sample_var, type = "l",
+#'      col = "red")
+#' par(new = TRUE)
+#' plot(x = res$HL_select$penalty_scales, y = res$HL_select$q_path,
+#'      type = "l", axes = FALSE, bty = "n", xlab = "", ylab = "",
+#'      col = "blue")
+#' axis(4)
+#' mtext("q_path", side = 4)
 #'
 #' @references Hallin, M. and Liska, R. (2007). Determining the Number of
 #' Factors in the General Dynamic Factor Model. Journal of the American
@@ -83,7 +90,7 @@
 dpca <- function(
   x,
   q,
-  freqs = -100:100 / 100 * pi,
+  freqs = -20:20 / 20 * pi,
   bandwidth = NULL,
   weights = c(
     "Bartlett", "trunc", "Tukey", "Parzen",
