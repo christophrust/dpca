@@ -15,3 +15,4 @@ tmp/
 /dpca_*.tar.gz
 /src/arpack/
 /tools/arpack-ng-3.9.0/
+/src/*.gcov

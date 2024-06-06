@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/christophrust/dpca/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/christophrust/dpca/actions/workflows/check-standard.yaml)
+[![Codecov test coverage](https://codecov.io/gh/christophrust/dpca/branch/main/graph/badge.svg)](https://app.codecov.io/gh/christophrust/dpca?branch=main)
 [![License](https://img.shields.io/github/license/christophrust/dpca)](./LICENSE)
 <!-- badges: end -->
 
