@@ -8,7 +8,8 @@
 void hl_select_q(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
                  int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln,
                  double tol, double * unpenalized_ic_vals, double * penalties,
-                 double * penalty_scales, int lps, double * sample_var, int *info, int *q) {
+                 double * penalty_scales, int lps, double * sample_var, int *info, int *q,
+                 int* c_q_path) {
 
 
     /* 1. obtain unpenalized ic vals for all q and n in n_path */
@@ -35,7 +36,9 @@ void hl_select_q(double _Complex * spec, double _Complex * evals, double _Comple
         sample_var[i] = x2 / (ln - 1) - (x1 * x1)/(ln * (ln - 1));
 
         // printf("sample_var[%i]: %f; x2: %f, x1: %f\n", i, sample_var[i], x2, x1);
+        c_q_path[i] = *(q_paths + (i + 1) * ln - 1);
     }
+
 
     /* 3.
      * find second 'stability interval' of sample variability and choose q either using q^T_c,n  or

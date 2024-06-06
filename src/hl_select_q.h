@@ -30,6 +30,8 @@
  * no zero stability invervals were found. If info = 2, no stability was found, such that
  * the penalty scale which globally minimizes the sample variance is chosen.
  * @param q The number factors (on output).
+ * @param q_path an integer array of length lps which will contain the q_path
+ * over all values of penalty_scales for n.
  * */
 void hl_select_q
 (
@@ -49,7 +51,8 @@ void hl_select_q
     int lps,
     double * sample_var,
     int *info,
-    int *q
+    int *q,
+    int* q_path
 );
 
 

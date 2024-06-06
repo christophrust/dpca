@@ -1,4 +1,5 @@
 #include "R_interfaces.h"
+#include "Rinternals.h"
 
 #ifndef  USE_FC_LEN_T
 # define USE_FC_LEN_T
@@ -268,13 +269,14 @@ SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
     int ln = length(r_n_path);
     int lps = length(r_penalty_scales);
 
+
     SEXP evals = PROTECT(allocMatrix(CPLXSXP, max_q, nfreqs));
     SEXP evecs = PROTECT(alloc3DArray(CPLXSXP, max_q, dim, nfreqs));
     SEXP unpenalized_ic_vals = PROTECT(allocMatrix(REALSXP, max_q + 1, ln));
     SEXP sample_var = PROTECT(allocVector(REALSXP, lps));
     SEXP info = PROTECT(allocVector(INTSXP, 1));
     SEXP q = PROTECT(allocVector(INTSXP, 1));
-
+    SEXP q_path = PROTECT(allocVector(INTSXP, lps));
 
     hl_select_q((_Complex double *) COMPLEX(r_spec),
                 (_Complex double *) COMPLEX(evals),
@@ -288,7 +290,8 @@ SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
                 REAL(r_penalty_scales), length(r_penalty_scales),
                 REAL(sample_var),
                 INTEGER(info),
-                INTEGER(q));
+                INTEGER(q),
+                INTEGER(q_path));
 
 
     /* for (int i=0; i < dim * max_q * nfreqs; i++) { */
@@ -296,24 +299,26 @@ SEXP R_hl_select_q(SEXP r_spec, SEXP r_n_path, SEXP r_max_q, SEXP r_dim,
     /* } */
 
 
-    SEXP res = PROTECT(allocVector(VECSXP, 6));
+    SEXP res = PROTECT(allocVector(VECSXP, 7));
     SET_VECTOR_ELT(res, 0, evals);
     SET_VECTOR_ELT(res, 1, evecs);
     SET_VECTOR_ELT(res, 2, unpenalized_ic_vals);
     SET_VECTOR_ELT(res, 3, sample_var);
     SET_VECTOR_ELT(res, 4, info);
     SET_VECTOR_ELT(res, 5, q);
+    SET_VECTOR_ELT(res, 6, q_path);
 
-    SEXP nms = PROTECT(allocVector(STRSXP, 6));
+    SEXP nms = PROTECT(allocVector(STRSXP, 7));
     SET_STRING_ELT(nms, 0, mkChar("evals"));
     SET_STRING_ELT(nms, 1, mkChar("evecs"));
     SET_STRING_ELT(nms, 2, mkChar("unpenalized_ic_vals"));
     SET_STRING_ELT(nms, 3, mkChar("sample_var_criterion"));
     SET_STRING_ELT(nms, 4, mkChar("info"));
     SET_STRING_ELT(nms, 5, mkChar("q"));
+    SET_STRING_ELT(nms, 6, mkChar("q_path"));
     setAttrib(res, R_NamesSymbol, nms);
 
-    UNPROTECT(8);
+    UNPROTECT(9);
     return res;
 }
 
@@ -331,9 +336,9 @@ SEXP R_lagged_cov(SEXP r_x, SEXP r_y, SEXP r_lag, SEXP r_nrx,
     int center = *INTEGER(r_center);
 
     if (length(r_x) != nrx * ncx)
-        error("Supplied dimension of X do not fit to supplied array length!");
+        error("Supplied dimensions of X do not fit to supplied array length!");
     if (length(r_y) != nry * ncy)
-        error("Supplied dimension of Y do not fit to supplied array length!");
+        error("Supplied dimensions of Y do not fit to supplied array length!");
     if (ncx != ncy)
         error("X and Y must have same number of columns!");
     if (ncx - 1 <= lag)
