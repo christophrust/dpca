@@ -60,6 +60,7 @@
 #'
 #' @examples
 #' data(fredmd)
+#' fredmd <- scale(fredmd)
 #'
 #' freqs <- -50:50/50 * pi
 #' res <- dpca::dpca(fredmd, freqs = freqs, qsel = TRUE, q = 10)
