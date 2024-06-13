@@ -170,3 +170,60 @@ test_that("dpca: HL switch", {
   expect_equal(res_dpca1$input, res_dpca2$input)
 
 })
+
+
+test_that("dpca: inferface", {
+
+  ## settings
+  nrx <- 100L
+  ncx <- 1000L
+  q <- 2L
+  bw <- as.integer(floor(ncx^(1 / 3)))
+  freqs <- -10:10 / 10 * pi
+  weights <- weights.Bartlett(-bw:bw / bw)
+  ones <- rep(1, length(weights))
+
+  ## simulate some data
+  set.seed(123456)
+  epsilon <- matrix(rnorm(ncx * q), nrow = q)
+
+  b_filter <- vapply(1:10, function(l) {
+    matrix(rnorm(q * nrx, sd = 1 / l), q, nrx)
+  }, matrix(0, q, nrx))
+
+  chi <- .Call("R_filter_process", b_filter, epsilon, as.integer(1:10),
+               nrx, q, q, ncx, 10L, 1L, 0L, 0L)
+  x <- chi + rnorm(nrx * ncx, sd = 0.1 * sd(chi))
+
+  res_dpca1 <- dpca::dpca(
+    x = x, q = 10, freqs = freqs, bandwidth = bw, weights = "Bartlett",
+    qsel = TRUE
+  )
+  res_dpca2 <- dpca::dpca(
+    x = ts(t(x)), q = 10, freqs = freqs, bandwidth = bw, weights = "Bartlett",
+    qsel = TRUE
+  )
+
+  expect_equal(res_dpca1$eig, res_dpca2$eig)
+
+  expect_error(
+    dpca::dpca(
+      x = "test", q = 10, freqs = freqs, bandwidth = bw, weights = "Bartlett",
+      qsel = TRUE
+    )
+  )
+
+  expect_warning(
+    dpca::dpca(
+      x = x, freqs = freqs, bandwidth = bw, weights = "Bartlett",
+      qsel = FALSE
+    )
+  )
+
+  expect_error(
+    dpca::dpca(
+      x = x, q = 1.23, freqs = freqs, bandwidth = bw, weights = "Bartlett",
+      qsel = FALSE
+    )
+  )
+})
