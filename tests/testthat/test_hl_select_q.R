@@ -20,7 +20,8 @@ test_that("HL: C function hl_select_q", {
     r1 <- .Call(
       "R_hl_select_q",
       spec_a, n_path, max_q, dim, nfreqs, 1L, .Machine$double.eps,
-      penalties, penalty_scales)
+      penalties, penalty_scales
+    )
   )
 
   expect_lt(sum(abs(r1$evecs[,,1] %*% t(Conj(r1$evecs[,,1])) - diag(12))), 1e-10)
@@ -54,4 +55,7 @@ test_that("HL: C function hl_select_q", {
   expect_equal(sample_var1, sample_var2)
   expect_equal(sample_var1, r1$sample_var_criterion)
 
+  intvl <- .Call("R_find_stability_intervals", sample_var1)
+  cmp_q <- r1$q_path[intvl[3] + 1]
+  expect_equal(cmp_q, r1$q)
 })

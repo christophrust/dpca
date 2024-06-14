@@ -70,7 +70,7 @@ int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx) {
         ivl_idx[2] = 0;
         ivl_idx[3] = 0;
 
-        double temp_min= sample_var[0];
+        double temp_min = sample_var[0];
         for (int i = 1; i < lsv; i++) {
             if (sample_var[i] < temp_min) {
                 temp_min = sample_var[i];
