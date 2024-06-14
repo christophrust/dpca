@@ -47,10 +47,11 @@ A list with the entries
     \code{penalty_scales}.
   \item \code{info}: single integer indicating success/failure finding
     a stability interval. It can take the following values:
-     0: everything went fine.
-     1: no zero stability invervals were found.
-     2: no stability was found, such that the penalty scale which globally
-        minimizes the sample variance is chosen.
+     0: Everything went fine.
+     1: No zero stability invervals were found and the stability interval
+        with lowest sample variance was chosen.
+     2: No stability was found at all , such that the penalty scale which
+        globally minimizes the sample variance is chosen.
   \item \code{r}: the number of selected components.
 }
 }

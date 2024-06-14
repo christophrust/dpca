@@ -46,7 +46,7 @@ multivariate_filter <- function(
     stop("Length of \"lags\" must be equal to the third dimension of \"filter_coefficients\"!")
 
   l_idx <- max(c(0, lags)) + 1
-  u_idx <- ncol(r) - max(c(0, -lags))
+  u_idx <- ncol(x) - max(c(0, -lags))
 
   r <- .Call(
     "R_filter_process",
