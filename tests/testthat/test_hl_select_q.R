@@ -1,7 +1,5 @@
 library(dpca)
 
-
-
 test_that("HL: C function hl_select_q", {
 
   dim <- 150L
