@@ -95,13 +95,15 @@ spca <- function(
 
   res <- list(
     xmean = mx,
-    cov = cx,
-    eig = edec,
+    cov = Re(cx),
+    eig = lapply(edec, Re),
     factors = factors,
     cc = cc,
-    ic = ic,
-    HL_select = hl_select
+    ic = ic
   )
+  if (rsel) {
+    res$HL_select = hl_select
+  }
 
   res
 }

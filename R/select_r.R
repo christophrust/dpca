@@ -36,10 +36,11 @@
 #'     \code{penalty_scales}.
 #'   \item \code{info}: single integer indicating success/failure finding
 #'     a stability interval. It can take the following values:
-#'      0: everything went fine.
-#'      1: no zero stability invervals were found.
-#'      2: no stability was found, such that the penalty scale which globally
-#'         minimizes the sample variance is chosen.
+#'      0: Everything went fine.
+#'      1: No zero stability invervals were found and the stability interval
+#'         with lowest sample variance was chosen.
+#'      2: No stability was found at all , such that the penalty scale which
+#'         globally minimizes the sample variance is chosen.
 #'   \item \code{r}: the number of selected components.
 #' }
 #'
@@ -78,6 +79,10 @@ select_r <- function(
     max_r <- floor(sqrt(n))
   }
 
+  if (length(crit) > 1) {
+    crit <- crit[1]
+  }
+
   ## penalties suggested by Bai & Ng (2002)
   penalties <- if (crit == "IC1") {
     (n_path + t_len) / (n_path * t_len) *
@@ -92,10 +97,10 @@ select_r <- function(
 
   res <- .Call(
     "R_hl_select_q",
-    cx,
-    n_path,
-    max_r,
-    n,
+    as.complex(cx),
+    as.integer(n_path),
+    as.integer(max_r),
+    as.integer(n),
     1L,
     2L,
     .Machine$double.eps,
@@ -103,7 +108,7 @@ select_r <- function(
     penalty_scales,
     PACKAGE = "dpca"
   )
-
+  res$penalty_scales <- penalty_scales
   names(res)[names(res) == "q"] <- "r"
   res
 }

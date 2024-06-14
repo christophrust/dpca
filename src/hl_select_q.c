@@ -47,5 +47,5 @@ void hl_select_q(double _Complex * spec, double _Complex * evals, double _Comple
     int stability_interval[4];
     *info = hl_find_stability_intervals(sample_var, lps, stability_interval);
 
-    *q = q_paths[stability_interval[2] * ln - 1];
+    *q = q_paths[stability_interval[2] * ln + ln - 1];
 }
