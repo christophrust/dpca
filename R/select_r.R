@@ -79,6 +79,10 @@ select_r <- function(
     max_r <- floor(sqrt(n))
   }
 
+  if (length(crit) > 1) {
+    crit <- crit[1]
+  }
+
   ## penalties suggested by Bai & Ng (2002)
   penalties <- if (crit == "IC1") {
     (n_path + t_len) / (n_path * t_len) *
