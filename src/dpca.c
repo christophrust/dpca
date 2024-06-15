@@ -1,4 +1,5 @@
 #include "dpca.h"
+#include "R_ext/Complex.h"
 #include "R_ext/RS.h"
 #include "R_ext/Rdynload.h"
 #include "Rinternals.h"
@@ -130,16 +131,36 @@ SEXP R_dpca
         evals = PROTECT(allocMatrix(CPLXSXP, q, nfreqs));
         filter_input = PROTECT(alloc3DArray(REALSXP, nrx, q, nlags));
         input = PROTECT(allocMatrix(REALSXP, q, ncx));
-        // TODO: compute eigendecomposition only on 0 to pi and get
-        // eigenvalues for -pi to 0 by using the conjugate!!
 
         /* eigen decomposition of spectrum with preselected q */
-        for (int i = 0; i < nfreqs; i++)
+        if (nfreqs % 2) {
+            // center
+            int i = nfreqs / 2;
+            arnoldi_eigs(
+                (double _Complex *) COMPLEX(spec) + nrx * nrx * i, nrx, nrx, q,
+                (double _Complex *) COMPLEX(evals) + q * i,
+                (double _Complex *) COMPLEX(evecs) + nrx * q * i, tol, 1, 0, 1, 1);
+        }
+        for (int k = 0; k < nfreqs / 2; k++) {
+            int i = nfreqs / 2 + k + nfreqs % 2;
+            int i_neg = nfreqs / 2 - k - 1;
+
             arnoldi_eigs(
                 (double _Complex *) COMPLEX(spec) + nrx * nrx * i, nrx, nrx, q,
                 (double _Complex *) COMPLEX(evals) + q * i,
                 (double _Complex *) COMPLEX(evecs) + nrx * q * i, tol, 1, 0, 1, 1);
 
+            // copy eigenvalues and conjugated eigenvectors into i_neg subview;
+            for (int j = 0; j < q; j++) {
+
+                *(COMPLEX(evals) + q * i_neg + j) = *(COMPLEX(evals) + q * i + j);
+
+                for (int l = 0; l < nrx ; l++) {
+                    *(COMPLEX(evecs) + q * nrx * i_neg + nrx * j + l) = *(COMPLEX(evecs) + q * nrx * i + nrx * j + l);
+                    (*(COMPLEX(evecs) + q * nrx * i_neg + nrx * j + l)).i *= -1;
+                }
+            }
+        }
     }
 
     for (int i = 0; i < nfreqs; i++) {

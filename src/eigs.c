@@ -148,7 +148,7 @@ void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
       }
     }
 
-    for (int j = 0; j < dim; j++){
+    for (int j = 0; j < dim; j++) {
       if (transpose_out) {ridx = j; cidx = i;} else {ridx = i; cidx = j;}
 
 
