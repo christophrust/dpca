@@ -226,4 +226,12 @@ test_that("dpca: inferface", {
       qsel = FALSE
     )
   )
+
+  expect_warning(
+    dpca::dpca(
+      x = x, q = 4, freqs = c(-pi, -2,seq(0, pi, length.out = 5)), bandwidth = bw, weights = "Bartlett",
+      qsel = FALSE
+    )
+  )
+
 })

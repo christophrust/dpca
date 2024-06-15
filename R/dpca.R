@@ -140,6 +140,18 @@ dpca <- function(
   if (!is.numeric(freqs) || any(abs(freqs) > pi))
     stop("\"freqs\" must be a numeric vector with values in [-pi, pi]!")
 
+  if  (!isTRUE(all.equal(freqs, rev(-freqs)))) {
+    warning(
+      paste0(
+        "\"freqs\" has to be a symmetric sequence around zero!",
+        "Making symmetric using only the positive elements!",
+        collapse = "\n"
+      )
+    )
+    pfreqs <- freqs[freqs > 0]
+    freqs <- c(rev(-pfreqs), 0, pfreqs)
+  }
+
   wghts <- get(paste0("weights.", weights))(-bandwidth:bandwidth / bandwidth)
 
   if (is.null(n_path)) {

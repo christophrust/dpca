@@ -5,6 +5,9 @@
 void hl_ic(double _Complex * spec, double _Complex * evals, int max_q, int nfreqs,
            int dim, int ldm, int select_q, double * ic_vals) {
 
+    // NOTE: we only use the first nfreqs/2 slices of the spectrum array
+    // to compute the Hallin & Liska criterion. If the passed spec array is
+    // non-symmetric, this will result in undefined behaviour.
     double total_trace = 0.0;
 
     if (nfreqs % 2) {
