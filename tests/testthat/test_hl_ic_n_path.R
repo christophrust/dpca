@@ -6,12 +6,15 @@ test_that("HL: C function hl_ic_n_path", {
 
   dim <- 150L
   max_q <- 12L
-  nfreqs <- 10L
+  nfreqs <- 11L
   spec_a <- array(dim = c(dim,dim, nfreqs))
-  for (i in seq_len(nfreqs)) {
+  for (i in seq_len(nfreqs/2 + 1)) {
       m <- matrix(cos(runif(dim^2, -pi, pi)) + 1i * sin(runif(dim^2, -pi, pi)), ncol = dim)
       spec <- m %*% t(Conj(m))
       spec_a[,,i] <- spec
+      if (i < 6) {
+        spec_a[,,nfreqs - i + 1] <- t(spec)
+      }
   }
 
   n_path <- as.integer(seq(90, 150, 10))
