@@ -4,6 +4,7 @@
 #include "R_ext/Rdynload.h"
 #include "Rinternals.h"
 #include <complex.h>
+#include <R_ext/Utils.h>
 
 #include "complex_crossprod.h"
 #include "eigs.h"
@@ -142,6 +143,8 @@ SEXP R_dpca
                 (double _Complex *) COMPLEX(evecs) + nrx * q * i, tol, 1, 0, 1, 1);
         }
         for (int k = 0; k < nfreqs / 2; k++) {
+
+            R_CheckUserInterrupt();
             int i = nfreqs / 2 + k + nfreqs % 2;
             int i_neg = nfreqs / 2 - k - 1;
 

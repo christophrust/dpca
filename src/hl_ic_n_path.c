@@ -3,7 +3,7 @@
 #include "eigs.h"
 #include "hl_ic.h"
 #include "complex.h"
-
+#include <R_ext/Utils.h>
 
 void hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
                 int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln,
@@ -27,6 +27,9 @@ void hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Compl
                          1, 0, 1, 1);
         }
         for (int k = 0; k < nfreqs / 2; k++) {
+
+            R_CheckUserInterrupt();
+
             int j = nfreqs / 2 + k + nfreqs % 2;
             int j_neg = nfreqs / 2 - k - 1;
 
