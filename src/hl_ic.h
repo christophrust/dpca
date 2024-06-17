@@ -4,7 +4,9 @@
 /**
  * @brief Compute the unpenalized information criterium from Hallin & Liska (2007)
  *
- * @param spec A dim by dim by nfreqs array.
+ * @param spec A dim by dim by nfreqs array. Note that only the
+ *   first subarrays 0 to floor(nfreqs/2) fo spec are used for the
+ *   computation, assuming symmetric frequencies around zero.
  * @param evals The first max_q eigenvalues of spec.
  * @param max_q Maximum number of factors to be considered.
  * @param nfreqs Number of frequencies along the spectrum

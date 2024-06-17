@@ -6,6 +6,8 @@
  * @brief Selection of number of dynamic factors.
  *
  * @param spec The spectral density matrix (of dimension n by n by nfreqs).
+ *   Note that only the first subarrays 0 to floor(nfreqs/2) fo spec are
+ *   used for the computation, assuming symmetric frequencies around zero.
  * @param evals An max_q by nfreqs array which will (on output) hold in
  * the first q by nfreqs entries the resulting eigenvalues.
  * @param evecs An n by max_q by nfreqs array which will (on output) hold
