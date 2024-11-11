@@ -216,5 +216,7 @@ dpca <- function(
     res$HL_select$penalty_scales <- penalty_scales
   }
 
+  class(res) <- "dpca"
+
   res
 }

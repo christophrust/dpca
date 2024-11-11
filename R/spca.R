@@ -106,6 +106,7 @@ spca <- function(
   if (rsel) {
     res$HL_select <- hl_select
   }
+  class(res) <- "spca"
 
   res
 }
