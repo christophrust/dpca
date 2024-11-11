@@ -49,10 +49,6 @@ spca <- function(
     stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
   }
 
-  ## centering
-  mx <- rowMeans(x)
-  x <- x - mx
-
   if (missing(r)) {
     warning(
       "No number of dynamic principal components supplied. Using r = 1..."
@@ -67,6 +63,10 @@ spca <- function(
   if (is.null(n_path)) {
     n_path <- floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20))
   }
+
+  ## centering
+  mx <- rowMeans(x)
+  x <- x - mx
 
   if (rsel) {
     hl_select <- dpca:::select_r(x,

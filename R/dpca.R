@@ -85,9 +85,17 @@
 #' axis(4)
 #' mtext("q_path", side = 4)
 #'
-#' @references Hallin, M. and Liska, R. (2007). Determining the Number of
-#' Factors in the General Dynamic Factor Model. Journal of the American
-#' Statistical Association, 102(478).
+#' @references
+#' Forni, M., Hallin, M., Lippi, M., & Reichlin, L. (2000). The generalized
+#' dynamic-factor model: Identification and estimation. Review of Economics
+#' and statistics, 82(4), 540-554.
+#'
+#' Forni, M., & Lippi, M. (2001). The Generalized Dynamic Factor Model:
+#' Representation Theory. Econometric Theory, 17(6), 1113-1141.
+#'
+#' Hallin, M. and Liska, R. (2007). Determining the Number of Factors in
+#' the General Dynamic Factor Model. Journal of the American Statistical
+#' Association, 102(478).
 #'
 #' @useDynLib dpca
 #' @importFrom stats is.ts
@@ -118,10 +126,6 @@ dpca <- function(
   } else {
     stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
   }
-
-  ## centering
-  mx <- rowMeans(x)
-  x <- x - mx
 
   if (missing(q)) {
     warning(
@@ -158,7 +162,11 @@ dpca <- function(
     freqs <- c(rev(-pfreqs), 0, pfreqs)
   }
 
-  wghts <- get(paste0("weights_", weights))(-bandwidth:bandwidth / bandwidth)
+  ## centering
+  mx <- rowMeans(x)
+  x <- x - mx
+
+  wghts <- get(paste0("weights.", weights))(-bandwidth:bandwidth / bandwidth)
 
   if (is.null(n_path)) {
     n_path <- floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20))
