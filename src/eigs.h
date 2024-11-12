@@ -25,12 +25,12 @@ void get_rank(double *values, int *rank, int n);
  * @param evecs Array of at least length dim times q which will hold the
  *   eigenvectors on output.
  * @param tol Tolerance passed to the ARPACK routine.
- * @param normalize_evecs If set to a value different from zero, each of the resulting
- *   eigenvectors is normalized such that the complex part of the first entry is zero
- *   (the same is done in R's base::eigen()).
+ * @param normalize_evecs If set to a value different from zero, each of the
+ * resulting eigenvectors is normalized such that the complex part of the first
+ * entry is zero (the same is done in R's base::eigen()).
  * @param verbose If different from zero, we show some messages.
- * @param row_evecs If different from zero, the eigenvalues are roweigenvectors instead
- *   of column-eigenvectors
+ * @param row_evecs If different from zero, the eigenvalues are roweigenvectors
+ * instead of column-eigenvectors
  * @param transpose_out If different from zero, the eigenvectors leading
  *  dimension is q, otherwise ldm
  */

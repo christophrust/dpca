@@ -26,24 +26,24 @@
 #' @importFrom stats is.ts
 #' @export
 multivariate_filter <- function(
-  x,
-  filter_coefficients,
-  lags = seq_len(dim(filter_coefficients)[3])
-) {
-
+    x,
+    filter_coefficients,
+    lags = seq_len(dim(filter_coefficients)[3])) {
   x <- if (is.ts(x) || "zoo" %in% class(x)) {
-         t(x)
-       } else if (is.matrix(x)) {
-         x
-       } else {
-         stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
-       }
+    t(x)
+  } else if (is.matrix(x)) {
+    x
+  } else {
+    stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
+  }
 
-  if (dim(x)[1] != dim(filter_coefficients)[2])
+  if (dim(x)[1] != dim(filter_coefficients)[2]) {
     stop("Incompatible dimension of \"x\" and \"filter_coefficients\"!")
+  }
 
-  if (length(lags) != dim(filter_coefficients)[3])
+  if (length(lags) != dim(filter_coefficients)[3]) {
     stop("Length of \"lags\" must be equal to the third dimension of \"filter_coefficients\"!")
+  }
 
   l_idx <- max(c(0, lags)) + 1
   u_idx <- ncol(x) - max(c(0, -lags))

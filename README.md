@@ -23,6 +23,7 @@ Moreover, `dpca` implements the method to select the number of dynamic principal
 - [ ] One-Sided representation of the the dynamic common component using the approach of [`Forni, Hallin, Lippi, Zaffaroni (2015)`](http://dx.doi.org/10.1016/j.jeconom.2013.10.017).
 - [ ] Forecasting methods.
 - [ ] Model assessment.
+- [ ] Port C code to modern C++.
 
 We are aware of the R package [`freqdom`](https://cran.r-project.org/web/packages/freqdom/index.html), developed by Siegfried Hörmann and Lukas Kidzinsiki which is a pure `R` implementation. `dpca` is written mainly in `C`. Although providing a similiar interface to that of `freqdom`, `dpca` has some unique features apart from being much faster.
 

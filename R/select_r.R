@@ -51,21 +51,19 @@
 #' @importFrom stats cov
 #' @export
 select_r <- function(
-  x,
-  crit = c("IC1", "IC2", "IC3"),
-  penalty_scales = seq(0, 2, by = 0.01),
-  n_path,
-  max_r,
-  ...
-) {
-
+    x,
+    crit = c("IC1", "IC2", "IC3"),
+    penalty_scales = seq(0, 2, by = 0.01),
+    n_path,
+    max_r,
+    ...) {
   x <- if (is.ts(x) || "zoo" %in% class(x)) {
-         t(x)
-       } else if (is.matrix(x)) {
-         x
-       } else {
-         stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
-       }
+    t(x)
+  } else if (is.matrix(x)) {
+    x
+  } else {
+    stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
+  }
 
   n <- nrow(x)
   t_len <- ncol(x)
