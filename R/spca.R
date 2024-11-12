@@ -20,7 +20,7 @@
 #' @param penalty_scales Tuning values for the penalty scaling parameter
 #' \eqn{c} over which the \code{q}-path is optimized to stability.
 #'
-#' @return A list with the entries
+#' @return An object of class "spca", wrapping a list with the entries
 #' \itemize{
 #'   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
 #'   \item \code{cov}: variance-covariance-matrix of \code{x}
@@ -35,21 +35,19 @@
 #' @importFrom stats is.ts
 #' @export
 spca <- function(
-  x,
-  r,
-  rsel = FALSE,
-  rsel_crit = c("IC1", "IC2", "IC3"),
-  n_path = NULL,
-  penalty_scales = seq(0, 2, by = 0.01)
-) {
-
+    x,
+    r,
+    rsel = FALSE,
+    rsel_crit = c("IC1", "IC2", "IC3"),
+    n_path = NULL,
+    penalty_scales = seq(0, 2, by = 0.01)) {
   x <- if (is.ts(x) || "zoo" %in% class(x)) {
-         t(x)
-       } else if (is.matrix(x)) {
-         x
-       } else {
-         stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
-       }
+    t(x)
+  } else if (is.matrix(x)) {
+    x
+  } else {
+    stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
+  }
 
   ## centering
   mx <- rowMeans(x)
@@ -62,15 +60,19 @@ spca <- function(
     r <- 1L
   }
 
-  if (length(r) > 1 || floor(abs(r)) != r)
+  if (length(r) > 1 || floor(abs(r)) != r) {
     stop("\"r\" has to be a single positive integer!")
+  }
 
   if (is.null(n_path)) {
     n_path <- floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20))
   }
 
   if (rsel) {
-    hl_select <- select_r(x, crit = rsel_crit, penalty_scales = penalty_scales, n_path = n_path, max_r = r)
+    hl_select <- dpca:::select_r(x,
+      crit = rsel_crit, penalty_scales = penalty_scales,
+      n_path = n_path, max_r = r
+    )
     r <- hl_select$r
   }
 
@@ -102,7 +104,7 @@ spca <- function(
     ic = ic
   )
   if (rsel) {
-    res$HL_select = hl_select
+    res$HL_select <- hl_select
   }
 
   res

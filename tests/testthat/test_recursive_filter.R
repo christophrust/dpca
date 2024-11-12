@@ -1,7 +1,6 @@
 library(dpca)
 
 test_that("Recursive filter (C-function)", {
-
   x <- matrix(rnorm(300), nrow = 3)
   f <- array(matrix(rnorm(18, sd = 0.1), ncol = 3), dim = c(3, 3, 2))
   res1 <- .Call("R_recursive_filter", x, as.vector(f), 3L, 2L)
@@ -25,5 +24,4 @@ test_that("Recursive filter (C-function)", {
   expect_error(recursive_filter("test", f))
 
   expect_error(recursive_filter(matrix(1), f))
-
 })

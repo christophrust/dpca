@@ -3,7 +3,6 @@ library(dpca)
 
 
 test_that("HL: Get q path (c function)", {
-
   max_q <- 12L
   ln <- 10L
   unpenalized_crit <- matrix(runif((max_q + 1) * ln, 100, 140), ncol = ln)

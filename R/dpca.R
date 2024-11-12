@@ -44,7 +44,7 @@
 #' @param penalty_scales Tuning values for the penalty scaling parameter
 #' \eqn{c} over which the \code{q}-path is optimized to stability.
 #'
-#' @return A list with entries
+#' @return A object of class "dpca" wrapping a list with the entries
 #' \itemize{
 #'   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
 #'   \item \code{spectrum}: the estimated spectral density
@@ -62,7 +62,7 @@
 #' data(fredmd)
 #' fredmd <- scale(fredmd)
 #'
-#' freqs <- -50:50/50 * pi
+#' freqs <- -50:50 / 50 * pi
 #' res <- dpca::dpca(fredmd, freqs = freqs, qsel = TRUE, q = 10)
 #'
 #' ## eigenvalues
@@ -72,12 +72,16 @@
 #' cat(sprintf("Number of selected dynamic components: %s\n", res$HL_select$q))
 #'
 #' ## sample variability of the criterion S^2_C (Hallin & Liska 2007, equation 10)
-#' plot(x = res$HL_select$penalty_scales, y = res$HL_select$sample_var, type = "l",
-#'      col = "red")
+#' plot(
+#'   x = res$HL_select$penalty_scales, y = res$HL_select$sample_var, type = "l",
+#'   col = "red"
+#' )
 #' par(new = TRUE)
-#' plot(x = res$HL_select$penalty_scales, y = res$HL_select$q_path,
-#'      type = "l", axes = FALSE, bty = "n", xlab = "", ylab = "",
-#'      col = "blue")
+#' plot(
+#'   x = res$HL_select$penalty_scales, y = res$HL_select$q_path,
+#'   type = "l", axes = FALSE, bty = "n", xlab = "", ylab = "",
+#'   col = "blue"
+#' )
 #' axis(4)
 #' mtext("q_path", side = 4)
 #'
@@ -89,32 +93,31 @@
 #' @importFrom stats is.ts
 #' @export
 dpca <- function(
-  x,
-  q,
-  freqs = -20:20 / 20 * pi,
-  bandwidth = NULL,
-  weights = c(
-    "Bartlett", "trunc", "Tukey", "Parzen",
-    "Bohman", "Daniell", "ParzenCogburnDavis"
-  ),
-  qsel = FALSE,
-  qsel_crit = c("IC1", "IC2"),
-  n_path = NULL,
-  t_path = NULL,
-  penalties,
-  penalty_scales = seq(0, 2, by = 0.01)
-) {
-
-  if (length(weights) > 1)
-    weights <- "Bartlett"
+    x,
+    q,
+    freqs = -20:20 / 20 * pi,
+    bandwidth = NULL,
+    weights = c(
+      "bartlett", "trunc", "tukey", "parzen",
+      "bohman", "daniell", "parzen_cogburn_davis"
+    ),
+    qsel = FALSE,
+    qsel_crit = c("IC1", "IC2"),
+    n_path = NULL,
+    t_path = NULL,
+    penalties,
+    penalty_scales = seq(0, 2, by = 0.01)) {
+  if (length(weights) > 1) {
+    weights <- "bartlett"
+  }
 
   x <- if (is.ts(x) || "zoo" %in% class(x)) {
-         t(x)
-       } else if (is.matrix(x)) {
-         x
-       } else {
-         stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
-       }
+    t(x)
+  } else if (is.matrix(x)) {
+    x
+  } else {
+    stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
+  }
 
   ## centering
   mx <- rowMeans(x)
@@ -127,20 +130,23 @@ dpca <- function(
     q <- 1L
   }
 
-  if (length(q) > 1 || floor(abs(q)) != q)
+  if (length(q) > 1 || floor(abs(q)) != q) {
     stop("\"q\" has to be a single positive integer!")
+  }
 
   if (is.null(bandwidth)) {
     bandwidth <- floor(ncol(x)^(1 / 3))
   }
 
-  if (length(bandwidth) > 1 || floor(abs(bandwidth)) != bandwidth)
+  if (length(bandwidth) > 1 || floor(abs(bandwidth)) != bandwidth) {
     stop("\"bandwidth\" has to be a single positive integer!")
+  }
 
-  if (!is.numeric(freqs) || any(abs(freqs) > pi))
+  if (!is.numeric(freqs) || any(abs(freqs) > pi)) {
     stop("\"freqs\" must be a numeric vector with values in [-pi, pi]!")
+  }
 
-  if  (!isTRUE(all.equal(freqs, rev(-freqs)))) {
+  if (!isTRUE(all.equal(freqs, rev(-freqs)))) {
     warning(
       paste0(
         "\"freqs\" has to be a symmetric sequence around zero!",
@@ -152,7 +158,7 @@ dpca <- function(
     freqs <- c(rev(-pfreqs), 0, pfreqs)
   }
 
-  wghts <- get(paste0("weights.", weights))(-bandwidth:bandwidth / bandwidth)
+  wghts <- get(paste0("weights_", weights))(-bandwidth:bandwidth / bandwidth)
 
   if (is.null(n_path)) {
     n_path <- floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20))

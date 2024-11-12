@@ -17,3 +17,45 @@ repos:
   - id: clang-format
     args: [-style=file]
     types: [c++]
+- repo: https://github.com/lorenzwalthert/precommit
+  rev: v0.4.2
+  hooks:
+    - id: style-files
+      args:
+        ['--ignore-start="^# styler: off$"', '--ignore-stop="^# styler: on$"']
+      exclude: >
+        (?x)^(
+        tests/testthat/.*/.*\.R(md|nw)?|
+        data-raw/.*|
+        )$
+      files: \.R$
+
+    - id: lintr
+      additional_dependencies:
+      - r-lib/lintr
+      - any::cyclocomp
+      files: \.R$
+      exclude: >
+        (?x)^(
+        inst/.*|
+        man/.*|
+        tests/.*|
+        touchstone/.*|
+        vignettes/.*|
+        data-raw/.*|
+        )$
+    - id: roxygenize
+      additional_dependencies:
+      - r-lib/pkgapi
+      files: \.R$
+
+- repo: local
+  hooks:
+
+  - id: run-tests
+    name: run-tests
+    description: Run unit tests
+    entry: R -e "devtools::test()"
+    language: system
+    files: \.R$
+    pass_filenames: false

@@ -35,7 +35,7 @@ a regular sequence of length \code{20} from \code{n/2} to \code{n} is used.}
 \eqn{c} over which the \code{q}-path is optimized to stability.}
 }
 \value{
-A list with the entries
+An object of class "spca", wrapping a list with the entries
 \itemize{
   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
   \item \code{cov}: variance-covariance-matrix of \code{x}

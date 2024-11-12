@@ -9,8 +9,8 @@ dpca(
   q,
   freqs = -20:20/20 * pi,
   bandwidth = NULL,
-  weights = c("Bartlett", "trunc", "Tukey", "Parzen", "Bohman", "Daniell",
-    "ParzenCogburnDavis"),
+  weights = c("bartlett", "trunc", "tukey", "parzen", "bohman", "daniell",
+    "parzen_cogburn_davis"),
   qsel = FALSE,
   qsel_crit = c("IC1", "IC2"),
   n_path = NULL,
@@ -65,7 +65,7 @@ suggested in Hallin & Liska (2007, p. 611) is used:
 \eqn{c} over which the \code{q}-path is optimized to stability.}
 }
 \value{
-A list with entries
+A object of class "dpca" wrapping a list with the entries
 \itemize{
   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
   \item \code{spectrum}: the estimated spectral density
@@ -86,7 +86,7 @@ Dynamic Principal Component Analysis and Large Dynamic Factor Model Estimation
 data(fredmd)
 fredmd <- scale(fredmd)
 
-freqs <- -50:50/50 * pi
+freqs <- -50:50 / 50 * pi
 res <- dpca::dpca(fredmd, freqs = freqs, qsel = TRUE, q = 10)
 
 ## eigenvalues
@@ -96,12 +96,16 @@ matplot(x = freqs, y = t(res$eig$values), type = "l")
 cat(sprintf("Number of selected dynamic components: \%s\n", res$HL_select$q))
 
 ## sample variability of the criterion S^2_C (Hallin & Liska 2007, equation 10)
-plot(x = res$HL_select$penalty_scales, y = res$HL_select$sample_var, type = "l",
-     col = "red")
+plot(
+  x = res$HL_select$penalty_scales, y = res$HL_select$sample_var, type = "l",
+  col = "red"
+)
 par(new = TRUE)
-plot(x = res$HL_select$penalty_scales, y = res$HL_select$q_path,
-     type = "l", axes = FALSE, bty = "n", xlab = "", ylab = "",
-     col = "blue")
+plot(
+  x = res$HL_select$penalty_scales, y = res$HL_select$q_path,
+  type = "l", axes = FALSE, bty = "n", xlab = "", ylab = "",
+  col = "blue"
+)
 axis(4)
 mtext("q_path", side = 4)
 
