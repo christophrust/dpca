@@ -21,4 +21,5 @@ src/arpack-ng.*
 tools/arpack-ng.*/
 
 data-raw
+examples
 ^\.github$
