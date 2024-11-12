@@ -16,9 +16,12 @@ src/compile_commands.json
 
 \.github
 \.git
+\.pre-commit-config.yaml
+\.lintr
 
 src/arpack-ng.*
 tools/arpack-ng.*/
 
 data-raw
+examples
 ^\.github$
