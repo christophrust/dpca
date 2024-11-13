@@ -2,7 +2,7 @@
 % Please edit documentation in R/dpca.R
 \name{dpca}
 \alias{dpca}
-\title{Dynamic Principal Component Analysis and Large Dynamic Factor Model Estimation}
+\title{Dynamic Principal Component Analysis and Dynamic Factor Model Estimation}
 \usage{
 dpca(
   x,
@@ -73,10 +73,17 @@ A object of class "dpca" wrapping a list with the entries
   \item \code{dic}: (dynamic) idiosyncratic component
   \item \code{HL_select}: results of the selection methodology of Hallin & Liska (2007),
 }
-see also \code{\link{select_r}}.
+also see \code{\link{select_r}}.
 }
 \description{
-Dynamic Principal Component Analysis and Large Dynamic Factor Model Estimation
+\code{dpca} is used to estimate a Generalized Dynamic Factor Model
+in the spirit of Forni et al. (2000) and Forni & Lippi (2001) via dynamic principal
+components analysis (DPCA) a la Brillinger (2001). The number of principal components
+can be chosen in a data-driven way using the method suggested by Hallin & Liska (2007).
+
+\code{dpca} has a cousin \code{\link{spca}} for estimating static principal components as
+they are used in the dynamic factor model literature around Stock & Watson (2001),
+also making the Hallin & Liska method for selecting the number of factors available.
 }
 \examples{
 data(fredmd)
@@ -107,6 +114,8 @@ mtext("q_path", side = 4)
 
 }
 \references{
+Brillinger, D. R. (2001). Time Series: Data Analysis and Theory. SIAM.
+
 Forni, M., Hallin, M., Lippi, M., & Reichlin, L. (2000). The generalized
 dynamic-factor model: Identification and estimation. Review of Economics
 and statistics, 82(4), 540-554.

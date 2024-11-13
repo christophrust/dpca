@@ -1,4 +1,13 @@
-#' Dynamic Principal Component Analysis and Large Dynamic Factor Model Estimation
+#' @title Dynamic Principal Component Analysis and Dynamic Factor Model Estimation
+#'
+#' @description \code{dpca} is used to estimate a Generalized Dynamic Factor Model
+#' in the spirit of Forni et al. (2000) and Forni & Lippi (2001) via dynamic principal
+#' components analysis (DPCA) a la Brillinger (2001). The number of principal components
+#' can be chosen in a data-driven way using the method suggested by Hallin & Liska (2007).
+#'
+#' \code{dpca} has a cousin \code{\link{spca}} for estimating static principal components as
+#' they are used in the dynamic factor model literature around Stock & Watson (2001),
+#' also making the Hallin & Liska method for selecting the number of factors available.
 #'
 #' @param x Input data supplied either as a matrix (rows correspond to cross-sectional
 #' units and columnts to observations in the time domain) or a multivariate object of
@@ -39,6 +48,7 @@
 #' @param penalty_scales Tuning values for the penalty scaling parameter
 #' \eqn{c} over which the \code{q}-path is optimized to stability.
 #'
+#'
 #' @return A object of class "dpca" wrapping a list with the entries
 #' \itemize{
 #'   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
@@ -51,7 +61,7 @@
 #'   \item \code{dic}: (dynamic) idiosyncratic component
 #'   \item \code{HL_select}: results of the selection methodology of Hallin & Liska (2007),
 #' }
-#' see also \code{\link{select_r}}.
+#' also see \code{\link{select_r}}.
 #'
 #' @examples
 #' data(fredmd)
@@ -81,6 +91,8 @@
 #' mtext("q_path", side = 4)
 #'
 #' @references
+#' Brillinger, D. R. (2001). Time Series: Data Analysis and Theory. SIAM.
+#'
 #' Forni, M., Hallin, M., Lippi, M., & Reichlin, L. (2000). The generalized
 #' dynamic-factor model: Identification and estimation. Review of Economics
 #' and statistics, 82(4), 540-554.
