@@ -173,14 +173,12 @@ test_that("dpca: HL switch", {
 
 
   res_dpca1 <- dpca::dpca(
-    x = x, q = 10, freqs = freqs, bandwidth = bw, weights = "bartlett",
-    qsel = TRUE
+    x = x, q_max = 10, freqs = freqs, bandwidth = bw, weights = "bartlett",
   )
 
 
   res_dpca2 <- dpca::dpca(
-    x = x, q = res_dpca1$HL_select$q, freqs = freqs, bandwidth = bw, weights = "bartlett",
-    qsel = FALSE
+    x = x, q = res_dpca1$HL_select$q, freqs = freqs, bandwidth = bw, weights = "bartlett"
   )
 
   expect_lt(sum(abs(res_dpca1$spectrum[, , 1] %*% Conj(res_dpca1$eig$vectors[1, , 1]) -
@@ -217,35 +215,29 @@ test_that("dpca: inferface", {
   x <- chi + rnorm(nrx * ncx, sd = 0.1 * sd(chi))
 
   res_dpca1 <- dpca::dpca(
-    x = x, q = 10, freqs = freqs, bandwidth = bw, qsel = TRUE
+    x = x, q = 10, freqs = freqs, bandwidth = bw
   )
   res_dpca2 <- dpca::dpca(
-    x = ts(t(x)), q = 10, freqs = freqs, bandwidth = bw, qsel = TRUE
+    x = ts(t(x)), q = 10, freqs = freqs, bandwidth = bw
   )
 
   expect_equal(res_dpca1$eig, res_dpca2$eig)
 
   expect_error(
     dpca::dpca(
-      x = "test", q = 10, freqs = freqs, bandwidth = bw, qsel = TRUE
-    )
-  )
-
-  expect_warning(
-    dpca::dpca(
-      x = x, freqs = freqs, bandwidth = bw, qsel = FALSE
+      x = "test", q = 10, freqs = freqs, bandwidth = bw
     )
   )
 
   expect_error(
     dpca::dpca(
-      x = x, q = 1.23, freqs = freqs, bandwidth = bw, qsel = FALSE
+      x = x, q = 1.23, freqs = freqs, bandwidth = bw
     )
   )
 
   expect_warning(
     dpca::dpca(
-      x = x, q = 4, freqs = c(-pi, -2, seq(0, pi, length.out = 5)), bandwidth = bw, qsel = FALSE
+      x = x, q = 4, freqs = c(-pi, -2, seq(0, pi, length.out = 5)), bandwidth = bw
     )
   )
 })

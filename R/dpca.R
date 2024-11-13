@@ -4,8 +4,8 @@
 #' units and columnts to observations in the time domain) or a multivariate object of
 #' class \code{\link[stats]{ts}} or \code{\link[zoo]{zoo}}.
 #'
-#' @param q Number of dynamic factors. If \code{qsel} is set to \code{TRUE}, this is
-#' the maximum number of dynamic factors.
+#' @param q Number of dynamic factors. If no value is supplied for \code{q},
+#' it is chosed data-driven by using the criterion of Hallin & Liska (2007).
 #'
 #' @param freqs Numeric vector in \eqn{[-\pi, \pi]} giving the frequencies where the
 #' spectral density is evaluated.
@@ -16,19 +16,14 @@
 #'
 #' @param weights Kernel used for the lag window estimation of spectrum.
 #'
-#' @param qsel Logical, if \code{TRUE} one of the Hallin & Liska (2007) criteria
-#' are used to choose \code{q} from the data.
-#'
 #' @param qsel_crit Criterion to select the number of factors using the
-#'   Hallin & Liska (2007, JASA) method. Either \code{"IC1"} or \code{"IC2"}.
+#' Hallin & Liska (2007, JASA) method. Either \code{"IC1"} or \code{"IC2"}.
 #'
+#' @param q_max Maximum numer of dynamic factors considered in the data-driven
+#' selection.
 #' @param n_path Integer vector specifying which (nested) subsets of the
 #' cross section are used in the Hallin & Liska procedure. If unspecified,
 #' a regular sequence of length \code{20} from \code{n/2} to \code{n} is used.
-#'
-#' @param t_path Integer vector specifying Which (nested) subsets of the
-#' time domain are used in the Hallin & Liska procedure. If unspecified,
-#' a regular sequence of length \code{20} from \code{T/2} to \code{T} is used.
 #'
 #' @param penalties Evaluated values of the penalty function at
 #' each value of the n_path. In case this is missing, the penalty \eqn{p_1(n,T)}
@@ -63,7 +58,7 @@
 #' fredmd <- scale(fredmd)
 #'
 #' freqs <- -50:50 / 50 * pi
-#' res <- dpca::dpca(fredmd, freqs = freqs, qsel = TRUE, q = 10)
+#' res <- dpca::dpca(fredmd, freqs = freqs, q_max = 10)
 #'
 #' ## eigenvalues
 #' matplot(x = freqs, y = t(res$eig$values), type = "l")
@@ -104,16 +99,17 @@ dpca <- function(
     x,
     q,
     freqs = -20:20 / 20 * pi,
-    bandwidth = NULL,
+    bandwidth = floor(ncol(x)^(1 / 3)),
     weights = c(
       "bartlett", "trunc", "tukey", "parzen",
       "bohman", "daniell", "parzen_cogburn_davis"
     ),
-    qsel = FALSE,
     qsel_crit = c("IC1", "IC2"),
-    n_path = NULL,
-    t_path = NULL,
-    penalties,
+    q_max = 15,
+    n_path = floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20)),
+    penalties = (
+      bandwidth^(-2) + sqrt(bandwidth / ncol(x)) + 1 / n_path
+    ) * log(pmin(n_path, bandwidth^2, sqrt(ncol(x) / bandwidth))),
     penalty_scales = seq(0, 2, by = 0.01)) {
   if (length(weights) > 1) {
     weights <- "bartlett"
@@ -127,19 +123,8 @@ dpca <- function(
     stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
   }
 
-  if (missing(q)) {
-    warning(
-      "No number of dynamic principal components supplied. Using q = 1..."
-    )
-    q <- 1L
-  }
-
-  if (length(q) > 1 || floor(abs(q)) != q) {
+  if (!missing(q) && (length(q) > 1 || floor(abs(q)) != q)) {
     stop("\"q\" has to be a single positive integer!")
-  }
-
-  if (is.null(bandwidth)) {
-    bandwidth <- floor(ncol(x)^(1 / 3))
   }
 
   if (length(bandwidth) > 1 || floor(abs(bandwidth)) != bandwidth) {
@@ -168,23 +153,8 @@ dpca <- function(
 
   wghts <- get(paste0("weights.", weights))(-bandwidth:bandwidth / bandwidth)
 
-  if (is.null(n_path)) {
-    n_path <- floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20))
-  }
-  if (is.null(t_path)) {
-    floor(seq(ncol(x) / 2, ncol(x), ncol(x) / 20))
-  }
-
-  if (qsel && missing(penalties)) {
-    penalties <- (
-      bandwidth^(-2) + sqrt(bandwidth / ncol(x)) + 1 / n_path
-    ) * log(pmin(n_path, bandwidth^2, sqrt(ncol(x) / bandwidth)))
-  } else if (isFALSE(qsel)) {
-    penalties <- rep(0, length(n_path))
-  }
-
   select_q <-
-    if (isFALSE(qsel)) {
+    if (!missing(q)) {
       0L
     } else if (qsel_crit[1] == "IC1") {
       1L
@@ -196,15 +166,15 @@ dpca <- function(
   res <- .Call(
     "R_dpca",
     x,
-    as.integer(q),
+    if (missing(q)) 0L else as.integer(q),
     as.numeric(freqs),
     as.integer(bandwidth),
     .Machine$double.eps,
     as.numeric(wghts),
-    as.integer(q),
+    as.integer(q_max),
     select_q,
     as.integer(n_path),
-    as.integer(t_path),
+    as.integer(rep(ncol(x), length(n_path))),
     as.numeric(penalties),
     as.numeric(penalty_scales),
     PACKAGE = "dpca"
@@ -212,11 +182,10 @@ dpca <- function(
 
   ## add cross-sectional means
   res$xmean <- mx
-  if (qsel) {
+  if (select_q) {
     res$HL_select$penalty_scales <- penalty_scales
   }
 
   class(res) <- "dpca"
-
   res
 }

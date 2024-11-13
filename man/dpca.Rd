@@ -8,14 +8,14 @@ dpca(
   x,
   q,
   freqs = -20:20/20 * pi,
-  bandwidth = NULL,
+  bandwidth = floor(ncol(x)^(1/3)),
   weights = c("bartlett", "trunc", "tukey", "parzen", "bohman", "daniell",
     "parzen_cogburn_davis"),
-  qsel = FALSE,
   qsel_crit = c("IC1", "IC2"),
-  n_path = NULL,
-  t_path = NULL,
-  penalties,
+  q_max = 15,
+  n_path = floor(seq(nrow(x)/2, nrow(x), nrow(x)/20)),
+  penalties = (bandwidth^(-2) + sqrt(bandwidth/ncol(x)) + 1/n_path) * log(pmin(n_path,
+    bandwidth^2, sqrt(ncol(x)/bandwidth))),
   penalty_scales = seq(0, 2, by = 0.01)
 )
 }
@@ -24,8 +24,8 @@ dpca(
 units and columnts to observations in the time domain) or a multivariate object of
 class \code{\link[stats]{ts}} or \code{\link[zoo]{zoo}}.}
 
-\item{q}{Number of dynamic factors. If \code{qsel} is set to \code{TRUE}, this is
-the maximum number of dynamic factors.}
+\item{q}{Number of dynamic factors. If no value is supplied for \code{q},
+it is chosed data-driven by using the criterion of Hallin & Liska (2007).}
 
 \item{freqs}{Numeric vector in \eqn{[-\pi, \pi]} giving the frequencies where the
 spectral density is evaluated.}
@@ -36,19 +36,15 @@ observations is used as default.}
 
 \item{weights}{Kernel used for the lag window estimation of spectrum.}
 
-\item{qsel}{Logical, if \code{TRUE} one of the Hallin & Liska (2007) criteria
-are used to choose \code{q} from the data.}
-
 \item{qsel_crit}{Criterion to select the number of factors using the
 Hallin & Liska (2007, JASA) method. Either \code{"IC1"} or \code{"IC2"}.}
+
+\item{q_max}{Maximum numer of dynamic factors considered in the data-driven
+selection.}
 
 \item{n_path}{Integer vector specifying which (nested) subsets of the
 cross section are used in the Hallin & Liska procedure. If unspecified,
 a regular sequence of length \code{20} from \code{n/2} to \code{n} is used.}
-
-\item{t_path}{Integer vector specifying Which (nested) subsets of the
-time domain are used in the Hallin & Liska procedure. If unspecified,
-a regular sequence of length \code{20} from \code{T/2} to \code{T} is used.}
 
 \item{penalties}{Evaluated values of the penalty function at
 each value of the n_path. In case this is missing, the penalty \eqn{p_1(n,T)}
@@ -87,7 +83,7 @@ data(fredmd)
 fredmd <- scale(fredmd)
 
 freqs <- -50:50 / 50 * pi
-res <- dpca::dpca(fredmd, freqs = freqs, qsel = TRUE, q = 10)
+res <- dpca::dpca(fredmd, freqs = freqs, q_max = 10)
 
 ## eigenvalues
 matplot(x = freqs, y = t(res$eig$values), type = "l")

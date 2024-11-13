@@ -78,6 +78,6 @@ test_that("Test spca, interface.", {
   expect_error(spca(x, 1.3))
 
   ## rselection
-  rr <- spca(x, r = 10, rsel = TRUE)
+  rr <- spca(x, r_max = 10)
   expect_named(rr$HL_select)
 })
