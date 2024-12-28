@@ -70,14 +70,11 @@ test_that("Test spca, interface.", {
   ## wrong input for x
   expect_error(spca("abc"))
 
-  ## no r supplied
-  expect_warning(spca(x))
-
   ## wrong r supplied
   expect_error(spca(x, c(1:3)))
   expect_error(spca(x, 1.3))
 
   ## rselection
-  rr <- spca(x, r_max = 10)
+  rr <- spca(x, max_r = 10)
   expect_named(rr$HL_select)
 })

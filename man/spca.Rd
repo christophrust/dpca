@@ -7,8 +7,8 @@
 spca(
   x,
   r,
-  rsel = FALSE,
   rsel_crit = c("IC1", "IC2", "IC3"),
+  max_r = 15,
   n_path = NULL,
   penalty_scales = seq(0, 2, by = 0.01)
 )
@@ -21,11 +21,11 @@ class \code{\link[stats]{ts}} or \code{\link[zoo]{zoo}}.}
 \item{r}{Number of static factors. If \code{rsel} is set to \code{TRUE}, this is
 the maximum number of static factors.}
 
-\item{rsel}{Logical, if \code{TRUE} one of the Hallin & Liska criteria are used to
-choose \code{r} from the data.}
-
 \item{rsel_crit}{Criterion to select the number of factors using the
 Hallin & Liska (2007, JASA) method. Either \code{"IC1"} or \code{"IC2"}.}
+
+\item{max_r}{Maximum numer of static factors considered in the data-driven
+selection.}
 
 \item{n_path}{Integer vector specifying which (nested) subsets of the
 cross section are used in the Hallin & Liska procedure. If unspecified,

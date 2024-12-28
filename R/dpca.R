@@ -163,7 +163,7 @@ dpca <- function(
   mx <- rowMeans(x)
   x <- x - mx
 
-  wghts <- get(paste0("weights.", weights))(-bandwidth:bandwidth / bandwidth)
+  wghts <- get(paste0("weights_", weights))(-bandwidth:bandwidth / bandwidth)
 
   select_q <-
     if (!missing(q)) {

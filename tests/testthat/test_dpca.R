@@ -126,7 +126,7 @@ test_that("Test dpca, stepwise", {
     as.integer(-bw:bw), length(-bw:bw), -10:10 / 10 * pi, 21L
   )
 
-  expect_equal(ff1, res_dpca$filter$filter_dcc)
+  expect_equal(ff1, res_dpca$filter$dcc)
 
   ## SEXP R_filter_process(SEXP r_f, SEXP r_x, SEXP r_lags,
   ##                     SEXP r_nrf, SEXP r_ncf, SEXP r_nrx, SEXP r_ncx,

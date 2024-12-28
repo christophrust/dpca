@@ -67,8 +67,9 @@ plot.spca <- function(x, ...) {
   r_selection <- x$HL_select
   plot(
     x = r_selection$penalty_scales, y = r_selection$q_path,
-    type = "n", ylab = "Number of selected factors",
-    xlab = "c", lwd = 2
+    type = "n", ylab = "Number of factors",
+    xlab = "c", lwd = 2,
+    main = "Hallin & Liska (2007) factor selection summary"
   )
   par(new = TRUE)
   plot(
