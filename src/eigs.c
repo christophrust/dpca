@@ -1,8 +1,9 @@
-#include "eigs.h"
-
 #include <complex.h>
-#include <arpack.h>
 #include <math.h>
+
+#include <arpack.h>
+
+#include "eigs.h"
 #include "complex_mv_product.h"
 
 #ifdef USING_R

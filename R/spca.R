@@ -7,11 +7,11 @@
 #' @param r Number of static factors. If \code{rsel} is set to \code{TRUE}, this is
 #' the maximum number of static factors.
 #'
-#' @param rsel Logical, if \code{TRUE} one of the Hallin & Liska criteria are used to
-#' choose \code{r} from the data.
-#'
 #' @param rsel_crit Criterion to select the number of factors using the
 #'   Hallin & Liska (2007, JASA) method. Either \code{"IC1"} or \code{"IC2"}.
+#'
+#' @param max_r Maximum numer of static factors considered in the data-driven
+#' selection.
 #'
 #' @param n_path Integer vector specifying which (nested) subsets of the
 #' cross section are used in the Hallin & Liska procedure. If unspecified,
@@ -20,7 +20,7 @@
 #' @param penalty_scales Tuning values for the penalty scaling parameter
 #' \eqn{c} over which the \code{q}-path is optimized to stability.
 #'
-#' @return A list with the entries
+#' @return An object of class "spca", wrapping a list with the entries
 #' \itemize{
 #'   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
 #'   \item \code{cov}: variance-covariance-matrix of \code{x}
@@ -35,43 +35,38 @@
 #' @importFrom stats is.ts
 #' @export
 spca <- function(
-  x,
-  r,
-  rsel = FALSE,
-  rsel_crit = c("IC1", "IC2", "IC3"),
-  n_path = NULL,
-  penalty_scales = seq(0, 2, by = 0.01)
-) {
-
+    x,
+    r,
+    rsel_crit = c("IC1", "IC2", "IC3"),
+    max_r = 15,
+    n_path = NULL,
+    penalty_scales = seq(0, 2, by = 0.01)) {
   x <- if (is.ts(x) || "zoo" %in% class(x)) {
-         t(x)
-       } else if (is.matrix(x)) {
-         x
-       } else {
-         stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
-       }
+    t(x)
+  } else if (is.matrix(x)) {
+    x
+  } else {
+    stop("x must either a \"ts\" or \"zoo\" object or a matrix!")
+  }
+
+  if (!missing(r) && (length(r) > 1 || floor(abs(r)) != r)) {
+    stop("\"r\" has to be a single positive integer!")
+  }
+
+  if (is.null(n_path)) {
+    n_path <- floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20))
+  }
 
   ## centering
   mx <- rowMeans(x)
   x <- x - mx
 
   if (missing(r)) {
-    warning(
-      "No number of dynamic principal components supplied. Using r = 1..."
+    hl_select <- dpca::select_r(x,
+      crit = rsel_crit, penalty_scales = penalty_scales,
+      n_path = n_path, max_r = max_r
     )
-    r <- 1L
-  }
-
-  if (length(r) > 1 || floor(abs(r)) != r)
-    stop("\"r\" has to be a single positive integer!")
-
-  if (is.null(n_path)) {
-    n_path <- floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20))
-  }
-
-  if (rsel) {
-    hl_select <- select_r(x, crit = rsel_crit, penalty_scales = penalty_scales, n_path = n_path, max_r = r)
-    r <- hl_select$r
+    r_selected <- hl_select$r
   }
 
   cx <- cov(t(x))
@@ -81,7 +76,7 @@ spca <- function(
     "R_arnoldi_eigs",
     mat = cx,
     dim = nrow(cx),
-    as.integer(r),
+    as.integer(if (missing(r)) r_selected else r),
     .Machine$double.eps,
     1L,
     0L,
@@ -101,9 +96,10 @@ spca <- function(
     cc = cc,
     ic = ic
   )
-  if (rsel) {
-    res$HL_select = hl_select
+  if (missing(r)) {
+    res$HL_select <- hl_select
   }
+  class(res) <- "spca"
 
   res
 }

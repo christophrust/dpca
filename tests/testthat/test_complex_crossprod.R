@@ -1,7 +1,6 @@
 library(dpca)
 
 test_that("Complex crossprod", {
-
   nrx <- 100
   ncx <- 10
   x <- matrix(runif(nrx * ncx) + runif(nrx * ncx) * 1i, nrow = nrx)
@@ -13,5 +12,4 @@ test_that("Complex crossprod", {
   res1 <- .Call("R_complex_crossprod", x, 1L)
   res2 <- x %*% Conj(t(x))
   expect_equal(res1, res2)
-
 })

@@ -10,8 +10,6 @@
  * On output this holds the indices (start, end) of the
  * first two stability intervals.
  * */
-int hl_find_stability_intervals(double * sample_var, int lsv, int *ivl_idx);
-
-
+int hl_find_stability_intervals(double *sample_var, int lsv, int *ivl_idx);
 
 #endif // HL_FIND_STABILITY_INTERVAL_H_

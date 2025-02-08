@@ -1,5 +1,4 @@
 test_that("Multivariate filter, computation", {
-
   nrx <- 100L
   ncx <- 1000L
   nrf <- 10L
@@ -16,13 +15,11 @@ test_that("Multivariate filter, computation", {
 
   f_arr <- array(f, dim = c(dim(f), 1))
   res3 <- multivariate_filter(x = x, filter_coefficients = f_arr, lags = 1)
-  expect_equal(res3, res2[,-1000])
-
+  expect_equal(res3, res2[, -1000])
 })
 
 
 test_that("multivariate filter, interface", {
-
   nrx <- 100L
   ncx <- 1000L
   nrf <- 10L
@@ -39,10 +36,9 @@ test_that("multivariate filter, interface", {
 
   expect_error(multivariate_filter("anc", f_arr))
 
-  f_arr2 <- array(c(f,f), dim = c(dim(f), 2))
-  f_arr3 <- array(c(f,f), dim = c(dim(f), 1) + c(0,1,0))
+  f_arr2 <- array(c(f, f), dim = c(dim(f), 2))
+  f_arr3 <- array(c(f, f), dim = c(dim(f), 1) + c(0, 1, 0))
 
   expect_error(multivariate_filter(x, f_arr2, 1))
   expect_error(multivariate_filter(x, f_arr3, 1))
-
 })

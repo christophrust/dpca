@@ -1,5 +1,6 @@
-#include "hl_select_q.h"
+#include <string.h>
 
+#include "hl_select_q.h"
 #include "hl_ic_n_path.h"
 #include "hl_q_path.h"
 #include "hl_find_stability_interval.h"
@@ -20,6 +21,8 @@ void hl_select_q(double _Complex * spec, double _Complex * evals, double _Comple
 
     /* 2. obtain for any c in the penalty_scales the q_path and compute its sample variability */
     int q_paths[ln * lps];
+    memset(q_paths, 0, ln * lps);
+
     double penalty_scale;
 
     double x2, x1;

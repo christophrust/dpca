@@ -1,7 +1,6 @@
 #ifndef HL_IC_N_PATH_H_
 #define HL_IC_N_PATH_H_
 
-
 /**
  * @brief Selection of number of dynamic factors.
  *
@@ -24,9 +23,9 @@
  * @param ic_vals An array of at least length ln * (max_q + 1)
  *
  * */
-void hl_ic_n_path(double _Complex * spec, double _Complex * evals, double _Complex *evecs,
-                int dim, int nfreqs, int max_q, int select_q, int * n_path, int ln, double tol,
-                double * ic_vals);
-
+void hl_ic_n_path(double _Complex *spec, double _Complex *evals,
+                  double _Complex *evecs, int dim, int nfreqs, int max_q,
+                  int select_q, int *n_path, int ln, double tol,
+                  double *ic_vals);
 
 #endif // HL_IC_N_PATH_H_
