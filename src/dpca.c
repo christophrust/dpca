@@ -1,11 +1,12 @@
-#include "dpca.h"
-#include "R_ext/Complex.h"
-#include "R_ext/RS.h"
-#include "R_ext/Rdynload.h"
-#include "Rinternals.h"
 #include <complex.h>
+
+#include <R_ext/Complex.h>
+#include <R_ext/RS.h>
+#include <R_ext/Rdynload.h>
+#include <Rinternals.h>
 #include <R_ext/Utils.h>
 
+#include "dpca.h"
 #include "complex_crossprod.h"
 #include "eigs.h"
 #include "filter_process.h"
@@ -206,8 +207,8 @@ SEXP R_dpca
     SET_VECTOR_ELT(filter, 0, filter_input);
     SET_VECTOR_ELT(filter, 1, filter_dcc);
     SEXP nms_filter = PROTECT(allocVector(STRSXP, 2));
-    SET_STRING_ELT(nms_filter, 0, mkChar("filter_input"));
-    SET_STRING_ELT(nms_filter, 1, mkChar("filter_dcc"));
+    SET_STRING_ELT(nms_filter, 0, mkChar("ndpc"));
+    SET_STRING_ELT(nms_filter, 1, mkChar("dcc"));
     setAttrib(filter, R_NamesSymbol, nms_filter);
 
     SEXP hl_select;
@@ -245,7 +246,7 @@ SEXP R_dpca
     SET_STRING_ELT(nms, 0, mkChar("spectrum"));
     SET_STRING_ELT(nms, 1, mkChar("eig"));
     SET_STRING_ELT(nms, 2, mkChar("filter"));
-    SET_STRING_ELT(nms, 3, mkChar("input"));
+    SET_STRING_ELT(nms, 3, mkChar("ndpc"));
     SET_STRING_ELT(nms, 4, mkChar("dcc"));
     SET_STRING_ELT(nms, 5, mkChar("dic"));
     SET_STRING_ELT(nms, 6, mkChar("HL_select"));
