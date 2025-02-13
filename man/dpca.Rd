@@ -7,15 +7,15 @@
 dpca(
   x,
   q,
-  freqs = -20:20/20 * pi,
-  bandwidth = floor(ncol(x)^(1/3)),
+  freqs = -bandwidth:bandwidth/bandwidth * pi,
+  bandwidth = floor(0.75 * sqrt(tx)),
   weights = c("bartlett", "trunc", "tukey", "parzen", "bohman", "daniell",
     "parzen_cogburn_davis"),
   qsel_crit = c("IC1", "IC2"),
   q_max = 15,
-  n_path = floor(seq(nrow(x)/2, nrow(x), nrow(x)/20)),
-  penalties = (bandwidth^(-2) + sqrt(bandwidth/ncol(x)) + 1/n_path) * log(pmin(n_path,
-    bandwidth^2, sqrt(ncol(x)/bandwidth))),
+  n_path = floor(seq(nx/2, nx, nx/20)),
+  penalties = (bandwidth^(-2) + sqrt(bandwidth/tx) + 1/n_path) * log(pmin(n_path,
+    bandwidth^2, sqrt(tx/bandwidth))),
   penalty_scales = seq(0, 2, by = 0.01)
 )
 }
@@ -31,8 +31,8 @@ it is chosed data-driven by using the criterion of Hallin & Liska (2007).}
 spectral density is evaluated.}
 
 \item{bandwidth}{Single integer, giving the width of the
-lag window estimator. If unspecified, the cube root of the number of time
-observations is used as default.}
+lag window estimator. If unspecified, 0.75 times the square root of the number
+of time observations is used as default.}
 
 \item{weights}{Kernel used for the lag window estimation of spectrum.}
 
