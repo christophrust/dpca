@@ -2,7 +2,7 @@
 % Please edit documentation in R/s3methods.R
 \name{plot.dpca}
 \alias{plot.dpca}
-\title{Plot q-selection graphcs for a \code{dpca} object.}
+\title{Diagnostics plot for a \code{dpca} object.}
 \usage{
 \method{plot}{dpca}(x, ...)
 }
@@ -12,5 +12,5 @@
 \item{...}{Further pass-through arguments.}
 }
 \description{
-Plot q-selection graphcs for a \code{dpca} object.
+Diagnostics plot for a \code{dpca} object.
 }

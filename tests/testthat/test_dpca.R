@@ -36,6 +36,7 @@ test_that("Test dpca, stepwise", {
   class(res_dpca) <- "dpca"
   res_dpca1$call <- NULL
   res_dpca$call <- NULL
+  res_dpca$freqs <- freqs
 
   expect_equal(res_dpca, res_dpca1)
 

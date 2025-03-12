@@ -5,23 +5,67 @@
 #' @param ... Further pass-through arguments.
 #' @export
 print.dpca <- function(x, ...) {
-  cat("\nDynamic principal component estimation object:\n")
-  cat(sprintf("  Number of selected dynamic components: %s\n", x$HL_select$q))
+  cat("\nDynamic principal component estimation\n")
+  cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"),
+    "\n\n",
+    sep = ""
+  )
+  cat(paste("Number of dynamic components:", dim(x$ndpc)[1]), "\n")
 }
 
 #' Summary method for object of class \code{dpca}.
 #' @param object An object of type \code{spca}.
 #' @param ... Further pass-through arguments.
 #' @export
-summary.dpca <- function(object, ...) print.dpca(object)
+summary.dpca <- function(object, ...) {
+  ps <- object$eig$vectors
+  lambda <- object$eig$values
+  ndim <- dim(ps)[2]
+  spec_chi <- vapply(seq_along(object$freqs), function(i) {
+    crossprod(
+      Conj(ps[, , i]) * lambda[, i], ps[, , i]
+    )
+  }, matrix(0i, nrow = ndim, ncol = ndim))
+
+  z <- list()
+  z$freqs <- object$freqs
+  z$gamma <- apply(object$spectrum, c(1, 2), sum) / length(object$freqs)
+  z$gamma_chi <- apply(spec_chi, c(1, 2), sum) / length(object$freqs)
+  z$q <- dim(ps)[1]
+  z$object <- object
+
+  class(z) <- "summary.dpca"
+  z
+}
+
+#' Summary method for object of class \code{summary.dpca}.
+#'
+#' @param x An object of type \code{summary.dpca}.
+#' @param ... Further pass-through arguments.
+#' @export
+print.summary.dpca <- function(x, ...) {
+  trace_chi <- Re(sum(diag(x$gamma_chi)))
+  trace_x <- Re(sum(diag(x$gamma)))
+  cat("\nDynamic principal component estimation summary\n\n")
+  cat("\nCall:\n", paste(deparse(x$object$call), sep = "\n", collapse = "\n"),
+    "\n\n",
+    sep = ""
+  )
+  cat(paste("Number of dynamic components:", x$q, "\n"))
+  cat(paste("Proportion of explained variance: ", round(trace_chi / trace_x, 2), "\n"))
+}
 
 #' Print method for object of class \code{spca}.
 #' @param x An object of type \code{spca}.
 #' @param ... Further pass-through arguments.
 #' @export
 print.spca <- function(x, ...) {
-  cat("\nStatic principal component estimation object:\n")
-  cat(sprintf("  Number of selected static components: %s\n", x$HL_select$r))
+  cat("\nStatic principal component estimation\n")
+  cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"),
+    "\n\n",
+    sep = ""
+  )
+  cat(paste("Number of dynamic components:", dim(x$factors)[1]), "\n")
 }
 
 #' Summary method for object of class \code{spca}.
@@ -30,14 +74,18 @@ print.spca <- function(x, ...) {
 #' @export
 summary.spca <- function(object, ...) print.spca(object)
 
-#' Plot q-selection graphcs for a \code{dpca} object.
+#' Diagnostics plot for a \code{dpca} object.
+#'
 #' @param x An object of type \code{spca}.
 #' @param ... Further pass-through arguments.
 #' @importFrom graphics axis mtext par
 #' @export
 plot.dpca <- function(x, ...) {
   if (is.null(x$HL_select)) {
-    warning("No data-driven selection of number of dynamic factors for passed object. Nothing to plot!")
+    warning(paste(
+      "No data-driven selection of number of dynamic factors for passed object.",
+      "Nothing to plot!"
+    ))
     return(invisible())
   }
   par(mar = c(5, 4, 4, 6))

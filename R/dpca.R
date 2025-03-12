@@ -203,6 +203,7 @@ dpca <- function(
   }
 
   res$call <- cl
+  res$freqs <- freqs
   class(res) <- "dpca"
   res
 }
