@@ -56,6 +56,7 @@ spca <- function(
   if (is.null(n_path)) {
     n_path <- floor(seq(nrow(x) / 2, nrow(x), nrow(x) / 20))
   }
+  cl <- match.call()
 
   ## centering
   mx <- rowMeans(x)
@@ -100,6 +101,7 @@ spca <- function(
     res$HL_select <- hl_select
   }
   class(res) <- "spca"
+  res$call <- cl
 
   res
 }

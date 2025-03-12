@@ -33,7 +33,10 @@ test_that("Test dpca, stepwise", {
   system.time(res_dpca1 <- dpca::dpca(x = x, q = 4, freqs = freqs, bandwidth = bw, weights = "bartlett"))
   system.time(res_freqdom <- freqdom::dpca(t(x), bw, freqs, 4L))
   res_dpca$xmean <- rowMeans(x)
-  class(res_dpca1) <- NULL
+  class(res_dpca) <- "dpca"
+  res_dpca1$call <- NULL
+  res_dpca$call <- NULL
+
   expect_equal(res_dpca, res_dpca1)
 
 

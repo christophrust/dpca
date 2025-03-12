@@ -138,6 +138,7 @@ dpca <- function(
   }
   nx <- nrow(x)
   tx <- ncol(x)
+  cl <- match.call()
 
   if (!missing(q) && (length(q) > 1 || floor(abs(q)) != q)) {
     stop("\"q\" has to be a single positive integer!")
@@ -195,13 +196,13 @@ dpca <- function(
     as.numeric(penalty_scales),
     PACKAGE = "dpca"
   )
-
   ## add cross-sectional means
   res$xmean <- mx
   if (select_q) {
     res$HL_select$penalty_scales <- penalty_scales
   }
 
+  res$call <- cl
   class(res) <- "dpca"
   res
 }
