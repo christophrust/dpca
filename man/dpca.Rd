@@ -64,7 +64,9 @@ suggested in Hallin & Liska (2007, p. 611) is used:
 A object of class "dpca" wrapping a list with the entries
 \itemize{
   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
-  \item \code{spectrum}: the estimated spectral density
+  \item \code{spectrum}: the estimated spectral density without the
+    normalization by a factor of 2 \code{pi}. Therefore, a white noise
+    process would have a spectrum equal to one a.e.
   \item \code{eig}: eigen decomposition of the spectral density
   \item \code{filter}: a list holding the filter coefficients for the filter
     returning input and dynamic common component.
