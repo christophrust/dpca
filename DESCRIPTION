@@ -12,12 +12,7 @@ Authors@R: c(
          role = c("ctb"),
          email = "philipp.gersing@univie.ac.at")
     )
-Description: Efficient implementations for estimating Generalized
-  Dynamic Factor Models based on the work of Mario Forni and
-  Marco Lippi (2001). This package currently
-  covers (multivariate) spectral density estimation, truncated
-  eigendecomposition, selection of the number of dynamic factors,
-  projection on common component space.
+Description: Efficient implementations for estimating Generalized Dynamic Factor Models starting with the works by Forni et al. (2000) and Forni and Lippi (2001). This package currently covers (multivariate) spectral density estimation, truncated eigendecomposition, selection of the number of dynamic factors, projection on common component space.
 SystemRequirements: GNU make
 NeedsCompilation: yes
 Depends: R (>= 3.5.0)

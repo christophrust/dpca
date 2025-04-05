@@ -77,9 +77,10 @@ also see \code{\link{select_r}}.
 }
 \description{
 \code{dpca} is used to estimate a Generalized Dynamic Factor Model
-in the spirit of Forni et al. (2000) and Forni & Lippi (2001) via dynamic principal
-components analysis (DPCA) a la Brillinger (2001). The number of principal components
-can be chosen in a data-driven way using the method suggested by Hallin & Liska (2007).
+starting with the works by Forni et al. (2000) and Forni & Lippi (2001) via dynamic
+principal components analysis (DPCA) á la Brillinger (2001). The number of principal
+components can be chosen in a data-driven way using the method suggested by
+Hallin & Liska (2007).
 
 \code{dpca} has a cousin \code{\link{spca}} for estimating static principal components as
 they are used in the dynamic factor model literature around Stock & Watson (2001),

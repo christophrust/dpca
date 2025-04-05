@@ -25,7 +25,7 @@ Moreover, `dpca` implements the method to select the number of dynamic principal
 - [ ] Model assessment.
 - [ ] Port C code to modern C++.
 
-We are aware of the R package [`freqdom`](https://cran.r-project.org/web/packages/freqdom/index.html), developed by Siegfried Hörmann and Lukas Kidzinsiki which is a pure `R` implementation. `dpca` is written mainly in `C`. Although providing a similiar interface to that of `freqdom`, `dpca` has some unique features apart from being much faster.
+We are aware of the R package [`freqdom`](https://CRAN.R-project.org/package=freqdom), developed by Siegfried Hörmann and Lukas Kidzinsiki which is a pure `R` implementation. `dpca` is written mainly in `C`. Although providing a similiar interface to that of `freqdom`, `dpca` has some unique features apart from being much faster.
 
 For instance, the convoluted filter which computes the dynamic common component from the output in `freqdom` is obtained by filtering the output twice: first to get the inputs \(what in `freqdom` is called "scores" in analogy to their FDA context\) and, second these inputs are filtered again to get the dynamic common component \("KLexpansion"\). `dpca` computes the convolution in the frequency domain. The advantage of this approach is that this filter is invariant with respect to multiplications of dynamic eigenvectors by a unit-length complex number.
 
