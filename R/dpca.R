@@ -54,7 +54,9 @@
 #' @return A object of class "dpca" wrapping a list with the entries
 #' \itemize{
 #'   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
-#'   \item \code{spectrum}: the estimated spectral density
+#'   \item \code{spectrum}: the estimated spectral density without the
+#'     normalization by a factor of 2 \code{pi}. Therefore, a white noise
+#'     process would have a spectrum equal to one a.e.
 #'   \item \code{eig}: eigen decomposition of the spectral density
 #'   \item \code{filter}: a list holding the filter coefficients for the filter
 #'     returning input and dynamic common component.
@@ -139,6 +141,7 @@ dpca <- function(
   }
   nx <- nrow(x)
   tx <- ncol(x)
+  cl <- match.call()
 
   if (!missing(q) && (length(q) > 1 || floor(abs(q)) != q)) {
     stop("\"q\" has to be a single positive integer!")
@@ -196,13 +199,14 @@ dpca <- function(
     as.numeric(penalty_scales),
     PACKAGE = "dpca"
   )
-
   ## add cross-sectional means
   res$xmean <- mx
   if (select_q) {
     res$HL_select$penalty_scales <- penalty_scales
   }
 
+  res$call <- cl
+  res$freqs <- freqs
   class(res) <- "dpca"
   res
 }

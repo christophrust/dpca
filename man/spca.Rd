@@ -39,7 +39,7 @@ An object of class "spca", wrapping a list with the entries
 \itemize{
   \item \code{xmean}: a vector holding the mean of each cross-sectional unit
   \item \code{cov}: variance-covariance-matrix of \code{x}
-  \item \code{eig}: eigen decomposition of \code{cov}
+  \item \code{eig}: truncated eigen decomposition of \code{cov}
   \item \code{factors}: an \eqn{r} times \eqn{T} dimensional matrix with the computed factors
   \item \code{cc}: (static) common component
   \item \code{ic}: (static) idiosyncratic component
