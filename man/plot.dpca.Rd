@@ -7,7 +7,7 @@
 \method{plot}{dpca}(x, ...)
 }
 \arguments{
-\item{x}{An object of type \code{spca}.}
+\item{x}{An object of type \code{dpca}.}
 
 \item{...}{Further pass-through arguments.}
 }

@@ -52,7 +52,7 @@ print.summary.dpca <- function(x, ...) {
     sep = ""
   )
   cat(paste("Number of dynamic components:", x$q, "\n"))
-  cat(paste("Proportion of explained variance: ", round(trace_chi / trace_x, 2), "\n"))
+  cat(paste("Proportion of explained total variance: ", round(trace_chi / trace_x, 2), "\n"))
 }
 
 #' Print method for object of class \code{spca}.
@@ -72,11 +72,44 @@ print.spca <- function(x, ...) {
 #' @param object An object of type \code{spca}.
 #' @param ... Further pass-through arguments.
 #' @export
-summary.spca <- function(object, ...) print.spca(object)
+summary.spca <- function(object, ...) {
+  ps <- object$eig$vectors
+  lambda <- object$eig$values
+  cov_chi <- tcrossprod(
+    t(t(ps) * lambda), ps
+  )
+
+  z <- list()
+  z$cov <- object$cov
+  z$cov_chi <- cov_chi
+  z$r <- length(lambda)
+  z$object <- object
+
+  class(z) <- "summary.spca"
+  z
+}
+
+#' Summary method for object of class \code{summary.spca}.
+#'
+#' @param x An object of type \code{summary.spca}.
+#' @param ... Further pass-through arguments.
+#' @export
+print.summary.spca <- function(x, ...) {
+  trace_chi <- sum(diag(x$cov_chi))
+  trace_x <- sum(diag(x$cov))
+  cat("basdfadf")
+  cat("\nStatic principal component estimation summary\n\n")
+  cat("\nCall:\n", paste(deparse(x$object$call), sep = "\n", collapse = "\n"),
+    "\n\n",
+    sep = ""
+  )
+  cat(paste("Number of static components:", x$r, "\n"))
+  cat(paste("Proportion of explained total variance: ", round(trace_chi / trace_x, 2), "\n"))
+}
 
 #' Diagnostics plot for a \code{dpca} object.
 #'
-#' @param x An object of type \code{spca}.
+#' @param x An object of type \code{dpca}.
 #' @param ... Further pass-through arguments.
 #' @importFrom graphics axis mtext par
 #' @export
@@ -110,6 +143,11 @@ plot.dpca <- function(x, ...) {
   )
 }
 
+#' Diagnostics plot for an \code{spca} object.
+#'
+#' @param x An object of type \code{spca}.
+#' @param ... Further pass-through arguments.
+#' @importFrom graphics axis mtext par
 #' @export
 plot.spca <- function(x, ...) {
   r_selection <- x$HL_select
