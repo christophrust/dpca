@@ -89,7 +89,6 @@ void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
 
   int cnt = 0;
   while (ido != 99) {
-    /* call arpack like you would have, but, use znaupd_c instead of znaupd_ */
     znaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, rwork, &info);
 
@@ -106,7 +105,6 @@ void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
   }
 
 
-  /* call arpack like you would have, but, use zneupd_c instead of zneupd_ */
   zneupd_c(rvec, howmny, select, d, z, ldz, sigma, workev, bmat, N, which, nev,
            tol, resid, ncv, V, ldv, iparam, ipntr, workd, workl, lworkl, rwork,
            &info);
