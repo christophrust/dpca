@@ -2,12 +2,13 @@
 # and configure with ISO C bindings
 
 ZSRC="z*.f icbazn.F90 debug.h stat.h"
-USRC="icnteq.f icopy.f iset.f iswap.f dvout.f ivout.f second_NONE.f zvout.f zmout.f"
+USRC="icnteq.f icopy.f iset.f iswap.f second_NONE.f"
 FSRC_C="*.f icbazn.F90"
 
 tar -xf tools/arpack-ng-3.9.0.tar.gz -C tools/
 
 for f in $ZSRC; do cp tools/arpack-ng-3.9.0/SRC/$f src/arpack/; done
+cat tools/arpack-ng-3.9.0/SRC/znaupd.f | sed -e '/if (msglvl .gt. 0) then/,/end if/s/^/c /' > src/arpack/znaupd.f
 for f in $USRC; do cp tools/arpack-ng-3.9.0/UTIL/$f src/arpack/; done
 cat tools/arpack-ng-3.9.0/arpackdef.h.in | sed -e 's/@INTERFACE64@/0/g' > src/arpack/arpackdef.h
 cat tools/arpack-ng-3.9.0/arpackicb.h.in | sed -e 's/@INTERFACE64@/0/g' > src/arpack/arpackicb.h
