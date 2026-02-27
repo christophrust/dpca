@@ -1,13 +1,12 @@
-PKG_LIBS = arpack/libarpack.a $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 PKG_CFLAGS = -I"arpack" -DUSING_R
 
 UNAME := $(shell uname -s)
 
 ifeq ($(UNAME), Darwin)
-  SHLIB_LDFLAGS = -Wl,-exported_symbols_list,dpca.exp
+  PKG_LIBS = arpack/libarpack.a $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -Wl,-exported_symbols_list,dpca.exp
 else
   # Linux and other ELF platforms
-  SHLIB_LDFLAGS = -Wl,--verbose,--version-script=dpca.map
+  PKG_LIBS = arpack/libarpack.a $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -Wl,--verbose,--version-script=dpca.map
 endif
 
 $(SHLIB): arpack/libarpack.a
