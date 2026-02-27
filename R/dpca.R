@@ -67,7 +67,7 @@
 #' }
 #' also see \code{\link{select_r}}.
 #'
-#' @examples
+#' #@examples
 #' data(fredmd)
 #' fredmd <- scale(fredmd)
 #'

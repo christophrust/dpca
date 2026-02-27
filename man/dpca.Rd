@@ -76,21 +76,18 @@ A object of class "dpca" wrapping a list with the entries
   \item \code{HL_select}: results of the selection methodology of Hallin & Liska (2007),
 }
 also see \code{\link{select_r}}.
-}
-\description{
-\code{dpca} is used to estimate a Generalized Dynamic Factor Model
-starting with the works by Forni et al. (2000) and Forni & Lippi (2001) via dynamic
-principal components analysis (DPCA) á la Brillinger (2001). The number of principal
-components can be chosen in a data-driven way using the method suggested by
-Hallin & Liska (2007).
 
-\code{dpca} has a cousin \code{\link{spca}} for estimating static principal components as
-they are used in the dynamic factor model literature around Stock & Watson (2001),
-also making the Hallin & Liska method for selecting the number of factors available.
-}
-\examples{
+#@examples
 data(fredmd)
 fredmd <- scale(fredmd)
+
+dim <- 150L
+m <- matrix(cos(runif(dim^2, -pi, pi)) + 1i * sin(runif(dim^2, -pi, pi)), ncol = dim)
+spec <- m %*% t(Conj(m))
+
+cat("calling eigen")
+eigen(spec)
+cat("called eigen")
 
 freqs <- -50:50 / 50 * pi
 res <- dpca::dpca(fredmd, freqs = freqs, q_max = 10)
@@ -99,7 +96,7 @@ res <- dpca::dpca(fredmd, freqs = freqs, q_max = 10)
 matplot(x = freqs, y = t(res$eig$values), type = "l")
 
 ## q selection
-cat(sprintf("Number of selected dynamic components: \%s\n", res$HL_select$q))
+cat(sprintf("Number of selected dynamic components: %s\n", res$HL_select$q))
 
 ## sample variability of the criterion S^2_C (Hallin & Liska 2007, equation 10)
 plot(
@@ -114,7 +111,17 @@ plot(
 )
 axis(4)
 mtext("q_path", side = 4)
+}
+\description{
+\code{dpca} is used to estimate a Generalized Dynamic Factor Model
+starting with the works by Forni et al. (2000) and Forni & Lippi (2001) via dynamic
+principal components analysis (DPCA) á la Brillinger (2001). The number of principal
+components can be chosen in a data-driven way using the method suggested by
+Hallin & Liska (2007).
 
+\code{dpca} has a cousin \code{\link{spca}} for estimating static principal components as
+they are used in the dynamic factor model literature around Stock & Watson (2001),
+also making the Hallin & Liska method for selecting the number of factors available.
 }
 \references{
 Brillinger, D. R. (2001). Time Series: Data Analysis and Theory. SIAM.
