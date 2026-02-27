@@ -10,6 +10,15 @@ cat("sizeof(a_int) in C should match\n")
 
 test_that("Eigenvalue and -vector equality", {
   ## normalize evectors to be up to sign equivalent to result of eigen
+  cat("--- Diagnosing 'spec' before eigen() ---\n")
+  cat("str(spec):\n"); str(spec)
+  cat("dim(spec): ", dim(spec), "\n")
+  cat("is.complex(spec): ", is.complex(spec), "\n")
+  cat("any(is.na(spec)): ", any(is.na(spec)), "\n")
+  cat("any(is.nan(spec)): ", any(is.nan(spec)), "\n")
+  cat("any(is.infinite(spec)): ", any(is.infinite(spec)), "\n")
+  cat("summary(c(spec)):\n"); summary(c(spec))
+  cat("---------------------------------------\n")
   cat("calling eigen\n")
   r2 <- eigen(spec)
 
