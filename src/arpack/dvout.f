@@ -1,0 +1,6 @@
+      SUBROUTINE DVOUT(LOUT, N, SX, IDIGIT, IFMT)
+      CHARACTER*( *)    IFMT
+      INTEGER            IDIGIT, LOUT, N
+      DOUBLE PRECISION   SX( * )
+      RETURN
+      END

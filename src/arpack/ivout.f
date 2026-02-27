@@ -1,0 +1,5 @@
+      SUBROUTINE IVOUT(LOUT, N, IX, IDIGIT, IFMT)
+      INTEGER    IX(*), N, IDIGIT, LOUT
+      CHARACTER  IFMT*(*)
+      RETURN
+      END

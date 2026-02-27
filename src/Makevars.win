@@ -1,2 +1,8 @@
-PKG_LIBS = arpack/*.o  -llapack -lblas -lgfortran -lquadmath
+PKG_LIBS = -Larpack -larpack -llapack $(BLAS_LIBS) $(FLIBS)
 PKG_CFLAGS = -I"arpack" -DUSING_R
+
+$(SHLIB): arpack/libarpack.a
+
+arpack/libarpack.a:
+	@(cd arpack && $(MAKE) libarpack.a \
+		FC="$(FC)" FFLAGS="$(FFLAGS) $(FPICFLAGS)" AR="$(AR)")
