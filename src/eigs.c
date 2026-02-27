@@ -1,5 +1,6 @@
 #include <complex.h>
 #include <math.h>
+#include <float.h>
 
 #include <arpack.h>
 
@@ -146,11 +147,18 @@ void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
 
     if (normalize_evecs) {
 
-      z2 = sqrt(1.0 / (1.0 + pow(creal(z[didx * dim + 0]) / cimag(z[didx * dim + 0]), 2.0)));
-      z1 = - creal(z[didx * dim + 0]) / cimag(z[didx * dim + 0]) * z2;
-      if ((creal(z[didx * dim + 0]) * z1 - cimag(z[didx * dim + 0]) * z2) < 0.0) {
-        z1 = -z1;
-        z2 = -z2;
+      double imag_part = cimag(z[didx * dim + 0]);
+      if (fabs(imag_part) > DBL_EPSILON) {
+        z2 = sqrt(1.0 / (1.0 + pow(creal(z[didx * dim + 0]) / imag_part, 2.0)));
+        z1 = - creal(z[didx * dim + 0]) / imag_part * z2;
+        if ((creal(z[didx * dim + 0]) * z1 - imag_part * z2) < 0.0) {
+          z1 = -z1;
+          z2 = -z2;
+        }
+      } else {
+        // Handle purely real eigenvalue case
+        z1 = 1.0;
+        z2 = 0.0;
       }
     }
 
