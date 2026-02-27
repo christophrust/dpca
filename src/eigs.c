@@ -32,6 +32,7 @@ void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
                   int normalize_evecs, int verbose, int row_evecs,
                   int transpose_out) {
 
+  dprint("size of a_int: %i\n", sizeof(a_int));
 
   // znaupd parameters
   a_int ido = 0;                // reverse communication flag, (handled internally) must be zero at start

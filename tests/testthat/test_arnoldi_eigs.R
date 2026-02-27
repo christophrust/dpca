@@ -5,6 +5,9 @@ dim <- 150L
 m <- matrix(cos(runif(dim^2, -pi, pi)) + 1i * sin(runif(dim^2, -pi, pi)), ncol = dim)
 spec <- m %*% t(Conj(m))
 
+cat("Integer size:", .Machine$sizeof.long, "\n")
+cat("sizeof(a_int) in C should match\n")
+
 test_that("Eigenvalue and -vector equality", {
   ## normalize evectors to be up to sign equivalent to result of eigen
   r1 <- .Call("R_arnoldi_eigs", mat = spec, dim = dim, 4L, .Machine$double.eps, 1L, 0L, 0L, 0L)
