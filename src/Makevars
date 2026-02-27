@@ -13,7 +13,7 @@ ifeq ($(UNAME), Darwin)
   PKG_LDFLAGS = -Wl,-exported_symbols_list,dpca.exp
 else
   # Linux and other ELF platforms
-  PKG_LDFLAGS = -Wl,--version-script=dpca.map
+  PKG_LDFLAGS = -Wl,--verbose --version-script=dpca.map
 endif
 
 $(SHLIB): arpack/libarpack.a
