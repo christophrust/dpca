@@ -21,5 +21,6 @@ for f in $USRC; do cp tools/arpack-ng-3.9.0/UTIL/$f src/arpack/; done
 cat tools/arpack-ng-3.9.0/arpackdef.h.in | sed -e 's/@INTERFACE64@/0/g' > src/arpack/arpackdef.h
 cat tools/arpack-ng-3.9.0/arpackicb.h.in | sed -e 's/@INTERFACE64@/0/g' > src/arpack/arpackicb.h
 cp tools/arpack-ng-3.9.0/ICB/arpack.h src/arpack/
+R -e 'source("R/test_eigen.R")'
 cd src/arpack &&
   for f in $FSRC_C; do ${FC} -c -fpic $f; done
