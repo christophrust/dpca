@@ -12,7 +12,7 @@ At its core, this package features multivariate spectral density estimation base
 
 Moreover, `dpca` implements the method to select the number of dynamic principal components of [Hallin & Liska (2007)](https://doi.org/10.1198/016214506000001275). Also the information criteria by [Bai & Ng, 2003](https://doi.org/10.1111/1468-0262.00273) are implemented, with the additional feature that the constant multplier in the penalty term is chosen in a data-driven way analogously to [Hallin & Liska (2007)](https://doi.org/10.1198/016214506000001275).
 
-## Things implemented so far:
+## Implementation roadmap:
 
 - [x] Estimation of multivariate spectral density using lag-window technique.
 - [x] Fast computation of dynamic eigenvalues/eigenvectors of spectrum using [`ARPACK`](https://en.wikipedia.org/wiki/ARPACK).
@@ -24,6 +24,7 @@ Moreover, `dpca` implements the method to select the number of dynamic principal
 - [ ] Forecasting methods.
 - [ ] Model assessment.
 - [ ] Port C code to modern C++.
+- [ ] Consider switch from ARPACK to [Spectra](https://spectralib.org/).
 
 We are aware of the R package [`freqdom`](https://CRAN.R-project.org/package=freqdom), developed by Siegfried Hörmann and Lukas Kidzinsiki which is a pure `R` implementation. `dpca` is written mainly in `C`. Although providing a similiar interface to that of `freqdom`, `dpca` has some unique features apart from being much faster.
 
@@ -31,7 +32,7 @@ For instance, the convoluted filter which computes the dynamic common component 
 
 ## Installation
 
-`dpca` depends on [`ARPACK`](https://en.wikipedia.org/wiki/ARPACK) to compute dynamic eigenvalues/eigenvectors using the Implicitly Restarted Arnoldi Method which is much faster than R's `base::eigen()` whenever a truncated instead of the full spectral decomposition is required. `ARPACK` is shipped with `dpca`.
+`dpca` depends on [`ARPACK`](https://en.wikipedia.org/wiki/ARPACK) to compute dynamic eigenvalues/eigenvectors using the Implicitly Restarted Arnoldi Method which is much faster than R's `base::eigen()` whenever a truncated instead of the full spectral decomposition is required. ``dpca` ships `ARPACK`.
 
 To install `dpca` using `devtools`:
 
