@@ -10,7 +10,7 @@ cat("sizeof(a_int) in C should match\n")
 
 test_that("Eigenvalue and -vector equality", {
   ## normalize evectors to be up to sign equivalent to result of eigen
-  r1 <- .Call("R_arnoldi_eigs", mat = spec, dim = dim, 4L, .Machine$double.eps, 1L, 0L, 0L, 0L)
+  r1 <- .Call("R_arnoldi_eigs", mat = spec, dim = dim, 4L, .Machine$double.eps, 1L, 1L, 0L, 0L)
   r2 <- eigen(spec)
   diff_cp <- abs(Re(t(Conj(r1$vectors)) %*% r2$vectors[, 1:4])) - diag(4)
   expect_lte(sum(Re(r1$values - r2$values[1:4])^2), 1e-12)

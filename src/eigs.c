@@ -8,10 +8,16 @@
 
 #ifdef USING_R
 #include <R_ext/Print.h>
+#include <R.h>
 #define dprint Rprintf
+#define ALLOC_VLA(n, type) (type *) R_alloc(n, sizeof(type))
+#define FREE_VLA(p)
 #else
 #include <stdio.h>
+#include <stdlib.h>
 #define dprint printf
+#define ALLOC_VLA(n, type) (type *) malloc((n) * sizeof(type))
+#define FREE_VLA(p) free(p)
 #endif
 
 void get_rank(double *values, int *rank, int n) {
@@ -32,46 +38,44 @@ void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
                   int normalize_evecs, int verbose, int row_evecs,
                   int transpose_out) {
 
-  dprint("size of a_int: %i\n", sizeof(a_int));
-
   // znaupd parameters
   a_int ido = 0;                // reverse communication flag, (handled internally) must be zero at start
   char bmat[] = "I";            // B matrix ( I -> standard EV problem )
   a_int N = (a_int) dim;        // number of rows (dimension of the eigenproblem)
   char which[] = "LM";          // LM -> largest eigenvalues are of interest
   a_int nev = (a_int) q;        // Number of eigenvalues
-  double _Complex resid[N];     // residual vector
+  double _Complex *resid = ALLOC_VLA(N, double _Complex);     // residual vector
 
   a_int ncv = 2 * nev + 1; //
   if (ncv < 20) ncv = 20;  // usage consistent to octave
   if (ncv > N) ncv = N;
 
-  double _Complex V[ncv * N];
+  double _Complex *V = ALLOC_VLA(ncv * N, double _Complex);
   a_int ldv = N;
   a_int iparam[11] = {0};
   a_int ipntr[14];
   for (int i=0; i< 14; i++) ipntr[i] = 0;
 
-  double _Complex workd[3 * N];
+  double _Complex *workd = ALLOC_VLA(3 * N, double _Complex);
   a_int rvec = 1;
   char howmny[] = "A";
-  double _Complex d[nev+1];
+  double _Complex *d = ALLOC_VLA(nev + 1, double _Complex);
 
-  a_int select[ncv];
+  a_int *select = ALLOC_VLA(ncv, a_int);
   for (int i = 0; i < ncv; i++) select[i] = 1;
 
-  double _Complex z[N  * nev];
+  double _Complex *z = ALLOC_VLA(N * nev, double _Complex);
   a_int ldz = N;
   double _Complex sigma = 0. + I * 0.;
   int k;
   for (k = 0; k < 3 * N; ++k) workd[k] = 0;
 
   a_int lworkl = ncv *  (3 * ncv + 5);
-  double _Complex workl[lworkl];
+  double _Complex *workl = ALLOC_VLA(lworkl, double _Complex);
   for (k = 0; k < lworkl; ++k) workl[k] = 0;
 
-  double rwork[ncv];
-  double _Complex workev[2 * ncv];
+  double *rwork = ALLOC_VLA(ncv, double);
+  double _Complex *workev = ALLOC_VLA(2 * ncv, double _Complex);
   a_int info = 0;
 
   iparam[0] = 1;
@@ -119,8 +123,8 @@ void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
     dprint("copying results\n");
 
   // sort eigenvalues and eigenvectors
-  int rank[q];
-  double abs_vals[q];
+  int *rank = ALLOC_VLA(q, int);
+  double *abs_vals = ALLOC_VLA(q, double);
   for (int i = 0; i < q; i++)
     abs_vals[i] = sqrt( pow(creal(d[i]), 2) +  pow(cimag(d[i]), 2));
 
@@ -164,4 +168,18 @@ void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
         imag * _Complex_I;
     }
   }
+
+#ifndef USING_R
+  FREE_VLA(resid);
+  FREE_VLA(V);
+  FREE_VLA(workd);
+  FREE_VLA(d);
+  FREE_VLA(select);
+  FREE_VLA(z);
+  FREE_VLA(workl);
+  FREE_VLA(rwork);
+  FREE_VLA(workev);
+  FREE_VLA(rank);
+  FREE_VLA(abs_vals);
+#endif
 }
