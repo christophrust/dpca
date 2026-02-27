@@ -1,0 +1,16 @@
+_R_arnoldi_eigs
+_R_zMatVec
+_R_lagged_cov
+_R_lagged_covs
+_R_fourier_transform
+_R_fourier_inverse
+_R_filter_process
+_R_dpca
+_R_complex_crossprod
+_R_recursive_filter
+_R_hl_ic
+_R_hl_ic_n_path
+_R_hl_q_path
+_R_find_stability_intervals
+_R_hl_select_q
+_R_init_dpca

@@ -1,0 +1,19 @@
+{global:
+R_arnoldi_eigs;
+R_zMatVec;
+R_lagged_cov;
+R_lagged_covs;
+R_fourier_transform;
+R_fourier_inverse;
+R_filter_process;
+R_dpca;
+R_complex_crossprod;
+R_recursive_filter;
+R_hl_ic;
+R_hl_ic_n_path;
+R_hl_q_path;
+R_find_stability_intervals;
+R_hl_select_q;
+R_init_dpca;
+local: *;
+};
