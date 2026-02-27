@@ -15,5 +15,7 @@ R_hl_q_path;
 R_find_stability_intervals;
 R_hl_select_q;
 R_init_dpca;
-local: *;
+local:
+*;
+zgetv0_;
 };
