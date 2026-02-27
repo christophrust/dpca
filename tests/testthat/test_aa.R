@@ -1,6 +1,3 @@
-library(dpca)
-
-
 dim <- 150L
 m <- matrix(cos(runif(dim^2, -pi, pi)) + 1i * sin(runif(dim^2, -pi, pi)), ncol = dim)
 spec <- m %*% t(Conj(m))
