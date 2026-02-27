@@ -10,6 +10,7 @@ cat("sizeof(a_int) in C should match\n")
 
 test_that("Eigenvalue and -vector equality", {
   ## normalize evectors to be up to sign equivalent to result of eigen
+  cat("calling eigen\n")
   r2 <- eigen(spec)
 
   cat("called eigen\n")
