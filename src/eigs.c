@@ -99,6 +99,10 @@ void arnoldi_eigs(double _Complex *mat, int dim, int ldm, int q,
     znaupd_c(&ido, bmat, N, which, nev, tol, resid, ncv, V, ldv, iparam, ipntr,
              workd, workl, lworkl, rwork, &info);
 
+    if (verbose) {
+      dprint("Calling complex_mv_product: mat=0x%p, x=0x%p, y=0x%p, dim=%d, ldm=%d, ipntr[0]=%d, ipntr[1]=%d\n",
+             (void*)mat, (void*)&(workd[ipntr[0] - 1]), (void*)&(workd[ipntr[1] - 1]), dim, ldm, ipntr[0], ipntr[1]);
+    }
     complex_mv_product(&(workd[ipntr[0] - 1]), &(workd[ipntr[1] - 1]), mat, dim, ldm);
     cnt++;
   }

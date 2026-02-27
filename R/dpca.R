@@ -71,6 +71,14 @@
 #' data(fredmd)
 #' fredmd <- scale(fredmd)
 #'
+#' dim <- 150L
+#' m <- matrix(cos(runif(dim^2, -pi, pi)) + 1i * sin(runif(dim^2, -pi, pi)), ncol = dim)
+#' spec <- m %*% t(Conj(m))
+#'
+#' cat("calling eigen")
+#' eigen(spec)
+#' cat("called eigen")
+#' 
 #' freqs <- -50:50 / 50 * pi
 #' res <- dpca::dpca(fredmd, freqs = freqs, q_max = 10)
 #'
