@@ -3,7 +3,6 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/christophrust/dpca/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/christophrust/dpca/actions/workflows/check-standard.yaml)
 [![Codecov test coverage](https://codecov.io/gh/christophrust/dpca/branch/main/graph/badge.svg)](https://app.codecov.io/gh/christophrust/dpca?branch=main)
-[![License](https://img.shields.io/github/license/christophrust/dpca)](./LICENSE)
 <!-- badges: end -->
 
 This package provides a fast and reliable implementation of Brillinger's dynamic principal component analysis. The main use case is estimation of Generalized Dynamic Factor Models ([Forni & Lippi, 2001](https://doi.org/10.1017/S0266466601176048), [Forni, Hallin, Lippi and Reichlin, 2000](https://www.jstor.org/stable/2646650)).
