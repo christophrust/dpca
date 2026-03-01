@@ -38,6 +38,9 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
+          
+      - name: Run custom R script
+        run: Rscript -e 'source("tests/foo.R")'
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
