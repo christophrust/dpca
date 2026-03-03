@@ -16,7 +16,7 @@ Description: Efficient implementations for estimating Generalized Dynamic Factor
 SystemRequirements: GNU make
 NeedsCompilation: yes
 Depends: R (>= 3.5.0)
-License: GPL-3 + file LICENSE
+License: GPL-3
 URL: https://github.com/christophrust/dpca
 Encoding: UTF-8
 LazyData: true
